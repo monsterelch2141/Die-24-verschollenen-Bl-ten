@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7e9cd">
+  <meta name="description" content="Das Geheimnis der verschollenen Blüten – 24 kleine Adventsrätsel in unserer gemeinsamen Reise.">
+  <title>Das Geheimnis der verschollenen Blüten</title>
+  <link rel="stylesheet" href="style.css?v=54">
+  <script src="config.js?v=54" defer></script>
+  <script src="script.js?v=54" defer></script>
+</head>
+<body>
+  <section id="password-gate" class="password-gate" aria-labelledby="gate-title">
+    <div class="gate-florals" aria-hidden="true"></div>
+    <div class="gate-paper">
+      <div class="gate-compass" aria-hidden="true">✧ ─── ✥ ─── ✧</div>
+      <p class="gate-eyebrow">Ein Geheimnis wartet auf dich</p>
+      <h1 id="gate-title" class="gate-title">Das Geheimnis <span>der verschollenen Blüten</span></h1>
+      <div class="gate-divider" aria-hidden="true">❦ ─── ✧ ─── ❦</div>
+      <p class="gate-intro">Für den Zugriff auf diese Seite ist ein Passwort erforderlich.</p>
+      <form id="password-form" class="gate-form">
+        <label for="password-input">Wie ist Ihr Nachname?</label>
+        <input id="password-input" name="password" type="password" autocomplete="off" spellcheck="false" required placeholder="Deine Antwort …" />
+        <button type="submit">✧ Geheimnis enthüllen ✧</button>
+        <p id="password-error" class="gate-error" role="status" aria-live="polite"></p>
+      </form>
+      <p class="gate-footnote">Nur wer das richtige Wort kennt, darf eintreten. ♡</p>
+    </div>
+  </section>
+  <main class="page" id="advent-page" hidden>
+    
+    <div class="paper">
+      <header class="hero">
+        <div class="compass" aria-hidden="true">✧ ─── ✥ ─── ✧</div>
+        <p class="eyebrow">Ein Rätselbuch voller Erinnerungen</p>
+        <h1>Das Geheimnis <span>der verschollenen Blüten</span></h1>
+        <p class="subtitle">24 kleine Adventsrätsel in unserer gemeinsamen Reise</p>
+        <div class="ornament" aria-hidden="true">❦ ─── ✧ ─── ❦</div>
+      </header>
+      <section class="game" aria-labelledby="game-title">
+        <h2 id="game-title">Wähle den Tag deiner Entdeckung</h2>
+        <div class="day-nav">
+          <button id="previous" type="button" aria-label="Vorheriger Tag">❮</button>
+          <label class="sr-only" for="day">Tag auswählen</label>
+          <select id="day"></select>
+          <button id="next" type="button" aria-label="Nächster Tag">❯</button>
+        </div>
+        <p id="unlock-hint" class="unlock-hint" aria-live="polite"></p>
+        <p class="instruction">Tippe auf das Feld, in dem deine Sternenroute endet.</p>
+        <div id="board" class="board" role="group" aria-label="Rätselraster mit sechs Spalten und vier Zeilen"></div>
+        <button id="reveal-all" class="reveal-all-button" type="button" aria-pressed="false">✧ Alles aufdecken ✧</button>
+        <div id="final-actions" class="final-actions" hidden>
+          <p>✧ Alle 24 Blüten sind gefunden. Eure Erinnerungen warten. ✧</p>
+          <button id="open-collage" type="button" class="reveal-all-button">❦ Unser Erinnerungsbild ansehen ❦</button>
+        </div>
+        <button id="test-complete" class="test-complete" type="button" hidden>✧ Test: alle 24 Rätsel lösen ✧</button>
+        <div id="feedback" class="feedback" role="status" aria-live="polite">✧ Die Sterne warten auf deine Entdeckung. ✧</div>
+        <p id="progress" class="progress" aria-live="polite"></p>
+      </section>
+      <footer><div class="ornament" aria-hidden="true">✧ ❦ ✧</div><p>„Nur wer den rechten Stern findet,<br>vermag das nächste Geheimnis zu lüften.“</p></footer>
+    </div>
+  </main>
+  <section id="collage-view" class="collage-view" hidden aria-labelledby="collage-heading">
+    <div class="collage-panel">
+      <div class="collage-ornament">❦ ✧ ❦</div>
+      <h2 id="collage-heading">24 Blüten, eine Liebe</h2>
+      <p class="collage-subtitle">Unsere schönsten Erinnerungen</p>
+      <p id="collage-status" role="status">Dein Erinnerungsbild wird vorbereitet …</p>
+      <img id="collage-preview" alt="Erinnerungscollage mit 24 Polaroid-Fotos" hidden>
+      <div class="collage-buttons">
+        <button id="share-collage" type="button">♡ Bild sichern / teilen</button>
+        <a id="download-collage" download="24-Blueten-eine-Liebe.png">Bild herunterladen</a>
+        <button id="back-collage" type="button">← Zurück zum Rätselbuch</button>
+      </div>
+      <p class="collage-help">Auf dem iPhone: „Bild sichern“ im Teilen-Menü auswählen. Alternativ das Bild lange gedrückt halten und „In Fotos sichern“ wählen.</p>
+    </div>
+  </section>
+  <div id="photo-overlay" class="photo-overlay" hidden role="dialog" aria-modal="true" aria-label="Unser Erinnerungsfoto">
+    <div class="legendary-burst" aria-hidden="true"></div>
+    <div class="legendary-rings" aria-hidden="true"></div>
+    <div class="legendary-sparks" aria-hidden="true">
+      <span>✦</span><span>✧</span><span>✦</span><span>✧</span><span>✦</span><span>✧</span><span>✦</span><span>✧</span><span>✦</span><span>✧</span><span>✦</span><span>✧</span>
+    </div>
+    <div class="legendary-fog fog-one" aria-hidden="true"></div>
+    <div class="legendary-fog fog-two" aria-hidden="true"></div>
+    <div class="legendary-flash" aria-hidden="true"></div>
+    <div class="reveal-shell">
+      <div class="reveal-card-back" aria-hidden="true"><span>✦ ❦ ✦</span></div>
+      <div class="polaroid" role="document">
+      <button id="close-photo" class="close-photo" type="button" aria-label="Foto schließen">×</button>
+      <div class="polaroid-image"><img id="photo-image" alt="" /></div>
+      <p id="photo-caption" class="polaroid-caption"></p>
+      <div class="polaroid-stars" aria-hidden="true">✧ ✦ ✧</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
