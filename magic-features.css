@@ -34,3 +34,56 @@
 .flower-reward .real-flower{width:100%;height:100%;filter:drop-shadow(0 5px 6px #7774)}
 @media(max-width:550px){.illustrated-map{gap:9px;padding:20px 8px}.illustrated-map .journey-stop{min-height:125px}.illustrated-map .journey-icon{width:67px;height:64px}.bouquet-flower{width:59px;height:98px}}
 @media(prefers-reduced-motion:reduce){.journey-trail span,.bouquet-flower.flower-arriving{animation:none!important}}
+
+
+/* Märchenwelt: eigenständige Reisekarte, Miniaturfiguren und Blumenvase */
+.storybook-nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:24px 0}
+.storybook-nav button,.storybook-back,.storybook-return,.storybook-reward button{border:2px solid #b58a50;background:linear-gradient(#fff8e9,#e9c991);color:#65401e;padding:12px 20px;border-radius:26px;font:700 21px 'Cormorant Garamond',Georgia,serif;cursor:pointer;box-shadow:0 4px 14px #53341730}
+.storybook-screen{position:relative;min-height:100vh;padding:20px 12px 60px;background:linear-gradient(#f5e9d5cc,#f5e9d5cc),url('reise-hintergrund.webp') center/cover fixed;color:#57391f;text-align:center}
+.storybook-screen[hidden]{display:none!important}
+.storybook-inner{max-width:940px;margin:0 auto}
+.storybook-back{display:block;position:relative;z-index:8;margin:0 0 10px}
+.storybook-heading{font:400 clamp(39px,6vw,72px) 'Great Vibes',cursive;color:#75451f;margin:10px 0 0;text-shadow:0 2px 2px #fff8e9}
+.storybook-subtitle{font:italic 25px 'Cormorant Garamond',serif;margin:10px 0 22px}
+.storybook-map{position:relative;isolation:isolate;width:100%;aspect-ratio:1000/1050;overflow:hidden;border:9px ridge #bc8c4d;border-radius:18px;box-shadow:0 15px 35px #46321c55;background:radial-gradient(ellipse at 50% 45%,#e8d8a4a8,#e0d4ad90 58%,#c3d2c08c),url('reise-hintergrund.webp') center/100% 100%}
+.storybook-map-wash{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at center,#f4e4b322,#f8ebca33 75%),repeating-linear-gradient(155deg,transparent 0 100px,#c9b58c33 102px 104px,transparent 110px 190px);pointer-events:none}
+.storybook-route{position:absolute;inset:0;width:100%;height:100%;z-index:1;filter:drop-shadow(0 2px 2px #634722)}
+.storybook-stops{position:absolute;inset:0;z-index:2}
+.storybook-stop{position:absolute;transform:translate(-50%,-50%);width:21%;min-height:13%;padding:2px;background:linear-gradient(#fff4d9ee,#e6cfa7ef);border:2px solid #aa814c;border-radius:48% 48% 14% 14%/20% 20% 12% 12%;box-shadow:0 3px 7px #5b3d2a55;color:#644122;display:flex;align-items:center;flex-direction:column;justify-content:center;gap:1px;cursor:pointer}
+.storybook-stop.is-unlocked{background:linear-gradient(#fff6e5f4,#edd2a7e8);border-color:#a77b39}
+.storybook-stop.is-unlocked:hover{filter:brightness(1.09);z-index:5;box-shadow:0 5px 18px #f8df9a}
+.storybook-stop.is-locked{opacity:.22;filter:grayscale(1);pointer-events:none}
+.storybook-icon{display:block;width:58%;height:54%;max-height:73px}
+.storybook-icon .landmark-svg{height:100%;width:100%;filter:drop-shadow(0 3px 2px #4e3a2440)}
+.storybook-num{position:absolute;top:-10px;left:-9px;border-radius:50%;background:#fff2d2;border:2px solid #a87b42;min-width:23px;line-height:21px;font-size:14px;font-weight:bold}
+.storybook-stop-label{font:700 clamp(10px,1.35vw,16px)/1.06 'Cormorant Garamond',Georgia,serif;max-width:95%;overflow-wrap:anywhere}
+.storybook-pair{position:absolute;z-index:9;width:15%;transform:translate(-50%,-85%);transition:left 3s cubic-bezier(.3,.6,.2,1),top 3s cubic-bezier(.3,.6,.2,1);pointer-events:none;filter:drop-shadow(1px 6px 4px #3c2a1a88)}
+.travel-couple{width:100%;height:auto;overflow:visible}
+.storybook-fog{position:absolute;z-index:6;transform:translate(-50%,-50%);width:30%;height:22%;pointer-events:none;background:radial-gradient(ellipse,#d9ded9 0%,#dce0db 35%,#c4d0cddd 56%,#c7d2caaa 68%,transparent 76%);filter:blur(4px);animation:storybook-mist 8s ease-in-out infinite alternate}
+@keyframes storybook-mist{to{transform:translate(-45%,-52%) scale(1.1)}}
+.storybook-future{position:absolute;bottom:1.5%;right:2%;z-index:8;background:#fff1d8e8;border:1px solid #ac834c;border-radius:15px;padding:7px 11px;font-size:16px;font-weight:bold}
+.storybook-future small{font-style:italic}
+.storybook-note{font:italic 22px 'Cormorant Garamond',Georgia,serif;margin:15px auto}
+.storybook-memory{padding:22px;background:#fff5e6ed;border:5px double #c6a26b;min-height:420px}
+.storybook-memory h2{font:400 46px 'Great Vibes',cursive;text-transform:none;letter-spacing:0}
+.storybook-gallery{display:flex;justify-content:center;flex-wrap:wrap;gap:15px;margin:22px 0}
+.storybook-gallery figure{background:#fff;padding:12px 12px 22px;box-shadow:0 5px 15px #49352355;margin:0;max-width:290px}
+.storybook-gallery img{max-width:100%;max-height:360px;object-fit:cover}
+.storybook-gallery figcaption{margin-top:8px;font-style:italic}
+.storybook-vase-scene{height:min(82vw,680px);min-height:420px;max-width:680px;position:relative;margin:auto;border:8px ridge #bd945f;border-radius:18px;overflow:hidden;background:linear-gradient(#f9dfb58c,#f5d2aa8c),url('reise-hintergrund.webp') center/cover;box-shadow:0 12px 28px #49352344}
+.storybook-vase-scene:before{content:'';position:absolute;bottom:4%;left:0;right:0;height:12%;background:linear-gradient(#e4c29e,#b78e66);box-shadow:0 -6px 20px #4d322233}
+.storybook-bouquet{position:absolute;left:50%;bottom:26%;z-index:2;width:0;height:0}
+.storybook-flower{position:absolute;bottom:0;left:0;width:105px;height:180px;transform:translate(var(--fx),var(--fy)) rotate(var(--fr));transform-origin:50% 95%;filter:drop-shadow(0 3px 2px #32442b55)}
+.storybook-flower .botanical{height:100%;width:100%;overflow:visible}
+.storybook-flower.flower-arrives{animation:storybook-bloom 3.3s ease-in-out both}
+@keyframes storybook-bloom{0%{opacity:0;transform:translate(180px,-370px) rotate(90deg) scale(1.6)}45%{opacity:1}75%{transform:translate(calc(var(--fx) + 18px),calc(var(--fy) - 25px)) rotate(15deg)}100%{transform:translate(var(--fx),var(--fy)) rotate(var(--fr))}}
+.storybook-porcelain{position:absolute;z-index:5;bottom:9%;left:50%;transform:translateX(-50%);height:31%;width:29%;min-width:130px;border-radius:28% 28% 38% 38%/15% 15% 38% 38%;border:4px solid #fdfaf1;background:repeating-linear-gradient(90deg,#e5e1d9 0%,#fffef8 13%,#eeeae2 22%);box-shadow:inset 10px 0 13px #b8ae9c80,inset -10px 0 13px #b8ae9c80,0 12px 14px #3e2a2450;color:#b38c52;font-size:70px;padding-top:10px}
+.storybook-porcelain:before{content:'';position:absolute;top:-13px;left:-6px;right:-6px;height:26px;background:linear-gradient(#fff,#cfc9bd);border-radius:50%;border:3px solid #f9f6ef}
+.storybook-flower-count{font:700 25px 'Cormorant Garamond',serif;margin:18px auto}
+.storybook-reward{min-height:460px;padding:35px 15px;border:4px double #c3a06b;background:radial-gradient(#fff9e9,#f0dcb9)}
+.storybook-reward-flower{height:240px;margin:auto;max-width:200px;animation:storybook-bloom-in 2s ease both}
+.storybook-reward-flower svg{height:100%}
+@keyframes storybook-bloom-in{from{opacity:0;transform:scale(.1) rotate(-80deg)}to{opacity:1;transform:scale(1)}}
+.storybook-reward p{font-size:27px}
+@media(max-width:600px){.storybook-screen{padding:10px 4px 30px}.storybook-map{border-width:4px}.storybook-stop{border-width:1px;min-height:11%}.storybook-stop-label{font-size:9px}.storybook-num{font-size:10px;min-width:18px;line-height:16px;top:-8px;left:-5px}.storybook-icon{max-height:36px}.storybook-pair{width:18%}.storybook-future{font-size:10px}.storybook-fog{width:32%}.storybook-flower{width:73px;height:120px}.storybook-porcelain{font-size:42px}}
+@media(prefers-reduced-motion:reduce){.storybook-fog,.storybook-flower.flower-arrives,.storybook-reward-flower{animation:none!important}}
