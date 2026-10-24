@@ -12,14 +12,11 @@
   const progress = document.getElementById('progress');
   const previous = document.getElementById('previous');
   const next = document.getElementById('next');
-
   const overlay = document.getElementById('photo-overlay');
   const photoImage = document.getElementById('photo-image');
   const photoCaption = document.getElementById('photo-caption');
   const closePhoto = document.getElementById('close-photo');
-
   const unlockHint = document.getElementById('unlock-hint');
-  const key = 'verschollene-blueten-geloest-v1';
 
   const gate = document.getElementById('password-gate');
   const page = document.getElementById('advent-page');
@@ -27,8 +24,31 @@
   const passwordInput = document.getElementById('password-input');
   const passwordError = document.getElementById('password-error');
 
-  // Passwort wird bei jedem Seitenaufruf abgefragt.
-  // Auf GitHub Pages ist es nur eine spielerische Sperre.
+  const revealButton = document.getElementById('reveal-all');
+  const testComplete = document.getElementById('test-complete');
+  const finalActions = document.getElementById('final-actions');
+
+  const collageView = document.getElementById('collage-view');
+  const collagePreview = document.getElementById('collage-preview');
+  const collageStatus = document.getElementById('collage-status');
+  const shareCollage = document.getElementById('share-collage');
+  const downloadCollage = document.getElementById('download-collage');
+
+  const key = 'verschollene-blueten-geloest-v1';
+
+  let solved = {};
+  let day = 1;
+  let lastFocus = null;
+  let allRevealed = false;
+  let collageBlob = null;
+  let collageUrl = null;
+
+  testComplete.hidden = !testMode;
+
+  // ==========================================
+  // PASSWORT
+  // ==========================================
+
   function unlockPage() {
     gate.hidden = true;
     page.hidden = false;
@@ -51,7 +71,9 @@
     }
   });
 
-  let solved = {};
+  // ==========================================
+  // GESPEICHERTE RÄTSEL
+  // ==========================================
 
   try {
     const stored = JSON.parse(
@@ -67,21 +89,33 @@
     }
   } catch (_) {}
 
-  let day = 1;
-  let lastFocus = null;
-  let allRevealed = false;
+  function save() {
+    try {
+      localStorage.setItem(
+        key,
+        JSON.stringify(solved)
+      );
+    } catch (_) {}
+  }
 
-  const revealButton =
-    document.getElementById('reveal-all');
+  function solvedCount() {
+    return Array.from(
+      { length: 24 },
+      (_, i) => i + 1
+    ).filter(d => solved[d] === answers[d]).length;
+  }
 
-  const testComplete =
-    document.getElementById('test-complete');
+  function solvedFields() {
+    return new Set(
+      Object.keys(solved)
+        .filter(d => solved[d] === answers[d])
+        .map(d => solved[d])
+    );
+  }
 
-  testComplete.hidden = !testMode;
-
-  // =========================================
-  // TAGESFREIGABE
-  // =========================================
+  // ==========================================
+  // ADVENTSFREIGABE
+  // ==========================================
 
   function availableDays() {
     if (testMode) return 24;
@@ -118,26 +152,40 @@
     return 0;
   }
 
-  function save() {
-    try {
-      localStorage.setItem(
-        key,
-        JSON.stringify(solved)
-      );
-    } catch (_) {}
+  function refreshDays() {
+    const max = availableDays();
+
+    for (const option of daySelect.options) {
+      const n = Number(option.value);
+      option.disabled = n > max;
+      option.textContent =
+        `${n}. Dezember${n > max ? ' 🔒' : ''}`;
+    }
+
+    daySelect.disabled = max === 0;
+
+    if (max === 0) {
+      unlockHint.textContent =
+        'Das erste Adventsrätsel öffnet sich am 1. Dezember 2026. ✧';
+    } else if (testMode) {
+      unlockHint.textContent =
+        '✧ Testmodus: Alle 24 Tage sind zum Ausprobieren geöffnet.';
+    } else {
+      unlockHint.textContent = max < 24
+        ? `✧ Bis zum ${max}. Dezember freigeschaltet.`
+        : '✧ Alle 24 Tage sind freigeschaltet.';
+    }
+
+    if (day > max && max > 0) {
+      day = max;
+    }
+
+    return max;
   }
 
-  function solvedFields() {
-    return new Set(
-      Object.values(solved).filter(
-        value => typeof value === 'string'
-      )
-    );
-  }
-
-  // =========================================
-  // POLAROID-FOTOS
-  // =========================================
+  // ==========================================
+  // POLAROID-ANZEIGE
+  // ==========================================
 
   function showPhoto(forDay, animated = true) {
     const info = photos[forDay];
@@ -170,7 +218,6 @@
   function hidePhoto() {
     overlay.hidden = true;
     overlay.classList.remove('legendary-play');
-
     document.body.classList.remove('photo-open');
     photoImage.removeAttribute('src');
 
@@ -180,72 +227,32 @@
   }
 
   function solvedPhotoFor(code) {
-    const matching = Object.keys(solved)
+    return Object.keys(solved)
       .map(Number)
       .sort((a, b) => a - b)
-      .find(
-        d =>
-          solved[d] === code &&
-          solved[d] === answers[d] &&
-          photos[d]?.datei
-      );
-
-    return matching || null;
+      .find(d =>
+        solved[d] === code &&
+        solved[d] === answers[d] &&
+        photos[d]?.datei
+      ) || null;
   }
 
-  // =========================================
+  // ==========================================
   // SPIELFORTSCHRITT
-  // =========================================
+  // ==========================================
 
   function updateProgress() {
-    const count = Object.keys(solved).filter(
-      d => solved[d] === answers[d]
-    ).length;
+    const count = solvedCount();
 
     progress.textContent =
       `${count} von 24 Geheimnissen gelüftet`;
 
-    document.getElementById(
-      'final-actions'
-    ).hidden = count !== 24;
+    finalActions.hidden = count !== 24;
   }
 
-  function refreshDays() {
-    const max = availableDays();
-
-    for (const option of daySelect.options) {
-      const n = Number(option.value);
-
-      option.disabled = n > max;
-      option.textContent =
-        `${n}. Dezember${n > max ? ' 🔒' : ''}`;
-    }
-
-    daySelect.disabled = max === 0;
-
-    if (max === 0) {
-      unlockHint.textContent =
-        'Das erste Adventsrätsel öffnet sich am 1. Dezember 2026. ✧';
-    } else if (testMode) {
-      unlockHint.textContent =
-        '✧ Testmodus: Alle 24 Tage sind zum Ausprobieren geöffnet.';
-    } else {
-      unlockHint.textContent =
-        max < 24
-          ? `✧ Bis zum ${max}. Dezember freigeschaltet.`
-          : '✧ Alle 24 Tage sind freigeschaltet.';
-    }
-
-    if (day > max && max > 0) {
-      day = max;
-    }
-
-    return max;
-  }
-
-  // =========================================
+  // ==========================================
   // RÄTSELRASTER
-  // =========================================
+  // ==========================================
 
   function render() {
     const max = refreshDays();
@@ -304,7 +311,6 @@
           const tick = document.createElement('span');
           tick.className = 'tick';
           tick.textContent = '✓';
-
           tick.setAttribute('aria-hidden', 'true');
 
           if (!allRevealed || !photoDay) {
@@ -318,11 +324,12 @@
             return;
           }
 
-          // Aufgedeckte Fotos öffnen ohne Animation.
           if (green.has(code)) {
             const matchingDay = solvedPhotoFor(code);
 
             if (matchingDay) {
+              // Sichtbare Miniatur: sofort öffnen.
+              // Zugedecktes Feld: Animation.
               showPhoto(matchingDay, !allRevealed);
             } else {
               feedback.className = 'feedback success';
@@ -403,16 +410,15 @@
     daySelect.appendChild(option);
   }
 
-  // =========================================
-  // ALLE FOTOS AUFDECKEN
-  // =========================================
+  // ==========================================
+  // ALLES AUFDECKEN
+  // ==========================================
 
   revealButton.addEventListener('click', () => {
     if (!allRevealed) {
-      const hasPhoto = Object.keys(solved).some(
-        d =>
-          solved[d] === answers[d] &&
-          photos[d]?.datei
+      const hasPhoto = Object.keys(solved).some(d =>
+        solved[d] === answers[d] &&
+        photos[d]?.datei
       );
 
       if (!hasPhoto) {
@@ -432,9 +438,9 @@
       : '✧ Die Erinnerungen sind wieder zugedeckt. ✧';
   });
 
-  // =========================================
-  // TEST: ALLE 24 RÄTSEL LÖSEN
-  // =========================================
+  // ==========================================
+  // TEST: ALLE RÄTSEL LÖSEN
+  // ==========================================
 
   testComplete.addEventListener('click', () => {
     if (
@@ -504,27 +510,9 @@
 
   window.setInterval(() => render(), 60000);
 
-  // =========================================
-  // ERINNERUNGSCOLLAGE
-  // =========================================
-
-  const collageView =
-    document.getElementById('collage-view');
-
-  const collagePreview =
-    document.getElementById('collage-preview');
-
-  const collageStatus =
-    document.getElementById('collage-status');
-
-  const shareCollage =
-    document.getElementById('share-collage');
-
-  const downloadCollage =
-    document.getElementById('download-collage');
-
-  let collageBlob = null;
-  let collageUrl = null;
+  // ==========================================
+  // BILDER FÜR DIE COLLAGE LADEN
+  // ==========================================
 
   function loadImage(url) {
     return new Promise((resolve, reject) => {
@@ -534,7 +522,7 @@
 
       img.onerror = () => reject(
         new Error(
-          `Foto konnte nicht geladen werden: ${url}`
+          `Bild konnte nicht geladen werden: ${url}`
         )
       );
 
@@ -542,7 +530,6 @@
     });
   }
 
-  // Zeichnet ein Bild ohne Verzerrung.
   function drawCover(ctx, img, x, y, w, h) {
     const ratio = Math.max(
       w / img.width,
@@ -565,9 +552,9 @@
     );
   }
 
-  // =========================================
-  // NEUE COLLAGE MIT REISEHINTERGRUND
-  // =========================================
+  // ==========================================
+  // FINALE ERINNERUNGSCOLLAGE
+  // ==========================================
 
   async function createCollage() {
     const urls = Array.from(
@@ -588,28 +575,27 @@
     );
 
     const images = Object.fromEntries(
-      unique.map(
-        (url, i) => [url, loaded[i]]
-      )
+      unique.map((url, i) => [url, loaded[i]])
     );
 
-    // Originaler Hintergrund aus deinem Buchcover.
     const travelBackground = await loadImage(
       'reise-hintergrund.webp'
     );
 
     const canvas = document.createElement('canvas');
 
-    // Hochauflösendes Hochformat.
     canvas.width = 1500;
     canvas.height = 2000;
 
     const c = canvas.getContext('2d');
 
-    const W = 1500;
-    const H = 2000;
+    const W = canvas.width;
+    const H = canvas.height;
 
-    // Originalillustration als Hintergrund.
+    // --------------------------------------
+    // 1. ORIGINALER REISEHINTERGRUND
+    // --------------------------------------
+
     drawCover(
       c,
       travelBackground,
@@ -619,77 +605,127 @@
       H
     );
 
-    // =====================================
-    // TITEL
-    // =====================================
+    // --------------------------------------
+    // 2. WEICHER PERGAMENT-SCHLEIER
+    // --------------------------------------
+    //
+    // Die Illustration bleibt über die
+    // gesamte Fläche sichtbar.
+    //
+    // Der warme Schleier beruhigt die Farben,
+    // ohne einen weißen Mittelblock zu bilden.
+    //
 
-    c.textAlign = 'center';
-    c.fillStyle = '#78451f';
+    c.fillStyle = 'rgba(255, 246, 226, 0.70)';
+    c.fillRect(0, 0, W, H);
 
-    c.shadowColor = '#fff8e6';
-    c.shadowBlur = 14;
+    // Sehr sanfter Helligkeitsverlauf:
+    // Mitte etwas ruhiger, Ränder minimal
+    // kräftiger, aber ohne sichtbare Kante.
 
-    c.font = 'bold 68px Georgia, serif';
-
-    c.fillText(
-      '24 Blüten, eine Liebe',
+    const softLight = c.createRadialGradient(
       W / 2,
-      242
+      H / 2,
+      100,
+      W / 2,
+      H / 2,
+      1100
     );
 
-    c.font = 'italic 30px Georgia, serif';
+    softLight.addColorStop(
+      0,
+      'rgba(255, 249, 236, 0.28)'
+    );
+
+    softLight.addColorStop(
+      0.65,
+      'rgba(255, 249, 236, 0.08)'
+    );
+
+    softLight.addColorStop(
+      1,
+      'rgba(255, 249, 236, 0)'
+    );
+
+    c.fillStyle = softLight;
+    c.fillRect(0, 0, W, H);
+
+    // --------------------------------------
+    // 3. TITEL
+    // --------------------------------------
+
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+
+    c.fillStyle = '#754522';
+
+    c.shadowColor = 'rgba(255, 248, 233, 0.9)';
+    c.shadowBlur = 12;
+
+    // Zweizeilig, damit der vollständige
+    // Adventskalender-Titel lesbar bleibt.
+
+    c.font = '600 67px Georgia, serif';
 
     c.fillText(
-      'Unsere schönsten Erinnerungen',
+      'Das Geheimnis der',
       W / 2,
-      293
+      132
+    );
+
+    c.fillText(
+      'verschollenen Blüten',
+      W / 2,
+      215
     );
 
     c.shadowBlur = 0;
-    c.fillStyle = '#b68a4b';
 
-    c.font = '32px Georgia, serif';
+    // Dezentes Ornament, kein Untertitel.
+
+    c.fillStyle = '#a77a43';
+    c.font = '30px Georgia, serif';
 
     c.fillText(
-      '❦  ✧  ❦',
+      '❦   ✧   ❦',
       W / 2,
-      335
+      284
     );
 
-    // =====================================
-    // 24 POLAROID-FOTOS
-    // =====================================
+    // --------------------------------------
+    // 4. POLAROID-RASTER
+    // --------------------------------------
 
     const cols = 4;
+    const cardW = 285;
+    const cardH = 232;
 
-    const cardW = 195;
-    const cardH = 222;
+    const gapX = 24;
+    const gapY = 24;
 
-    const gapX = 16;
-    const gapY = 18;
+    const totalWidth =
+      cols * cardW +
+      (cols - 1) * gapX;
 
-    const left = (
-      W -
-      (
-        cols * cardW +
-        (cols - 1) * gapX
-      )
-    ) / 2;
-
-    const top = 380;
+    const left = (W - totalWidth) / 2;
+    const top = 342;
 
     for (let i = 0; i < 24; i++) {
       const row = Math.floor(i / cols);
       const col = i % cols;
 
-      const x = left + col * (cardW + gapX);
-      const y = top + row * (cardH + gapY);
+      const x =
+        left + col * (cardW + gapX);
 
-      // Minimale Neigung für den Polaroid-Stil.
-      const tilt = (
-        [-0.012, 0.009, -0.008, 0.012][col] +
-        (row % 2 ? -0.003 : 0.003)
-      );
+      const y =
+        top + row * (cardH + gapY);
+
+      // Leichte Neigung für den
+      // natürlichen Polaroid-Look.
+
+      const tilt =
+        [-0.012, 0.008, -0.009, 0.011][col] +
+        (row % 2 ? -0.003 : 0.003);
 
       c.save();
 
@@ -700,12 +736,15 @@
 
       c.rotate(tilt);
 
-      // Schatten.
-      c.shadowColor = '#3e261d66';
-      c.shadowBlur = 11;
-      c.shadowOffsetY = 5;
+      // Schatten unter dem Foto.
 
-      // Weißes Polaroid.
+      c.shadowColor = 'rgba(69, 45, 28, 0.30)';
+      c.shadowBlur = 15;
+      c.shadowOffsetX = 0;
+      c.shadowOffsetY = 7;
+
+      // Weißer Polaroid-Rahmen.
+
       c.fillStyle = '#fffaf1';
 
       c.fillRect(
@@ -717,10 +756,10 @@
 
       c.shadowColor = 'transparent';
       c.shadowBlur = 0;
+      c.shadowOffsetX = 0;
       c.shadowOffsetY = 0;
 
-      // Feiner Papierrand.
-      c.strokeStyle = '#dfd1b8';
+      c.strokeStyle = '#e3d6c0';
       c.lineWidth = 1;
 
       c.strokeRect(
@@ -730,20 +769,33 @@
         cardH
       );
 
-      // Bildfläche.
-      const border = 9;
+      // Foto mit einem schmalen weißen Rand.
+      // Unterhalb bleibt etwas mehr Papier,
+      // aber ohne Schriftzug.
 
-      const imageH =
-        cardH - border * 2 - 13;
+      const border = 12;
+
+      const photoX =
+        -cardW / 2 + border;
+
+      const photoY =
+        -cardH / 2 + border;
+
+      const photoW =
+        cardW - border * 2;
+
+      const photoH =
+        cardH - border * 2 - 16;
 
       c.save();
+
       c.beginPath();
 
       c.rect(
-        -cardW / 2 + border,
-        -cardH / 2 + border,
-        cardW - border * 2,
-        imageH
+        photoX,
+        photoY,
+        photoW,
+        photoH
       );
 
       c.clip();
@@ -751,55 +803,54 @@
       drawCover(
         c,
         images[urls[i]],
-        -cardW / 2 + border,
-        -cardH / 2 + border,
-        cardW - border * 2,
-        imageH
+        photoX,
+        photoY,
+        photoW,
+        photoH
       );
 
       c.restore();
       c.restore();
     }
 
-    // Absichtlich kein Schriftzug am unteren Rand.
-    // Die Reiseillustration bleibt sichtbar.
+    // --------------------------------------
+    // 5. ABSCHLUSS
+    // --------------------------------------
+    //
+    // Kein Untertitel.
+    // Kein Schriftzug am unteren Rand.
+    // Keine zusätzliche Blumenrahmung.
+    //
+    // Der aufgehellte Reisehintergrund
+    // bildet die gesamte Collage.
+    //
 
-    // =====================================
-    // PNG ERZEUGEN
-    // =====================================
-
-    return await new Promise(
-      (resolve, reject) => {
-        canvas.toBlob(
-          blob => {
-            if (blob) {
-              resolve(blob);
-            } else {
-              reject(
-                new Error(
-                  'Bild konnte nicht erstellt werden.'
-                )
-              );
-            }
-          },
-          'image/png'
-        );
-      }
-    );
+    return await new Promise((resolve, reject) => {
+      canvas.toBlob(
+        blob => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(
+              new Error(
+                'Bild konnte nicht erstellt werden.'
+              )
+            );
+          }
+        },
+        'image/png'
+      );
+    });
   }
 
-  // =========================================
-  // COLLAGE ANZEIGEN
-  // =========================================
+  // ==========================================
+  // COLLAGE ÖFFNEN
+  // ==========================================
 
   document.getElementById(
     'open-collage'
   ).addEventListener('click', async () => {
-    const count = Object.keys(solved).filter(
-      d => solved[d] === answers[d]
-    ).length;
-
-    if (count !== 24) return;
+    if (solvedCount() !== 24) return;
 
     page.hidden = true;
     collageView.hidden = false;
@@ -814,15 +865,19 @@
     window.scrollTo(0, 0);
 
     try {
-      if (!collageBlob) {
-        collageBlob = await createCollage();
-      }
+      // Bei jedem Öffnen neu erstellen.
+      // So werden ausgetauschte Fotos
+      // nicht aus einem alten Bild übernommen.
+
+      collageBlob = await createCollage();
 
       if (collageUrl) {
         URL.revokeObjectURL(collageUrl);
       }
 
-      collageUrl = URL.createObjectURL(collageBlob);
+      collageUrl = URL.createObjectURL(
+        collageBlob
+      );
 
       collagePreview.src = collageUrl;
       collagePreview.hidden = false;
@@ -832,13 +887,16 @@
       collageStatus.hidden = true;
       shareCollage.disabled = false;
     } catch (error) {
-      collageStatus.textContent = error.message;
+      collageStatus.hidden = false;
+      collageStatus.textContent =
+        error.message ||
+        'Die Collage konnte nicht erstellt werden.';
     }
   });
 
-  // =========================================
-  // ZURÜCK ZUM RÄTSELRASTER
-  // =========================================
+  // ==========================================
+  // ZURÜCK ZUM ADVENTSKALENDER
+  // ==========================================
 
   document.getElementById(
     'back-collage'
@@ -849,48 +907,48 @@
     window.scrollTo(0, 0);
   });
 
-  // =========================================
-  // AUF DEM IPHONE BILD SICHERN
-  // =========================================
+  // ==========================================
+  // BILD AUF DEM IPHONE SICHERN
+  // ==========================================
 
-  shareCollage.addEventListener(
-    'click',
-    async () => {
-      if (!collageBlob) return;
+  shareCollage.addEventListener('click', async () => {
+    if (!collageBlob) return;
 
-      const file = new File(
-        [collageBlob],
-        '24-Blueten-eine-Liebe.png',
-        { type: 'image/png' }
-      );
+    const file = new File(
+      [collageBlob],
+      'Das-Geheimnis-der-verschollenen-Blueten.png',
+      { type: 'image/png' }
+    );
 
-      try {
-        if (
-          navigator.share &&
-          navigator.canShare?.({ files: [file] })
-        ) {
-          await navigator.share({
-            files: [file],
-            title: '24 Blüten, eine Liebe'
-          });
-        } else {
-          collageStatus.hidden = false;
-          collageStatus.textContent =
-            'Tippe länger auf das Bild und wähle „In Fotos sichern“ oder nutze „Bild herunterladen“.';
-        }
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          collageStatus.hidden = false;
-          collageStatus.textContent =
-            'Teilen nicht möglich. Halte das Bild länger gedrückt oder verwende „Bild herunterladen“.';
-        }
+    try {
+      if (
+        navigator.share &&
+        navigator.canShare?.({
+          files: [file]
+        })
+      ) {
+        await navigator.share({
+          files: [file],
+          title:
+            'Das Geheimnis der verschollenen Blüten'
+        });
+      } else {
+        collageStatus.hidden = false;
+        collageStatus.textContent =
+          'Halte das Bild länger gedrückt und wähle „In Fotos sichern“ oder nutze „Bild herunterladen“.';
+      }
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        collageStatus.hidden = false;
+        collageStatus.textContent =
+          'Teilen nicht möglich. Halte das Bild länger gedrückt oder verwende „Bild herunterladen“.';
       }
     }
-  );
+  });
 
-  // =========================================
+  // ==========================================
   // START
-  // =========================================
+  // ==========================================
 
   setDay(1);
 })();
