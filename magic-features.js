@@ -66,7 +66,7 @@ const stage=screen.querySelector('.storybook-stage'),heading=screen.querySelecto
 function enter(title,subtitle){root.hidden=true;document.getElementById('collage-view').hidden=true;screen.hidden=false;heading.textContent=title;sub.textContent=subtitle;scrollTo(0,0)}
 function home(){screen.hidden=true;root.hidden=false;scrollTo(0,0)}
 screen.querySelector('.storybook-back').onclick=home;
-function refresh(){hub.querySelector('[data-world="vase"]').hidden=!days().some(d=>d>=2)}
+function refresh(){const unlocked=days();hub.querySelector('[data-world="map"]').hidden=!unlocked.includes(1);hub.querySelector('[data-world="vase"]').hidden=!unlocked.includes(2)}
 function memory(d){enter(stops[d-1][0],'Unsere Erinnerung · Kapitel '+d);stage.innerHTML='<div class="storybook-memory"><h2>'+stops[d-1][0]+'</h2><p>'+stops[d-1][2]+'</p><div class="storybook-gallery"></div><button type="button" class="storybook-return">← Zur Reisekarte</button></div>';let gallery=stage.querySelector('.storybook-gallery');let list=window.ADVENT_GALERIEN?.[d]||[window.ADVENT_FOTOS?.[d]?.datei].filter(Boolean);list.forEach((src,i)=>{const fig=document.createElement('figure');const im=document.createElement('img');im.src=src;im.loading='lazy';im.alt='Erinnerungsfoto '+(i+1);fig.append(im);const cap=document.createElement('figcaption');cap.textContent=i===0?(window.ADVENT_FOTOS?.[d]?.text||stops[d-1][0]):stops[d-1][0];fig.append(cap);gallery.append(fig)});if(!list.length)gallery.textContent='Hier wartet noch eine Erinnerung.';stage.querySelector('.storybook-return').onclick=map}
 
 const picture=d=>'blume-'+String(d).padStart(2,'0')+'.png';
@@ -78,21 +78,25 @@ function map(animate=false){
  const frame=stage.querySelector('.final-map'),hot=stage.querySelector('.final-map-hotspots'),fog=stage.querySelector('.final-map-fog'),pair=stage.querySelector('.final-map-couple');
  positions.forEach(([x,y],i)=>{const d=i+1,b=document.createElement('button');b.type='button';b.className='final-map-hotspot';b.style.left=x+'%';b.style.top=y+'%';b.setAttribute('aria-label',stops[i][0]+' – Erinnerung öffnen');b.title=stops[i][0];b.disabled=!done.includes(d);if(done.includes(d))b.addEventListener('click',()=>memory(d));hot.append(b)});
  // Undurchsichtiger Nebel verdeckt noch nicht entdeckte Gebiete, statt sie als Kacheln anzuzeigen.
- positions.forEach(([x,y],i)=>{if(done.includes(i+1))return;const cloud=document.createElement('span');cloud.className='final-map-cloud';cloud.style.left=x+'%';cloud.style.top=y+'%';fog.append(cloud)});
+ // Eine einzige zusammenhängende Nebeldecke, mit präzise freigestellten entdeckten Stationen.
+ const holes=positions.filter((_,i)=>done.includes(i+1)).map(([x,y])=>'<ellipse cx="'+x+'" cy="'+y+'" rx="12.8" ry="8.4" fill="black"/>').join('');
+ const mask='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><defs><mask id="m"><rect width="100" height="100" fill="white"/>'+holes+'</mask></defs><rect width="100" height="100" fill="#edf0eb" mask="url(#m)"/></svg>';
+ fog.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(mask)+'")';
+ fog.style.backgroundSize='100% 100%';
  const target=last?positions[last-1]:[10,90],prior=last>1?positions[last-2]:target;
  pair.style.left=(animate?prior[0]:target[0])+'%';pair.style.top=(animate?prior[1]:target[1])+'%';
  if(animate)requestAnimationFrame(()=>requestAnimationFrame(()=>{pair.style.left=target[0]+'%';pair.style.top=target[1]+'%'}));
 }
 function vase(newDay=0){
  const done=days();enter('Die verschollenen Blüten',done.length+' von 24 Blüten gefunden');
- stage.innerHTML='<div class="final-vase-scene"><div class="final-vase-flowers"></div><img class="final-vase-image" src="prinzessinnenvase.png" alt="Weiße Prinzessinnenvase mit goldenen Ornamenten"></div><div class="final-vase-count">'+done.length+' von 24 Blüten gefunden</div><div class="final-flower-index"></div><p class="storybook-note">Jede Blume ist eine Erinnerung an uns. ♡</p>';
- const bouquet=stage.querySelector('.final-vase-flowers'),index=stage.querySelector('.final-flower-index');
+ stage.innerHTML='<div class="final-vase-scene"><div class="final-vase-flowers"></div><img class="final-vase-image" src="prinzessinnenvase.png" alt="Weiße Prinzessinnenvase mit goldenen Ornamenten"></div><div class="final-vase-count">'+done.length+' von 24 Blüten gefunden</div><p class="storybook-note">Jede Blume ist eine Erinnerung an uns. ♡</p>';
+ const bouquet=stage.querySelector('.final-vase-flowers');
  done.forEach(d=>{
   const i=d-1,a=i*2.39996,r=Math.sqrt((i+.5)/24),x=Math.sin(a)*r*41,y=Math.cos(a)*r*23;
   const flower=document.createElement('img');flower.src=picture(d);flower.alt='Blume '+d;flower.className='final-flower'+(d===newDay?' is-arriving':'');
   flower.style.left=(50+x)+'%';flower.style.top=(50+y)+'%';flower.style.zIndex=String(40+Math.round(y));flower.style.setProperty('--tilt',((i%7)-3)*7+'deg');bouquet.append(flower);
  });
- for(let d=1;d<=24;d++){const cell=document.createElement('span');cell.className='final-flower-slot'+(done.includes(d)?' unlocked':'');if(done.includes(d)){const im=document.createElement('img');im.src=picture(d);im.alt='Blume '+d;cell.append(im)}else cell.textContent='✿';index.append(cell)}
+
 }
 function reward(d){
  enter('Eine neue Blüte ist gefunden!','Herzlichen Glückwunsch, meine Quatschi!');
@@ -104,6 +108,6 @@ function reward(d){
 hub.onclick=e=>{const b=e.target.closest('[data-world]');if(!b)return;b.dataset.world==='map'?map():vase()};
 let pending=0;
 board.addEventListener('click',()=>{const before=days().length;setTimeout(()=>{const after=days();if(after.length>before)pending=Math.max(...after);refresh()},120)},true);
-const overlay=document.getElementById('photo-overlay');if(overlay)new MutationObserver(()=>{if(overlay.hidden&&pending){const d=pending;pending=0;setTimeout(()=>reward(d),200)}}).observe(overlay,{attributes:true,attributeFilter:['hidden']});
+const overlay=document.getElementById('photo-overlay');if(overlay)new MutationObserver(()=>{if(overlay.hidden&&pending){const d=pending;pending=0;setTimeout(()=>d===1?map(true):reward(d),200)}}).observe(overlay,{attributes:true,attributeFilter:['hidden']});
 refresh();
 })();
