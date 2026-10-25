@@ -45,11 +45,11 @@
       }
     }
     // Unabhängig vom Fortschritt: die beiden sitzenden Figuren unten links.
-    open+='<ellipse cx="15" cy="89" rx="28" ry="17" fill="black"/>';
+    open+='<ellipse cx="12" cy="90" rx="23" ry="13.5" fill="black"/>';
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
       <defs>
         <filter id="edge" x="-4%" y="-4%" width="108%" height="108%">
-          <feGaussianBlur stdDeviation=".38"/>
+          <feTurbulence type="fractalNoise" baseFrequency=".13 .19" numOctaves="3" seed="23" result="edgeNoise"/><feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="2.4" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".55"/>
         </filter>
         <mask id="visibility" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
           <rect width="100" height="100" fill="white"/>
@@ -58,7 +58,7 @@
         <!-- Multiscale turbulence produces continuous, irregular cloud masses,
              not geometric scallops or pastel circles. -->
         <filter id="cloudTexture" x="-10%" y="-10%" width="120%" height="120%">
-          <feTurbulence type="fractalNoise" baseFrequency=".045 .072" numOctaves="6" seed="17" stitchTiles="stitch" result="clouds"/>
+          <feTurbulence type="fractalNoise" baseFrequency=".09 .13" numOctaves="6" seed="17" stitchTiles="stitch" result="clouds"/>
           <feColorMatrix in="clouds" type="saturate" values="0" result="mono"/>
           <feComponentTransfer in="mono">
             <feFuncR type="gamma" amplitude=".60" exponent="1.3" offset=".39"/>
@@ -68,7 +68,7 @@
           <feGaussianBlur stdDeviation=".10"/>
         </filter>
         <filter id="cloudDepth" x="-10%" y="-10%" width="120%" height="120%">
-          <feTurbulence type="fractalNoise" baseFrequency=".022 .038" numOctaves="5" seed="8" result="depth"/>
+          <feTurbulence type="fractalNoise" baseFrequency=".037 .065" numOctaves="5" seed="8" result="depth"/>
           <feColorMatrix in="depth" type="saturate" values="0"/>
           <feComponentTransfer>
             <feFuncR type="linear" slope=".52" intercept=".42"/>
@@ -122,10 +122,23 @@
         :[(previous[0]+current[0])/2,(previous[1]+current[1])/2];
       // Nach dem Aufbauen der Karte erst positionieren; die alte
       // map()-Animation darf die Figuren nicht nachträglich versetzen.
+      // The map is recreated on every visit. Animate the new image from
+      // the preceding waypoint to the midpoint of the current segment.
+      // A transition:none here previously disabled the walking entirely.
+      const start=last>1?previous:[7.4,15.6];
       couple.style.transition='none';
-      couple.style.left=rest[0]+'%';
-      couple.style.top=rest[1]+'%';
+      couple.style.left=start[0]+'%';
+      couple.style.top=start[1]+'%';
       couple.style.visibility='visible';
+      couple.style.width='13%';
+      // Force the initial position to be committed before enabling motion.
+      void couple.offsetWidth;
+      requestAnimationFrame(()=>{
+        if(!couple.isConnected)return;
+        couple.style.transition='left 3.5s cubic-bezier(.2,.65,.2,1), top 3.5s cubic-bezier(.2,.65,.2,1)';
+        couple.style.left=rest[0]+'%';
+        couple.style.top=rest[1]+'%';
+      });
     }
     lastPosition=last;
   }
