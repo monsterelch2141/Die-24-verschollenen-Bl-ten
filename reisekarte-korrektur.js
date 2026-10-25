@@ -17,58 +17,70 @@
     return positions.map((_,i)=>i+1).filter(d=>solved[d]===window.STERNEN_LOESUNGEN?.[d]);
   }
   function fogSvg(last) {
-    // Exakte Schlangenlinien-Reihen: keine Öffnung in der nächsten Reihe.
-    // Die erste obere Dekorzone und die untere linke Figurenillustration bleiben sichtbar.
-    const rowEnds=[22,34,45,57,70,83,95];
-    const rowStarts=[10,22,34,45,57,70,83];
-    const count=[4,4,4,4,4,3,1];
-    let cleared='<rect x="0" y="0" width="100" height="10" fill="black"/>';
-    let offset=0;
-    for(let row=0;row<count.length;row++){
-      const n=Math.max(0,Math.min(count[row],last-offset));
-      if(n===count[row]) {
-        cleared+=`<rect x="0" y="${rowStarts[row]}" width="100" height="${rowEnds[row]-rowStarts[row]}" fill="black"/>`;
-      } else if(n>0) {
-        const first=positions[offset][0],current=positions[offset+n-1][0];
-        const leftToRight=positions[offset+count[row]-1][0]>first;
-        const x=leftToRight?0:Math.max(0,current-7.8);
-        const width=leftToRight?Math.min(100,current+7.8):100-x;
-        cleared+=`<rect x="${x}" y="${rowStarts[row]}" width="${width}" height="${rowEnds[row]-rowStarts[row]}" fill="black"/>`;
+    // Nur die tatsächlich gelösten Abschnitte des Schlangenwegs freigeben.
+    // Reihenenden liegen unter den jeweiligen Symbolen; nächste Reihe bleibt verdeckt.
+    const rows=[
+      {first:1,last:4,top:10,bottom:21.3,dir:1},
+      {first:5,last:8,top:21.3,bottom:33.2,dir:-1},
+      {first:9,last:12,top:33.2,bottom:44.6,dir:1},
+      {first:13,last:16,top:44.6,bottom:56.6,dir:-1},
+      {first:17,last:20,top:56.6,bottom:69.3,dir:1},
+      {first:21,last:23,top:69.3,bottom:82.3,dir:-1},
+      {first:24,last:24,top:82.3,bottom:96,dir:1}
+    ];
+    let open='<rect width="100" height="10" fill="black"/>';
+    for(const row of rows) {
+      const n=Math.max(0,Math.min(row.last-row.first+1,last-row.first+1));
+      if(!n)continue;
+      const h=row.bottom-row.top;
+      if(n===row.last-row.first+1) {
+        open+=`<rect x="0" y="${row.top}" width="100" height="${h}" fill="black"/>`;
+      } else {
+        const x=positions[row.first+n-2][0];
+        // Die Grenzlinie liegt jeweils NACH der erreichten Station.
+        const edge=row.dir===1?Math.min(100,x+7):Math.max(0,x-7);
+        open+=row.dir===1
+          ?`<rect x="0" y="${row.top}" width="${edge}" height="${h}" fill="black"/>`
+          :`<rect x="${edge}" y="${row.top}" width="${100-edge}" height="${h}" fill="black"/>`;
       }
-      offset+=count[row];
     }
-    // Figuren im Buchcover-Stil unten links sind von Beginn an sichtbar.
-    cleared+='<ellipse cx="11" cy="91" rx="22" ry="12" fill="black"/>';
+    // Unabhängig vom Fortschritt: die beiden sitzenden Figuren unten links.
+    open+='<ellipse cx="12" cy="91" rx="22" ry="12" fill="black"/>';
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
       <defs>
-        <mask id="fog-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
-          <rect width="100" height="100" fill="white"/>${cleared}
-        </mask>
-        <filter id="clouds" x="-20%" y="-20%" width="140%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency=".038 .095" numOctaves="5" seed="9" result="noise"/>
-          <feColorMatrix in="noise" type="saturate" values="0" result="gray"/>
-          <feComponentTransfer in="gray" result="cloud-alpha">
-            <feFuncR type="gamma" amplitude=".42" exponent=".9" offset=".53"/>
-            <feFuncG type="gamma" amplitude=".46" exponent=".9" offset=".53"/>
-            <feFuncB type="gamma" amplitude=".48" exponent=".9" offset=".53"/>
-          </feComponentTransfer>
+        <filter id="edge" x="-4%" y="-4%" width="108%" height="108%">
+          <feGaussianBlur stdDeviation=".38"/>
         </filter>
-        <linearGradient id="cloudshade" x1="0" y1="0" x2=".7" y2="1">
-          <stop stop-color="#f9faf8"/><stop offset=".5" stop-color="#e5e8e6"/><stop offset="1" stop-color="#d1d9d8"/>
+        <mask id="visibility" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+          <rect width="100" height="100" fill="white"/>
+          <g filter="url(#edge)">${open}</g>
+        </mask>
+        <filter id="cloudTexture" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency=".065 .10" numOctaves="5" seed="12" stitchTiles="stitch"/>
+          <feColorMatrix type="matrix" values="1.4 0 0 0 -.15  0 1.4 0 0 -.13  0 0 1.4 0 -.10  0 0 0 0 1"/>
+        </filter>
+        <linearGradient id="mistBase" x1="0" y1="0" x2=".15" y2="1">
+          <stop stop-color="#e1e8e7"/><stop offset=".35" stop-color="#f9fbfa"/>
+          <stop offset=".65" stop-color="#e6edeb"/><stop offset="1" stop-color="#f6f8f7"/>
         </linearGradient>
       </defs>
-      <g mask="url(#fog-cut)">
-        <rect width="100" height="100" fill="#e8eeec"/>
-        <rect width="100" height="100" fill="url(#cloudshade)" filter="url(#clouds)"/>
-        <g fill="#fff" opacity=".75">
-          <ellipse cx="12" cy="24" rx="25" ry="7"/><ellipse cx="42" cy="27" rx="31" ry="9"/>
-          <ellipse cx="82" cy="30" rx="29" ry="8"/><ellipse cx="12" cy="48" rx="30" ry="9"/>
-          <ellipse cx="55" cy="52" rx="38" ry="8"/><ellipse cx="95" cy="55" rx="28" ry="9"/>
-          <ellipse cx="28" cy="76" rx="35" ry="10"/><ellipse cx="78" cy="79" rx="36" ry="10"/>
-        </g>
-        <g fill="#cdd8d8" opacity=".35">
-          <ellipse cx="35" cy="37" rx="37" ry="6"/><ellipse cx="79" cy="65" rx="32" ry="7"/>
-          <ellipse cx="46" cy="92" rx="38" ry="8"/>
+      <g mask="url(#visibility)">
+        <rect width="100" height="100" fill="url(#mistBase)"/>
+        <rect width="100" height="100" filter="url(#cloudTexture)" opacity=".30"/>
+        <g opacity=".75" fill="#fff">
+          <circle cx="5" cy="24" r="8"/><circle cx="14" cy="22" r="7"/>
+          <circle cx="27" cy="26" r="9"/><circle cx="42" cy="24" r="8"/>
+          <circle cx="55" cy="28" r="10"/><circle cx="69" cy="25" r="8"/>
+          <circle cx="84" cy="29" r="10"/><circle cx="98" cy="25" r="8"/>
+          <circle cx="4" cy="51" r="10"/><circle cx="19" cy="49" r="9"/>
+          <circle cx="35" cy="54" r="11"/><circle cx="50" cy="50" r="9"/>
+          <circle cx="66" cy="54" r="11"/><circle cx="83" cy="51" r="9"/>
+          <circle cx="98" cy="55" r="10"/><circle cx="8" cy="77" r="10"/>
+          <circle cx="24" cy="75" r="8"/><circle cx="40" cy="80" r="11"/>
+          <circle cx="56" cy="77" r="10"/><circle cx="74" cy="80" r="11"/>
+          <circle cx="91" cy="77" r="10"/><circle cx="16" cy="97" r="10"/>
+          <circle cx="42" cy="96" r="11"/><circle cx="69" cy="98" r="10"/>
+          <circle cx="93" cy="96" r="9"/>
         </g>
       </g>
     </svg>`;
@@ -95,19 +107,21 @@
     }
     const couple=frame.querySelector('.final-map-couple');
     if(couple) {
-      const target=last?positions[last-1]:[12,90];
-      const before=last>1?positions[last-2]:[Math.max(2,target[0]-12),target[1]];
-      // Zwischen zwei Stationen stehen, statt auf der aktuellen Zahl.
-      const rest=[before[0]*.55+target[0]*.45,before[1]*.55+target[1]*.45];
-      // Auf der ersten Anzeige steht das Paar bei der erreichten Station.
-      // Bei einer neu gelösten Station läuft es von der vorherigen Station dorthin.
-      const shouldWalk=lastPosition!==null && last>lastPosition;
-      const previous=last>1?positions[last-2]:[12,90];
-      const start=shouldWalk?previous:rest;
-      couple.style.left=start[0]+'%';couple.style.top=start[1]+'%';
-      if(shouldWalk)requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        couple.style.left=rest[0]+'%';couple.style.top=rest[1]+'%';
-      }));
+      // Tatsächliche Positionen des gedruckten Pfads, nicht im freien Kartenfeld.
+      // Auf der waagerechten Strecke stehen die Figuren zwischen den Zahlen.
+      // Bei den Reihenwechseln stehen sie auf dem senkrechten Kurvenstück.
+      const previous=last>1?positions[last-2]:[7.4,15.6];
+      const current=last?positions[last-1]:[7.4,15.6];
+      const sameRow=Math.abs(previous[1]-current[1])<4;
+      const rest=last<=1?[14.5,15.8]:sameRow
+        ?[(previous[0]+current[0])/2,(previous[1]+current[1])/2+1.2]
+        :[(previous[0]+current[0])/2,(previous[1]+current[1])/2];
+      // Nach dem Aufbauen der Karte erst positionieren; die alte
+      // map()-Animation darf die Figuren nicht nachträglich versetzen.
+      couple.style.transition='none';
+      couple.style.left=rest[0]+'%';
+      couple.style.top=rest[1]+'%';
+      couple.style.visibility='visible';
     }
     lastPosition=last;
   }
