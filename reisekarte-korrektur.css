@@ -31,14 +31,14 @@
 .final-map-couple {
   position:absolute;
   z-index:5;
-  width:15%;height:auto;
-  transform:translate(-50%,-85%);
+  width:11%;height:auto;
+  transform:translate(-50%,-95%);
   pointer-events:none;
   transition:left 3.6s ease-in-out,top 3.6s ease-in-out;
 }
 @media (max-width:600px) {
   .final-map {border-width:3px;}
-  .final-map-couple {width:17%;}
+  .final-map-couple {width:12%;}
 }
 @media (prefers-reduced-motion:reduce) {
   .final-map-couple {transition:none;}
