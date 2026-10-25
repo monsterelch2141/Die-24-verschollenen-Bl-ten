@@ -125,7 +125,8 @@
       // The map is recreated on every visit. Animate the new image from
       // the preceding waypoint to the midpoint of the current segment.
       // A transition:none here previously disabled the walking entirely.
-      const start=last>1?previous:[7.4,15.6];
+      const shouldWalk=frame.dataset.walk==='yes';
+      const start=shouldWalk?(last>1?previous:[7.4,15.6]):rest;
       couple.style.transition='none';
       couple.style.left=start[0]+'%';
       couple.style.top=start[1]+'%';
@@ -134,7 +135,7 @@
       // Force the initial position to be committed before enabling motion.
       void couple.offsetWidth;
       requestAnimationFrame(()=>{
-        if(!couple.isConnected)return;
+        if(!couple.isConnected || !shouldWalk)return;
         couple.style.transition='left 3.5s cubic-bezier(.2,.65,.2,1), top 3.5s cubic-bezier(.2,.65,.2,1)';
         couple.style.left=rest[0]+'%';
         couple.style.top=rest[1]+'%';
