@@ -39,13 +39,13 @@
 /* Märchenwelt: eigenständige Reisekarte, Miniaturfiguren und Blumenvase */
 .storybook-nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:24px 0}
 .storybook-nav button,.storybook-back,.storybook-return,.storybook-reward button{border:2px solid #b58a50;background:linear-gradient(#fff8e9,#e9c991);color:#65401e;padding:12px 20px;border-radius:26px;font:700 21px 'Cormorant Garamond',Georgia,serif;cursor:pointer;box-shadow:0 4px 14px #53341730}
-.storybook-screen{position:relative;min-height:100vh;padding:20px 12px 60px;background:linear-gradient(#f5e9d5cc,#f5e9d5cc),url('reise-hintergrund.webp') center/cover fixed;color:#57391f;text-align:center}
+.storybook-screen{position:relative;min-height:100vh;padding:20px 12px 60px;background:linear-gradient(#f5e9d5cc,#f5e9d5cc),url('maerchenlandschaft.svg') center/cover fixed;color:#57391f;text-align:center}
 .storybook-screen[hidden]{display:none!important}
 .storybook-inner{max-width:940px;margin:0 auto}
 .storybook-back{display:block;position:relative;z-index:8;margin:0 0 10px}
 .storybook-heading{font:400 clamp(39px,6vw,72px) 'Great Vibes',cursive;color:#75451f;margin:10px 0 0;text-shadow:0 2px 2px #fff8e9}
 .storybook-subtitle{font:italic 25px 'Cormorant Garamond',serif;margin:10px 0 22px}
-.storybook-map{position:relative;isolation:isolate;width:100%;aspect-ratio:1000/1050;overflow:hidden;border:9px ridge #bc8c4d;border-radius:18px;box-shadow:0 15px 35px #46321c55;background:radial-gradient(ellipse at 50% 45%,#e8d8a4a8,#e0d4ad90 58%,#c3d2c08c),url('reise-hintergrund.webp') center/100% 100%}
+.storybook-map{position:relative;isolation:isolate;width:100%;aspect-ratio:1000/1050;overflow:hidden;border:9px ridge #bc8c4d;border-radius:18px;box-shadow:0 15px 35px #46321c55;background:radial-gradient(ellipse at 50% 45%,#e8d8a4a8,#e0d4ad90 58%,#c3d2c08c),url('maerchenlandschaft.svg') center/100% 100%}
 .storybook-map-wash{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at center,#f4e4b322,#f8ebca33 75%),repeating-linear-gradient(155deg,transparent 0 100px,#c9b58c33 102px 104px,transparent 110px 190px);pointer-events:none}
 .storybook-route{position:absolute;inset:0;width:100%;height:100%;z-index:1;filter:drop-shadow(0 2px 2px #634722)}
 .storybook-stops{position:absolute;inset:0;z-index:2}
@@ -70,7 +70,7 @@
 .storybook-gallery figure{background:#fff;padding:12px 12px 22px;box-shadow:0 5px 15px #49352355;margin:0;max-width:290px}
 .storybook-gallery img{max-width:100%;max-height:360px;object-fit:cover}
 .storybook-gallery figcaption{margin-top:8px;font-style:italic}
-.storybook-vase-scene{height:min(82vw,680px);min-height:420px;max-width:680px;position:relative;margin:auto;border:8px ridge #bd945f;border-radius:18px;overflow:hidden;background:linear-gradient(#f9dfb58c,#f5d2aa8c),url('reise-hintergrund.webp') center/cover;box-shadow:0 12px 28px #49352344}
+.storybook-vase-scene{height:min(82vw,680px);min-height:420px;max-width:680px;position:relative;margin:auto;border:8px ridge #bd945f;border-radius:18px;overflow:hidden;background:linear-gradient(#f9dfb58c,#f5d2aa8c),url('maerchenlandschaft.svg') center/cover;box-shadow:0 12px 28px #49352344}
 .storybook-vase-scene:before{content:'';position:absolute;bottom:4%;left:0;right:0;height:12%;background:linear-gradient(#e4c29e,#b78e66);box-shadow:0 -6px 20px #4d322233}
 .storybook-bouquet{position:absolute;left:50%;bottom:26%;z-index:2;width:0;height:0}
 .storybook-flower{position:absolute;bottom:0;left:0;width:105px;height:180px;transform:translate(var(--fx),var(--fy)) rotate(var(--fr));transform-origin:50% 95%;filter:drop-shadow(0 3px 2px #32442b55)}
@@ -87,3 +87,6 @@
 .storybook-reward p{font-size:27px}
 @media(max-width:600px){.storybook-screen{padding:10px 4px 30px}.storybook-map{border-width:4px}.storybook-stop{border-width:1px;min-height:11%}.storybook-stop-label{font-size:9px}.storybook-num{font-size:10px;min-width:18px;line-height:16px;top:-8px;left:-5px}.storybook-icon{max-height:36px}.storybook-pair{width:18%}.storybook-future{font-size:10px}.storybook-fog{width:32%}.storybook-flower{width:73px;height:120px}.storybook-porcelain{font-size:42px}}
 @media(prefers-reduced-motion:reduce){.storybook-fog,.storybook-flower.flower-arrives,.storybook-reward-flower{animation:none!important}}
+
+/* Feinzeichnung und goldene Ornamente */
+.storybook-map{background-image:linear-gradient(#fff6dd22,#fff6dd22),url('maerchenlandschaft.svg');background-size:cover;background-position:center}.storybook-vase-scene{background-image:linear-gradient(#fff2d555,#fff2d555),url('maerchenlandschaft.svg');background-size:cover;background-position:center}.storybook-stop{box-shadow:0 2px 0 #fff7dd inset,0 4px 10px #3d2c2066}.storybook-stop:after{content:'✧';position:absolute;bottom:-8px;color:#eac67e;text-shadow:0 0 5px #fff;font-size:15px}.storybook-porcelain{background:repeating-linear-gradient(90deg,#e5e1d9 0%,#fffef8 13%,#eeeae2 22%);box-shadow:inset 10px 0 13px #b8ae9c80,inset -10px 0 13px #b8ae9c80,0 12px 14px #3e2a2450,0 0 25px #fff5c9}.storybook-map:after{content:'❦ ✧ ❦';position:absolute;top:1%;left:50%;transform:translateX(-50%);font-size:28px;color:#b48442;z-index:7;text-shadow:0 1px #fff4d5;pointer-events:none}
