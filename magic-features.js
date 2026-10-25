@@ -65,17 +65,18 @@ const screen=document.createElement('section');screen.className='storybook-scree
 const stage=screen.querySelector('.storybook-stage'),heading=screen.querySelector('.storybook-heading'),sub=screen.querySelector('.storybook-subtitle');
 function enter(title,subtitle){root.hidden=true;document.getElementById('collage-view').hidden=true;screen.hidden=false;heading.textContent=title;sub.textContent=subtitle;scrollTo(0,0)}
 function home(){screen.hidden=true;root.hidden=false;scrollTo(0,0)}
-screen.querySelector('.storybook-back').onclick=home;
+screen.querySelector('.storybook-back').onclick=()=>{if(stage.querySelector('.storybook-memory'))map();else home()};
 function refresh(){const unlocked=days();hub.querySelector('[data-world="map"]').hidden=!unlocked.includes(1);hub.querySelector('[data-world="vase"]').hidden=!unlocked.includes(2)}
-function memory(d){enter(stops[d-1][0],'Unsere Erinnerung · Kapitel '+d);stage.innerHTML='<div class="storybook-memory"><h2>'+stops[d-1][0]+'</h2><p>'+stops[d-1][2]+'</p><div class="storybook-gallery"></div><button type="button" class="storybook-return">← Zur Reisekarte</button></div>';let gallery=stage.querySelector('.storybook-gallery');let list=window.ADVENT_GALERIEN?.[d]||[window.ADVENT_FOTOS?.[d]?.datei].filter(Boolean);list.forEach((src,i)=>{const fig=document.createElement('figure');const im=document.createElement('img');im.src=src;im.loading='lazy';im.alt='Erinnerungsfoto '+(i+1);fig.append(im);const cap=document.createElement('figcaption');cap.textContent=i===0?(window.ADVENT_FOTOS?.[d]?.text||stops[d-1][0]):stops[d-1][0];fig.append(cap);gallery.append(fig)});if(!list.length)gallery.textContent='Hier wartet noch eine Erinnerung.';stage.querySelector('.storybook-return').onclick=map}
+function memory(d){enter(stops[d-1][0],'Unsere Erinnerung · Kapitel '+d);stage.innerHTML='<div class="storybook-memory"><h2>'+stops[d-1][0]+'</h2><p>'+stops[d-1][2]+'</p><div class="storybook-gallery"></div><button type="button" class="storybook-return">← Zur Startseite</button></div>';let gallery=stage.querySelector('.storybook-gallery');let list=window.ADVENT_GALERIEN?.[d]||[window.ADVENT_FOTOS?.[d]?.datei].filter(Boolean);list.forEach((src,i)=>{const fig=document.createElement('figure');const im=document.createElement('img');im.src=src;im.loading='lazy';im.alt='Erinnerungsfoto '+(i+1);fig.append(im);const cap=document.createElement('figcaption');cap.textContent=i===0?(window.ADVENT_FOTOS?.[d]?.text||stops[d-1][0]):stops[d-1][0];fig.append(cap);gallery.append(fig)});if(!list.length)gallery.textContent='Hier wartet noch eine Erinnerung.';stage.querySelector('.storybook-return').onclick=home;screen.querySelector('.storybook-back').textContent='← Zur Reisekarte'}
 
 const picture=d=>'blume-'+String(d).padStart(2,'0')+'.png';
 const positions=[[12,19],[27,22],[48,20],[76,21],[10,32],[27,36],[45,35],[67,32],[85,39],[11,46],[28,49],[46,49],[64,48],[83,51],[12,60],[29,62],[47,62],[64,62],[83,63],[12,73],[30,75],[49,75],[67,77],[85,78]];
 function map(animate=false){
+ screen.querySelector('.storybook-back').textContent='← Zur Startseite';
  const done=days(),last=Math.max(0,...done);
  enter('Unsere gemeinsame Reise','24 besondere Momente – und noch so viele mehr …');
  stage.innerHTML='<div class="final-map"><img class="final-map-art" src="reise-karte-illustration.webp" alt="Märchenhafte illustrierte Karte unserer 24 gemeinsamen Erinnerungen"><div class="final-map-fog"></div><div class="final-map-hotspots"></div><img class="final-map-couple" src="reisepaar-mini.png" alt="Lena und Luis auf ihrer gemeinsamen Reise"></div><p class="final-map-note">Jedes entdeckte Wahrzeichen bewahrt eine Erinnerung. ♡</p>';
- const frame=stage.querySelector('.final-map'),hot=stage.querySelector('.final-map-hotspots'),fog=stage.querySelector('.final-map-fog'),pair=stage.querySelector('.final-map-couple');
+ const frame=stage.querySelector('.final-map');frame.dataset.walk=animate?'yes':'no';const hot=stage.querySelector('.final-map-hotspots'),fog=stage.querySelector('.final-map-fog'),pair=stage.querySelector('.final-map-couple');
  positions.forEach(([x,y],i)=>{const d=i+1,b=document.createElement('button');b.type='button';b.className='final-map-hotspot';b.style.left=x+'%';b.style.top=y+'%';b.setAttribute('aria-label',stops[i][0]+' – Erinnerung öffnen');b.title=stops[i][0];b.disabled=!done.includes(d);if(done.includes(d))b.addEventListener('click',()=>memory(d));hot.append(b)});
  // Undurchsichtiger Nebel verdeckt noch nicht entdeckte Gebiete, statt sie als Kacheln anzuzeigen.
  // Eine einzige zusammenhängende Nebeldecke, mit präzise freigestellten entdeckten Stationen.
@@ -83,9 +84,7 @@ function map(animate=false){
  const mask='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><defs><mask id="m"><rect width="100" height="100" fill="white"/>'+holes+'</mask></defs><rect width="100" height="100" fill="#edf0eb" mask="url(#m)"/></svg>';
  fog.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(mask)+'")';
  fog.style.backgroundSize='100% 100%';
- const target=last?positions[last-1]:[10,90],prior=last>1?positions[last-2]:target;
- pair.style.left=(animate?prior[0]:target[0])+'%';pair.style.top=(animate?prior[1]:target[1])+'%';
- if(animate)requestAnimationFrame(()=>requestAnimationFrame(()=>{pair.style.left=target[0]+'%';pair.style.top=target[1]+'%'}));
+ // Position and optional walking are handled by reisekarte-korrektur.js.
 }
 function vase(newDay=0){
  const done=days();enter('Die verschollenen Blüten',done.length+' von 24 Blüten gefunden');
