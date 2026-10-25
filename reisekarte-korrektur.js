@@ -45,7 +45,7 @@
       }
     }
     // Unabhängig vom Fortschritt: die beiden sitzenden Figuren unten links.
-    open+='<ellipse cx="12" cy="91" rx="22" ry="12" fill="black"/>';
+    open+='<ellipse cx="15" cy="89" rx="28" ry="17" fill="black"/>';
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
       <defs>
         <filter id="edge" x="-4%" y="-4%" width="108%" height="108%">
@@ -55,34 +55,38 @@
           <rect width="100" height="100" fill="white"/>
           <g filter="url(#edge)">${open}</g>
         </mask>
-        <filter id="cloudTexture" x="0" y="0" width="100%" height="100%">
-          <feTurbulence type="fractalNoise" baseFrequency=".065 .10" numOctaves="5" seed="12" stitchTiles="stitch"/>
-          <feColorMatrix type="matrix" values="1.4 0 0 0 -.15  0 1.4 0 0 -.13  0 0 1.4 0 -.10  0 0 0 0 1"/>
+        <!-- Multiscale turbulence produces continuous, irregular cloud masses,
+             not geometric scallops or pastel circles. -->
+        <filter id="cloudTexture" x="-10%" y="-10%" width="120%" height="120%">
+          <feTurbulence type="fractalNoise" baseFrequency=".045 .072" numOctaves="6" seed="17" stitchTiles="stitch" result="clouds"/>
+          <feColorMatrix in="clouds" type="saturate" values="0" result="mono"/>
+          <feComponentTransfer in="mono">
+            <feFuncR type="gamma" amplitude=".60" exponent="1.3" offset=".39"/>
+            <feFuncG type="gamma" amplitude=".62" exponent="1.3" offset=".38"/>
+            <feFuncB type="gamma" amplitude=".63" exponent="1.3" offset=".37"/>
+          </feComponentTransfer>
+          <feGaussianBlur stdDeviation=".10"/>
         </filter>
-        <linearGradient id="mistBase" x1="0" y1="0" x2=".15" y2="1">
-          <stop stop-color="#e1e8e7"/><stop offset=".35" stop-color="#f9fbfa"/>
-          <stop offset=".65" stop-color="#e6edeb"/><stop offset="1" stop-color="#f6f8f7"/>
+        <filter id="cloudDepth" x="-10%" y="-10%" width="120%" height="120%">
+          <feTurbulence type="fractalNoise" baseFrequency=".022 .038" numOctaves="5" seed="8" result="depth"/>
+          <feColorMatrix in="depth" type="saturate" values="0"/>
+          <feComponentTransfer>
+            <feFuncR type="linear" slope=".52" intercept=".42"/>
+            <feFuncG type="linear" slope=".56" intercept=".41"/>
+            <feFuncB type="linear" slope=".57" intercept=".40"/>
+          </feComponentTransfer>
+          <feGaussianBlur stdDeviation=".32"/>
+        </filter>
+        <linearGradient id="mistBase" x1="0" y1="0" x2=".2" y2="1">
+          <stop stop-color="#dce3e4"/><stop offset=".35" stop-color="#f4f5f5"/>
+          <stop offset=".65" stop-color="#dce2e3"/><stop offset="1" stop-color="#f0f2f2"/>
         </linearGradient>
       </defs>
       <g mask="url(#visibility)">
         <rect width="100" height="100" fill="url(#mistBase)"/>
-        <rect width="100" height="100" filter="url(#cloudTexture)" opacity=".30"/>
-        <g opacity=".75" fill="#fff">
-          <circle cx="5" cy="24" r="8"/><circle cx="14" cy="22" r="7"/>
-          <circle cx="27" cy="26" r="9"/><circle cx="42" cy="24" r="8"/>
-          <circle cx="55" cy="28" r="10"/><circle cx="69" cy="25" r="8"/>
-          <circle cx="84" cy="29" r="10"/><circle cx="98" cy="25" r="8"/>
-          <circle cx="4" cy="51" r="10"/><circle cx="19" cy="49" r="9"/>
-          <circle cx="35" cy="54" r="11"/><circle cx="50" cy="50" r="9"/>
-          <circle cx="66" cy="54" r="11"/><circle cx="83" cy="51" r="9"/>
-          <circle cx="98" cy="55" r="10"/><circle cx="8" cy="77" r="10"/>
-          <circle cx="24" cy="75" r="8"/><circle cx="40" cy="80" r="11"/>
-          <circle cx="56" cy="77" r="10"/><circle cx="74" cy="80" r="11"/>
-          <circle cx="91" cy="77" r="10"/><circle cx="16" cy="97" r="10"/>
-          <circle cx="42" cy="96" r="11"/><circle cx="69" cy="98" r="10"/>
-          <circle cx="93" cy="96" r="9"/>
-        </g>
-      </g>
+        <rect width="100" height="100" filter="url(#cloudDepth)" opacity=".82"/>
+        <rect width="100" height="100" filter="url(#cloudTexture)" opacity=".88"/>
+            </g>
     </svg>`;
   }
   let lastMap=null, lastPosition=null;
