@@ -22,13 +22,14 @@
   const passwordError = document.getElementById('password-error');
   // Nur eine spielerische Zugangssperre: In statischen GitHub-Seiten
   // sind Passwort und Dateien technisch öffentlich einsehbar.
-  // Keine Speicherung des Zugangs: Bei jedem neuen Seitenaufruf
-  // muss das Passwort erneut eingegeben werden.
+  // Zugang gilt für diese Browser-Sitzung; bei neuer Sitzung erneut Passwort.
   function unlockPage() {
     gate.hidden = true;
     page.hidden = false;
     document.body.classList.add('access-granted');
+    try { sessionStorage.setItem('advent-zugang-frei', '1'); } catch (_) {}
   }
+  try { if (sessionStorage.getItem('advent-zugang-frei') === '1') unlockPage(); } catch (_) {}
   passwordForm.addEventListener('submit', event => {
     event.preventDefault();
     if (passwordInput.value.trim().toLocaleLowerCase('de-DE') === 'quatsch') {
