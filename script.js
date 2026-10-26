@@ -250,7 +250,7 @@
   if (testReset) testReset.addEventListener('click', () => {
     if (!testMode || !confirm('Testfortschritt vollständig zurücksetzen? Alle grünen Felder, die Reisekarte und die Blumenvase beginnen wieder bei null.')) return;
     solved = {};
-    try { localStorage.removeItem(key); } catch (_) {}
+    try { localStorage.removeItem(key); localStorage.removeItem('advent_blumen_gefunden'); } catch (_) {}
     allRevealed = false;
     day = 1;
     if (!overlay.hidden) hidePhoto();
