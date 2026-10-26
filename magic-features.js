@@ -107,7 +107,7 @@ function reward(d){
 hub.onclick=e=>{const b=e.target.closest('[data-world]');if(!b)return;b.dataset.world==='map'?map():(location.href='blumen.html')};
 let pending=0;
 board.addEventListener('click',()=>{const before=days().length;setTimeout(()=>{const after=days();if(after.length>before)pending=Math.max(...after);refresh()},120)},true);
-const overlay=document.getElementById('photo-overlay');if(overlay)new MutationObserver(()=>{if(overlay.hidden&&pending){const d=pending;pending=0;if(d===1)setTimeout(()=>map(true),200)}}).observe(overlay,{attributes:true,attributeFilter:['hidden']});
+const overlay=document.getElementById('photo-overlay');if(overlay)new MutationObserver(()=>{if(overlay.hidden&&pending){const d=pending;pending=0;setTimeout(()=>map(true),200)}}).observe(overlay,{attributes:true,attributeFilter:['hidden']});
 refresh();
 if(location.hash==='#reise'){const tryOpen=()=>{if(!root.hidden&&days().includes(1)){map();history.replaceState(null,'',location.pathname+location.search)}};setTimeout(tryOpen,250);document.getElementById('password-form')?.addEventListener('submit',()=>setTimeout(tryOpen,350));}
 })();
