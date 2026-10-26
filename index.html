@@ -9,6 +9,14 @@
   <link rel="stylesheet" href="style.css?v=59">
   <link rel="stylesheet" href="magic-features.css?v=60">
   <link rel="stylesheet" href="reisekarte-korrektur.css?v=2">
+  <script>
+    // Einmaliger, ausdrücklich angeforderter Neustart nur für dieses Gerät.
+    // Aufruf: ?advent-reset=1 ; danach wird der Parameter entfernt.
+    if (new URLSearchParams(location.search).get('advent-reset') === '1') {
+      try { localStorage.removeItem('verschollene-blueten-geloest-v1'); } catch (_) {}
+      history.replaceState(null, '', location.pathname + location.hash);
+    }
+  </script>
   <script src="config.js?v=59" defer></script>
   <script src="script.js?v=59" defer></script>
   <script src="magic-features.js?v=61" defer></script>
