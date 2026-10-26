@@ -7,7 +7,7 @@ const img=document.getElementById('bouquet'),counter=document.getElementById('co
 function show(day,preview=false){
 day=Math.max(0,Math.min(24,Number(day)||0));
 if(day<2){img.hidden=false;img.src='hintergrund.jpg';counter.textContent='Der Strauß wartet noch auf seine ersten Blüten';sub.textContent='Ab dem zweiten gelösten Rätsel beginnt unser Blumenstrauß.'}
-else{img.hidden=false;img.src='tag-'+String(day).padStart(2,'0')+'.jpg';counter.textContent=preview?'Vorschau: Tag '+day:'Tag '+day+' · Unser wachsender Blumenstrauß';sub.textContent='Mit jedem gelösten Rätsel wächst unser Strauß. ♡'}
+else{img.hidden=false;img.src='tag-'+String(day).padStart(2,'0')+'.PNG';counter.textContent=preview?'Vorschau: Tag '+day:'Tag '+day+' · Unser wachsender Blumenstrauß';sub.textContent='Mit jedem gelösten Rätsel wächst unser Strauß. ♡'}
 if(num)num.value=day;if(slider)slider.value=Math.max(1,day);
 }
 show(progress());
