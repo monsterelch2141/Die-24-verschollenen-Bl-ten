@@ -1,2 +1,44 @@
-/* Auf der Startseite unmittelbar vor </body> einbinden: <script src="blumen-finden.js"></script> */
-(()=>{'use strict';const test=window.ADVENT_TESTMODUS===true;const key='advent_blumen_gefunden';const done=()=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch{return []}};const solved=()=>{try{let x=JSON.parse(localStorage.getItem('verschollene-blueten-geloest-v1')||'{}');if(Array.isArray(x))return x.filter(Boolean).length;if(x&&typeof x==='object')return Object.values(x).filter(Boolean).length}catch{}return 0};function update(){document.querySelectorAll('.blumen-fund').forEach(x=>x.remove());let n=solved();if(n<2||document.getElementById('advent-page')?.hidden)return;let found=done();for(let day=1;day<=n;day++){if(found.includes(day))continue;let el=document.createElement('button');el.className='blumen-fund';el.type='button';el.setAttribute('aria-label','Versteckte Blume '+day+' einsammeln');el.style.cssText='position:fixed;z-index:9999;width:66px;height:100px;background:transparent;border:0;cursor:pointer;filter:drop-shadow(0 5px 6px #60451e55);animation:blumeSchweben 3s ease-in-out infinite alternate';el.style.left=(day%2===0?8:77)+'%';el.style.top=(day%3===0?65:28)+'%';let image=document.createElement('img');image.src='blume-'+String(day).padStart(2,'0')+'.png';image.style.cssText='width:100%;height:100%;object-fit:contain';el.append(image);el.onclick=()=>{let f=done();if(!f.includes(day)){f.push(day);localStorage.setItem(key,JSON.stringify(f))}el.remove();let note=document.createElement('div');note.textContent='✧ Du hast eine neue Blume gefunden! ✧';note.style.cssText='position:fixed;z-index:10000;top:40%;left:5%;width:90%;padding:25px;text-align:center;border:3px solid #b78a54;border-radius:22px;background:#fff2d8;color:#65412a;font:italic 25px Georgia;box-shadow:0 10px 60px #0005';document.body.append(note);setTimeout(()=>{note.remove();location.href='blumen.html'},1800)}};document.body.append(el)}}if(!document.querySelector('#blumen-schwebe-stil')){let s=document.createElement('style');s.id='blumen-schwebe-stil';s.textContent='@keyframes blumeSchweben{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-14px) rotate(5deg)}}';document.head.append(s)}window.addEventListener('storage',update);window.addEventListener('focus',update);new MutationObserver(update).observe(document.getElementById('advent-page'),{attributes:true,attributeFilter:['hidden']});update()})();
+(()=>{'use strict';
+const KEY='advent_blumen_gefunden',SOLVED='verschollene-blueten-geloest-v1';
+const page=document.getElementById('advent-page'),overlay=document.getElementById('photo-overlay');
+if(!page)return;
+function found(){try{const a=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(a)?[...new Set(a.map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=24))]:[]}catch{return []}}
+function solved(){try{const a=JSON.parse(localStorage.getItem(SOLVED)||'{}');return Object.keys(a).map(Number).filter(n=>n>=1&&n<=24&&a[n]===window.STERNEN_LOESUNGEN?.[n]).sort((a,b)=>a-b)}catch{return []}}
+const style=document.createElement('style');style.textContent=`
+.blumen-fund{position:fixed;z-index:900;width:65px;height:96px;padding:0;background:none;border:0;cursor:pointer;filter:drop-shadow(0 5px 6px #583f2866);animation:blumeSchweben 3.2s ease-in-out infinite alternate}
+.blumen-fund img{width:100%;height:100%;object-fit:contain}
+@keyframes blumeSchweben{from{transform:translateY(0) rotate(-7deg)}to{transform:translateY(-16px) rotate(7deg)}}
+.blumen-fundmeldung{position:fixed;z-index:10002;inset:0;background:#25140c99;display:grid;place-items:center;padding:22px}
+.blumen-fundkarte{max-width:380px;width:100%;padding:28px 22px;border:3px solid #b78a54;border-radius:22px;background:#fff2d8;color:#65412a;text-align:center;box-shadow:0 16px 65px #0007;font:italic 23px/1.35 Georgia,serif}
+.blumen-fundkarte button{display:block;margin:22px auto 0;border:1px solid #ac804d;background:#f5dca8;border-radius:30px;padding:12px 22px;color:#5a3d2b;font:normal 17px Georgia;cursor:pointer}
+`;document.head.append(style);
+let signature='',showing=false;
+function refresh(){
+ const unlocked=solved(),available=unlocked.length>=2?unlocked:[],already=found();
+ const canShow=!page.hidden&&(!overlay||overlay.hidden)&&!document.querySelector('.storybook-screen:not([hidden])');
+ const wanted=canShow?available.filter(d=>!already.includes(d)):[];
+ const next=wanted.join(',')+'|'+canShow;
+ if(next===signature)return;signature=next;
+ document.querySelectorAll('.blumen-fund').forEach(e=>e.remove());
+ wanted.forEach((day,i)=>{
+  const button=document.createElement('button');button.type='button';button.className='blumen-fund';button.setAttribute('aria-label','Verschollene Blume '+day+' einsammeln');
+  button.style.left=(i%2===0?72:10)+'%';button.style.top=(24+(i%4)*13)+'%';
+  const img=document.createElement('img');img.src='blume-'+String(day).padStart(2,'0')+'.png';img.alt='';button.append(img);
+  button.addEventListener('click',()=>{
+   if(showing)return;showing=true;localStorage.setItem(KEY,JSON.stringify([...new Set([...found(),day])].sort((a,b)=>a-b)));button.remove();
+   const count=found().length,modal=document.createElement('div');modal.className='blumen-fundmeldung';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
+   const card=document.createElement('div');card.className='blumen-fundkarte';
+   const headline=document.createElement('p');headline.textContent=count===1?'✧ Glückwunsch! Du hast deine erste verschollene Blume gefunden! ✧':count===24?'✧ Alle 24 Blüten sind vereint! ✧':'✧ Glückwunsch! Du hast eine weitere verschollene Blume gefunden! ✧';
+   const detail=document.createElement('p');detail.style.fontSize='17px';detail.textContent=count+' von 24 Blumen gesammelt.';
+   const go=document.createElement('button');go.type='button';go.textContent='✿ Zur Blumenvase';go.onclick=()=>location.assign('blumen.html');
+   card.append(headline,detail,go);modal.append(card);document.body.append(modal);go.focus();signature='';refresh();
+  });document.body.append(button);
+ });
+}
+window.addEventListener('storage',refresh);window.addEventListener('focus',refresh);
+new MutationObserver(refresh).observe(page,{attributes:true,attributeFilter:['hidden']});
+if(overlay)new MutationObserver(refresh).observe(overlay,{attributes:true,attributeFilter:['hidden']});
+const board=document.getElementById('board');if(board)board.addEventListener('click',()=>setTimeout(refresh,180));
+document.getElementById('test-reset')?.addEventListener('click',()=>setTimeout(refresh,200));
+setInterval(refresh,800);refresh();
+})();
