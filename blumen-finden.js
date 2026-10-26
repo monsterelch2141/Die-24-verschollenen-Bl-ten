@@ -10,7 +10,7 @@ const style=document.createElement('style');style.textContent=`
 @keyframes blumeSchweben{from{transform:translateY(0) rotate(-7deg)}to{transform:translateY(-16px) rotate(7deg)}}
 .blumen-fundmeldung{position:fixed;z-index:10002;inset:0;background:#25140c99;display:grid;place-items:center;padding:22px}
 .blumen-fundkarte{max-width:380px;width:100%;padding:28px 22px;border:3px solid #b78a54;border-radius:22px;background:#fff2d8;color:#65412a;text-align:center;box-shadow:0 16px 65px #0007;font:italic 23px/1.35 Georgia,serif}
-.blumen-fundkarte button{display:block;margin:22px auto 0;border:1px solid #ac804d;background:#f5dca8;border-radius:30px;padding:12px 22px;color:#5a3d2b;font:normal 17px Georgia;cursor:pointer}
+.blumen-fundkarte .fundblume{display:block;max-width:125px;width:38%;height:190px;object-fit:contain;margin:0 auto 12px;filter:drop-shadow(0 7px 8px #5c402c55)}\n.blumen-fundkarte button{display:block;margin:22px auto 0;border:1px solid #ac804d;background:#f5dca8;border-radius:30px;padding:12px 22px;color:#5a3d2b;font:normal 17px Georgia;cursor:pointer}
 `;document.head.append(style);
 let signature='',showing=false;
 function refresh(){
@@ -29,9 +29,10 @@ function refresh(){
    const count=found().length,modal=document.createElement('div');modal.className='blumen-fundmeldung';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
    const card=document.createElement('div');card.className='blumen-fundkarte';
    const headline=document.createElement('p');headline.textContent=count===1?'✧ Glückwunsch! Du hast deine erste verschollene Blume gefunden! ✧':count===24?'✧ Alle 24 Blüten sind vereint! ✧':'✧ Glückwunsch! Du hast eine weitere verschollene Blume gefunden! ✧';
+   const large=document.createElement('img');large.className='fundblume';large.src='blume-'+String(day).padStart(2,'0')+'.png';large.alt='Deine gefundene Blume';
    const detail=document.createElement('p');detail.style.fontSize='17px';detail.textContent=count+' von 24 Blumen gesammelt.';
    const go=document.createElement('button');go.type='button';go.textContent='✿ Zur Blumenvase';go.onclick=()=>location.assign('blumen.html');
-   card.append(headline,detail,go);modal.append(card);document.body.append(modal);go.focus();signature='';refresh();
+   card.append(large,headline,detail,go);modal.append(card);document.body.append(modal);go.focus();signature='';refresh();
   });document.body.append(button);
  });
 }
