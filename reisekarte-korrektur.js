@@ -17,6 +17,8 @@
     return positions.map((_,i)=>i+1).filter(d=>solved[d]===window.STERNEN_LOESUNGEN?.[d]);
   }
   function fogSvg(last) {
+    // Nach der letzten Entdeckung ist die gesamte Karte vollständig sichtbar.
+    if (last >= 24) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"></svg>`;
     // Nur die tatsächlich gelösten Abschnitte des Schlangenwegs freigeben.
     // Reihenenden liegen unter den jeweiligen Symbolen; nächste Reihe bleibt verdeckt.
     const rows=[
@@ -30,8 +32,14 @@
     ];
     // Alle freigelegten Bereiche sind weich abgerundete, überlappende Wolkenöffnungen.
     // Die größere Höhe schützt vollständig freigeschaltete Symbole vor Nebelresten.
-    let open='<rect width="100" height="10.8" fill="black"/>';
+    // Durchgehende Öffnung vom oberen Kartenrand bis zur aktuellen Reihe.
+    // Keine getrennten Masken mehr zwischen bereits gelösten Reihen.
+    const activeRow=rows.find(row=>last>=row.first && last<=row.last);
+    const clearTo=activeRow ? activeRow.top+1.1 : 10.8;
+    let open=`<rect width="100" height="${clearTo}" fill="black"/>`;
     for(const row of rows) {
+      // Vollständig abgeschlossene Reihen liegen bereits in der durchgehenden Öffnung.
+      if (activeRow && row.last < activeRow.first) continue;
       const count=Math.max(0,Math.min(row.last-row.first+1,last-row.first+1));
       if(!count)continue;
       const full=count===row.last-row.first+1;
