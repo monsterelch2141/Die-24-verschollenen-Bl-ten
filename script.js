@@ -257,6 +257,7 @@
     try { localStorage.removeItem(key); localStorage.removeItem('advent_blumen_gefunden'); } catch (_) {}
     allRevealed = false;
     day = 1;
+    try { sessionStorage.removeItem(dayMemoryKey); } catch (_) {}
     if (!overlay.hidden) hidePhoto();
     feedback.className = 'feedback';
     feedback.textContent = '✧ Zurück am Anfang unserer Reise. ✧';
@@ -425,5 +426,5 @@
     }
   });
 
-  setDay(1);
+  setDay(day);
 })();
