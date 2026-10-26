@@ -23,7 +23,19 @@ function refresh(){
  document.querySelectorAll('.blumen-fund').forEach(e=>e.remove());
  wanted.forEach((day,i)=>{
   const button=document.createElement('button');button.type='button';button.className='blumen-fund';button.setAttribute('aria-label','Verschollene Blume '+day+' einsammeln');
-  button.style.left=(i%2===0?72:10)+'%';button.style.top=(24+(i%4)*13)+'%';
+  // Bei jedem neuen Erscheinen frische Positionen wählen; mehrere Blüten nicht stapeln.
+  const occupied=[...document.querySelectorAll('.blumen-fund')].map(el=>({x:parseFloat(el.style.left),y:parseFloat(el.style.top)}));
+  const width=Math.max(1,window.innerWidth),height=Math.max(1,window.innerHeight);
+  const flowerWidth=65,flowerHeight=96;
+  const minX=8,maxX=Math.max(minX,100-(flowerWidth+12)/width*100);
+  const minY=14,maxY=Math.max(minY,100-(flowerHeight+26)/height*100);
+  let x=20,y=30;
+  for(let attempt=0;attempt<70;attempt++){
+   x=minX+Math.random()*(maxX-minX);
+   y=minY+Math.random()*(maxY-minY);
+   if(occupied.every(p=>Math.abs((p.x-x)*width/100)>flowerWidth+18||Math.abs((p.y-y)*height/100)>flowerHeight+18))break;
+  }
+  button.style.left=x+'%';button.style.top=y+'%';
   const img=document.createElement('img');img.src='blume-'+String(day).padStart(2,'0')+'.png';img.alt='';button.append(img);
   button.addEventListener('click',()=>{
    if(showing)return;showing=true;localStorage.setItem(KEY,JSON.stringify([...new Set([...found(),day])].sort((a,b)=>a-b)));button.remove();
