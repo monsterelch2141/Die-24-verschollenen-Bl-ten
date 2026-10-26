@@ -104,9 +104,10 @@ function reward(d){
  stage.querySelector('button').onclick=continueJourney;
  setTimeout(()=>{if(!screen.hidden&&heading.textContent==='Eine neue Blüte ist gefunden!')continueJourney()},2800);
 }
-hub.onclick=e=>{const b=e.target.closest('[data-world]');if(!b)return;b.dataset.world==='map'?map():vase()};
+hub.onclick=e=>{const b=e.target.closest('[data-world]');if(!b)return;b.dataset.world==='map'?map():(location.href='blumen.html')};
 let pending=0;
 board.addEventListener('click',()=>{const before=days().length;setTimeout(()=>{const after=days();if(after.length>before)pending=Math.max(...after);refresh()},120)},true);
 const overlay=document.getElementById('photo-overlay');if(overlay)new MutationObserver(()=>{if(overlay.hidden&&pending){const d=pending;pending=0;setTimeout(()=>d===1?map(true):reward(d),200)}}).observe(overlay,{attributes:true,attributeFilter:['hidden']});
 refresh();
+if(location.hash==='#reise'){const tryOpen=()=>{if(!root.hidden&&days().includes(1)){map();history.replaceState(null,'',location.pathname+location.search)}};setTimeout(tryOpen,250);document.getElementById('password-form')?.addEventListener('submit',()=>setTimeout(tryOpen,350));}
 })();
