@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const BLUMENNAMEN={"11":"Ranunkel","12":"Amaryllis","13":"Iris","14":"Nelke","15":"Sonnenblume","16":"Hortensie","17":"Pfingstrose","18":"Blaue Rose","19":"Lilie","20":"Strandflieder","21":"Paradiesvogelblume","22":"Zierquitte","23":"Magnolie","24":"Ranunkel"};
+const BLUMENNAMEN={"1":"Orchidee","2":"Winterbeere (Ilex)","3":"Margerite","4":"Schmuckkörbchen (Cosmea)","5":"Lavendel","6":"Maiglöckchen","7":"Rittersporn","8":"Löwenmäulchen","9":"Grüne Nelke","10":"Gelbe Rose","11":"Ranunkel","12":"Amaryllis","13":"Iris","14":"Nelke","15":"Sonnenblume","16":"Hortensie","17":"Pfingstrose","18":"Enzian","19":"Lilie","20":"Rote Spornblume","21":"Paradiesvogelblume","22":"Zierquitte","23":"Magnolie","24":"Ranunkel"};
 const KEY='advent_blumen_gefunden',SOLVED='verschollene-blueten-geloest-v1';
 const page=document.getElementById('advent-page'),overlay=document.getElementById('photo-overlay');
 if(!page)return;
@@ -33,7 +33,7 @@ function refresh(){
    const large=document.createElement('img');large.className='fundblume';large.src='blume-'+String(day).padStart(2,'0')+'.png';large.alt='Deine gefundene Blume';
    const detail=document.createElement('p');detail.style.fontSize='17px';detail.textContent=count+' von 24 Blumen gesammelt.';
    const go=document.createElement('button');go.type='button';go.textContent='✿ Zur Blumenvase';go.onclick=()=>location.assign('blumen.html');
-   const flowerName=document.createElement('h3');flowerName.textContent=BLUMENNAMEN[day]||'Blüte des '+day+'. Tages';flowerName.style.cssText='font:italic 24px Georgia,serif;margin:8px 0;color:#85552e';card.append(large,headline,flowerName,detail,go);modal.append(card);document.body.append(modal);go.focus();signature='';refresh();
+   const flowerName=document.createElement('h3');flowerName.textContent=BLUMENNAMEN[day]||'Unbekannte Blume';flowerName.style.cssText='font:italic 24px Georgia,serif;margin:8px 0;color:#85552e';card.append(large,headline,flowerName,detail,go);modal.append(card);document.body.append(modal);go.focus();signature='';refresh();
   });document.body.append(button);
  });
 }
