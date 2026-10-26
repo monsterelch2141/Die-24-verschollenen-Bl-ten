@@ -20,12 +20,12 @@
     // Nur die tatsächlich gelösten Abschnitte des Schlangenwegs freigeben.
     // Reihenenden liegen unter den jeweiligen Symbolen; nächste Reihe bleibt verdeckt.
     const rows=[
-      {first:1,last:4,top:10,bottom:21.3,dir:1},
-      {first:5,last:8,top:21.3,bottom:33.2,dir:-1},
-      {first:9,last:12,top:33.2,bottom:44.6,dir:1},
-      {first:13,last:16,top:44.6,bottom:56.6,dir:-1},
-      {first:17,last:20,top:56.6,bottom:69.3,dir:1},
-      {first:21,last:23,top:69.3,bottom:82.3,dir:-1},
+      {first:1,last:4,top:10,bottom:20.2,dir:1},
+      {first:5,last:8,top:21.3,bottom:31.7,dir:-1},
+      {first:9,last:12,top:33.2,bottom:42.6,dir:1},
+      {first:13,last:16,top:44.6,bottom:54.2,dir:-1},
+      {first:17,last:20,top:56.6,bottom:66.9,dir:1},
+      {first:21,last:23,top:69.3,bottom:80.8,dir:-1},
       {first:24,last:24,top:82.3,bottom:96,dir:1}
     ];
     // Alle freigelegten Bereiche sind weich abgerundete, überlappende Wolkenöffnungen.
@@ -39,19 +39,23 @@
       const edge=row.dir===1?Math.min(100,x+11):Math.max(0,x-11);
       const left=full?0:(row.dir===1?0:edge);
       const right=full?100:(row.dir===1?edge:100);
-      const top=row.top-1.1,bottom=row.bottom+1.1;
+      const top=row.top-0.35,bottom=row.bottom;
       // Round both the advancing edge and the corners at the row transition.
-      open+=`<rect x="${left}" y="${top}" width="${right-left}" height="${bottom-top}" rx="4.3" ry="4.3" fill="black"/>`;
+      const width=right-left, height=bottom-top;
+      const rad=Math.min(4.8,width/3,height/2.5);
+      // Weiche Bezierkurven statt rechtwinkliger Ausschnitte.
+      const mid=(left+right)/2;
+      open+=`<path d="M ${left+rad} ${top} L ${right-rad} ${top} Q ${right} ${top} ${right} ${top+rad} L ${right} ${bottom-rad} Q ${right} ${bottom} ${right-rad} ${bottom} Q ${mid+width*.16} ${bottom-1.0} ${mid} ${bottom+.35} Q ${mid-width*.16} ${bottom+1.0} ${left+rad} ${bottom} Q ${left} ${bottom} ${left} ${bottom-rad} L ${left} ${top+rad} Q ${left} ${top} ${left+rad} ${top} Z" fill="black"/>`;
       // A softer halo prevents cloud remnants directly on the active symbol.
       const revealed=positions.slice(row.first-1,row.first-1+count);
-      for(const [cx,cy] of revealed)open+=`<ellipse cx="${cx}" cy="${cy}" rx="9.2" ry="6.5" fill="black"/>`;
+      for(const [cx,cy] of revealed)open+=`<ellipse cx="${cx}" cy="${cy}" rx="7.2" ry="3.6" fill="black"/>`;
     }
     // Unabhängig vom Fortschritt: die beiden sitzenden Figuren unten links.
     open+='<ellipse cx="12" cy="90" rx="23" ry="13.5" fill="black"/>';
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
       <defs>
         <filter id="edge" x="-4%" y="-4%" width="108%" height="108%">
-          <feTurbulence type="fractalNoise" baseFrequency=".085 .12" numOctaves="4" seed="23" result="edgeNoise"/><feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="4.2" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".9"/>
+          <feTurbulence type="fractalNoise" baseFrequency=".085 .12" numOctaves="4" seed="23" result="edgeNoise"/><feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="5.0" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".72"/>
         </filter>
         <mask id="visibility" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
           <rect width="100" height="100" fill="white"/>
