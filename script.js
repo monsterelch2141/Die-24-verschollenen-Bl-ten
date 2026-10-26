@@ -45,7 +45,9 @@
     const stored = JSON.parse(localStorage.getItem(key) || '{}');
     if (stored && typeof stored === 'object' && !Array.isArray(stored)) solved = stored;
   } catch (_) {}
+  const dayMemoryKey = 'advent-ausgewaehlter-tag-v1';
   let day = 1;
+  try { const remembered = Number(sessionStorage.getItem(dayMemoryKey)); if (Number.isInteger(remembered) && remembered >= 1 && remembered <= 24) day = remembered; } catch (_) {}
   let lastFocus = null;
   let allRevealed = false;
   const revealButton = document.getElementById('reveal-all');
@@ -209,6 +211,7 @@
     const max = refreshDays();
     if (!max) { render(); return; }
     day = Math.max(1, Math.min(max, Number(value) || 1));
+    try { sessionStorage.setItem(dayMemoryKey, String(day)); } catch (_) {}
     feedback.className = 'feedback';
     feedback.textContent = solved[day]
       ? '✧ Dieses Geheimnis hast du bereits gelüftet. ✧'
