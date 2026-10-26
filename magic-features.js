@@ -72,7 +72,13 @@ function memory(d){enter(stops[d-1][0],'Unsere Erinnerung · Kapitel '+d);stage.
 const picture=d=>'blume-'+String(d).padStart(2,'0')+'.png';
 const positions=[[12,19],[27,22],[48,20],[76,21],[10,32],[27,36],[45,35],[67,32],[85,39],[11,46],[28,49],[46,49],[64,48],[83,51],[12,60],[29,62],[47,62],[64,62],[83,63],[12,73],[30,75],[49,75],[67,77],[85,78]];
 function map(animate=false){
- screen.querySelector('.storybook-back').textContent='← Zur Startseite';
+ const backButton=screen.querySelector('.storybook-back');
+ backButton.textContent='← Zur Startseite';
+ // Nur auf der Reisekarte: kleiner Button direkt unter der Überschrift links über der Karte.
+ const mapHeader=screen.querySelector('.storybook-subtitle');
+ mapHeader.insertAdjacentElement('afterend',backButton);
+ backButton.style.cssText='display:block;position:relative;inset:auto;transform:none;width:max-content;max-width:90%;margin:10px 0 12px 0;padding:6px 12px;font:normal 13px/1.3 Georgia,serif;border-radius:18px;box-shadow:0 2px 6px #3e271a22;z-index:2;';
+
  const done=days(),last=Math.max(0,...done);
  enter('Unsere gemeinsame Reise','24 besondere Momente – und noch so viele mehr …');
  stage.innerHTML='<div class="final-map"><img class="final-map-art" src="reise-karte-illustration.webp" alt="Märchenhafte illustrierte Karte unserer 24 gemeinsamen Erinnerungen"><div class="final-map-fog"></div><div class="final-map-hotspots"></div><img class="final-map-couple" src="reisepaar-mini.png" alt="Lena und Luis auf ihrer gemeinsamen Reise"></div><p class="final-map-note">Jedes entdeckte Wahrzeichen bewahrt eine Erinnerung. ♡</p>';
