@@ -28,28 +28,30 @@
       {first:21,last:23,top:69.3,bottom:82.3,dir:-1},
       {first:24,last:24,top:82.3,bottom:96,dir:1}
     ];
-    let open='<rect width="100" height="10" fill="black"/>';
+    // Alle freigelegten Bereiche sind weich abgerundete, überlappende Wolkenöffnungen.
+    // Die größere Höhe schützt vollständig freigeschaltete Symbole vor Nebelresten.
+    let open='<rect width="100" height="10.8" fill="black"/>';
     for(const row of rows) {
-      const n=Math.max(0,Math.min(row.last-row.first+1,last-row.first+1));
-      if(!n)continue;
-      const h=row.bottom-row.top;
-      if(n===row.last-row.first+1) {
-        open+=`<rect x="0" y="${row.top}" width="100" height="${h}" fill="black"/>`;
-      } else {
-        const x=positions[row.first+n-2][0];
-        // Die Grenzlinie liegt jeweils NACH der erreichten Station.
-        const edge=row.dir===1?Math.min(100,x+7):Math.max(0,x-7);
-        open+=row.dir===1
-          ?`<rect x="0" y="${row.top}" width="${edge}" height="${h}" fill="black"/>`
-          :`<rect x="${edge}" y="${row.top}" width="${100-edge}" height="${h}" fill="black"/>`;
-      }
+      const count=Math.max(0,Math.min(row.last-row.first+1,last-row.first+1));
+      if(!count)continue;
+      const full=count===row.last-row.first+1;
+      const x=positions[row.first+count-2][0];
+      const edge=row.dir===1?Math.min(100,x+11):Math.max(0,x-11);
+      const left=full?0:(row.dir===1?0:edge);
+      const right=full?100:(row.dir===1?edge:100);
+      const top=row.top-1.1,bottom=row.bottom+1.1;
+      // Round both the advancing edge and the corners at the row transition.
+      open+=`<rect x="${left}" y="${top}" width="${right-left}" height="${bottom-top}" rx="4.3" ry="4.3" fill="black"/>`;
+      // A softer halo prevents cloud remnants directly on the active symbol.
+      const revealed=positions.slice(row.first-1,row.first-1+count);
+      for(const [cx,cy] of revealed)open+=`<ellipse cx="${cx}" cy="${cy}" rx="9.2" ry="6.5" fill="black"/>`;
     }
     // Unabhängig vom Fortschritt: die beiden sitzenden Figuren unten links.
     open+='<ellipse cx="12" cy="90" rx="23" ry="13.5" fill="black"/>';
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
       <defs>
         <filter id="edge" x="-4%" y="-4%" width="108%" height="108%">
-          <feTurbulence type="fractalNoise" baseFrequency=".13 .19" numOctaves="3" seed="23" result="edgeNoise"/><feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="2.4" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".55"/>
+          <feTurbulence type="fractalNoise" baseFrequency=".085 .12" numOctaves="4" seed="23" result="edgeNoise"/><feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="4.2" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".9"/>
         </filter>
         <mask id="visibility" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
           <rect width="100" height="100" fill="white"/>
@@ -117,7 +119,7 @@
       const previous=last>1?positions[last-2]:[7.4,15.6];
       const current=last?positions[last-1]:[7.4,15.6];
       const sameRow=Math.abs(previous[1]-current[1])<4;
-      const rest=last<=1?[14.5,15.8]:sameRow
+      const rest=last<=1?[7.4,9.1]:sameRow
         ?[(previous[0]+current[0])/2,(previous[1]+current[1])/2+1.2]
         :[(previous[0]+current[0])/2,(previous[1]+current[1])/2];
       // Nach dem Aufbauen der Karte erst positionieren; die alte
@@ -126,12 +128,20 @@
       // the preceding waypoint to the midpoint of the current segment.
       // A transition:none here previously disabled the walking entirely.
       const shouldWalk=frame.dataset.walk==='yes';
-      const start=shouldWalk?(last>1?previous:[7.4,15.6]):rest;
+      const start=shouldWalk?(last>1?previous:[7.4,9.1]):rest;
       couple.style.transition='none';
       couple.style.left=start[0]+'%';
       couple.style.top=start[1]+'%';
       couple.style.visibility='visible';
-      couple.style.width='13%';
+      couple.style.width=last<=1?'9%':'13%';
+      if(last===1){
+        const marker=document.createElement('div');
+        marker.className='final-map-start-marker';
+        marker.textContent='✦ Start';
+        marker.setAttribute('aria-label','Beginn unserer gemeinsamen Reise');
+        Object.assign(marker.style,{position:'absolute',left:'7.4%',top:'7.7%',transform:'translate(-50%,-50%)',zIndex:'5',pointerEvents:'none',font:'bold clamp(8px,1.6vw,12px) Georgia,serif',color:'#72421e',background:'linear-gradient(#fff8df,#e7c995)',border:'1px solid #bd914c',borderRadius:'999px',padding:'2px 7px',boxShadow:'0 2px 7px #40230d55',whiteSpace:'nowrap'});
+        frame.append(marker);
+      }
       // Force the initial position to be committed before enabling motion.
       void couple.offsetWidth;
       requestAnimationFrame(()=>{
