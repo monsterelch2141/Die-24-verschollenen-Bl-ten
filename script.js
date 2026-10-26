@@ -50,6 +50,8 @@
   const revealButton = document.getElementById('reveal-all');
   const testComplete = document.getElementById('test-complete');
   testComplete.hidden = !testMode;
+  const testReset = document.getElementById('test-reset');
+  if (testReset) testReset.hidden = !testMode;
 
   function availableDays() {
     // Deutsche Zeit, unabhängig von der eingestellten Geräte-Zeitzone.
@@ -243,6 +245,21 @@
     save(); allRevealed = true; render();
     feedback.className = 'feedback success';
     feedback.textContent = '✧ Alle 24 Erinnerungen sind zum Testen freigeschaltet. ✧';
+  });
+
+  if (testReset) testReset.addEventListener('click', () => {
+    if (!testMode || !confirm('Testfortschritt vollständig zurücksetzen? Alle grünen Felder, die Reisekarte und die Blumenvase beginnen wieder bei null.')) return;
+    solved = {};
+    try { localStorage.removeItem(key); } catch (_) {}
+    allRevealed = false;
+    day = 1;
+    if (!overlay.hidden) hidePhoto();
+    feedback.className = 'feedback';
+    feedback.textContent = '✧ Zurück am Anfang unserer Reise. ✧';
+    render();
+    // Die Reise- und Blumenansichten lesen denselben gespeicherten Fortschritt.
+    // Ein vollständiger Neustart setzt auch eventuell noch offene Ansichten zurück.
+    location.reload();
   });
 
   previous.addEventListener('click' , () => setDay(day - 1));
