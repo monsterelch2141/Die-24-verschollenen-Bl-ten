@@ -490,3 +490,28 @@ footer p { margin:0; }
   .page {padding-top:25px; background-size:100% 100%,100% auto;}
   .password-gate {background-size:cover;}
 }
+
+
+/* Sternentafel: Namen statt Koordinaten, die internen Loesungscodes bleiben erhalten. */
+.board .cell{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+ padding:5px 2px;border:1px solid #b99b65;border-radius:5px;
+ background:radial-gradient(ellipse at 50% 16%,#fdf3d7 0%,#f6e6c3 54%,#e7d2aa 100%);
+ box-shadow:inset 0 0 0 2px #fff9e5aa,0 2px 4px #52392224;
+ color:#5c452d;text-shadow:0 1px #fff9e6;
+ font-family:Georgia,'Times New Roman',serif;font-size:inherit;
+}
+.board .cell::before{content:'✦';top:4px;left:5px;color:#b38d51;font-size:9px}
+.board .cell::after{content:'✧';bottom:4px;right:5px;color:#b38d51;font-size:9px;transform:none}
+.board .cell:hover:not(:disabled){background:radial-gradient(ellipse at 50% 16%,#fff9e7,#f1dfb6);box-shadow:inset 0 0 0 2px #fff9e5,0 0 12px #dfbb7480}
+.board .cell-star-name{display:block;width:100%;overflow-wrap:anywhere;hyphens:auto;text-align:center;font-size:clamp(8px,1.35vw,15px);line-height:1.1;font-weight:600;letter-spacing:-.025em}
+.board .cell-test-day{display:block;font:normal clamp(8px,1vw,11px)/1.1 Georgia,serif;color:#94734c;opacity:.85}
+.board .cell.solved,.board .cell.correct{background:var(--green);color:#29462f;text-shadow:none}
+.board .cell.wrong{background:var(--red)}
+.board .cell .tick{position:absolute;right:3px;bottom:2px;font-size:12px}
+@media(max-width:600px){
+ .board .cell{padding:4px 1px;border-radius:3px}
+ .board .cell-star-name{font-size:clamp(7px,1.75vw,11px);letter-spacing:-.04em}
+ .board .cell-test-day{font-size:8px}
+ .board .cell::before,.board .cell::after{font-size:6px}
+}
