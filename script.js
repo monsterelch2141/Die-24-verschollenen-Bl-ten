@@ -1,6 +1,32 @@
 (() => {
   'use strict';
   const answers = window.STERNEN_LOESUNGEN || {};
+  const starNames = {
+    "A1": "Orion",
+    "B1": "Lyra",
+    "C1": "Andromeda",
+    "D1": "Cassiopeia",
+    "E1": "Pegasus",
+    "F1": "Phoenix",
+    "A2": "Draco",
+    "B2": "Cygnus",
+    "C2": "Aquila",
+    "D2": "Perseus",
+    "E2": "Auriga",
+    "F2": "Aries",
+    "A3": "Vega",
+    "B3": "Sirius",
+    "C3": "Altair",
+    "D3": "Deneb",
+    "E3": "Rigel",
+    "F3": "Antares",
+    "A4": "Arcturus",
+    "B4": "Capella",
+    "C4": "Polaris",
+    "D4": "Bellatrix",
+    "E4": "Spica",
+    "F4": "Regulus"
+  };
   const photos = window.ADVENT_FOTOS || {};
   const testMode = window.ADVENT_TESTMODUS === true;
   const daySelect = document.getElementById('day');
@@ -147,15 +173,18 @@
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'cell';
-        button.setAttribute('aria-label', `Feld ${code}${green.has(code) ? ', bereits gelöst' : ''}`);
-        button.append(document.createTextNode(code));
+        button.setAttribute('aria-label', `${starNames[code] || code}${green.has(code) ? ', bereits gelöst' : ''}`);
+        const star = document.createElement('span');
+        star.className = 'cell-star-name';
+        star.textContent = starNames[code] || code;
+        button.append(star);
         if (testMode) {
           const mappedDay = Object.keys(answers).find(d => answers[d] === code);
           if (mappedDay) {
             const hint = document.createElement('span');
             hint.className = 'cell-test-day';
-            hint.textContent = ' (' + mappedDay + ')';
-            hint.style.cssText = 'font-size:.72em;white-space:nowrap;opacity:.72';
+            hint.textContent = '(' + mappedDay + ')';
+
             button.append(hint);
           }
         }
@@ -171,7 +200,7 @@
             thumbnail.alt = '';
             thumbnail.loading = 'lazy';
             button.appendChild(thumbnail);
-            button.setAttribute('aria-label', `Feld ${code}, Foto vom ${photoDay}. Dezember`);
+            button.setAttribute('aria-label', `${starNames[code] || code}, Foto vom ${photoDay}. Dezember`);
           }
           const tick = document.createElement('span');
           tick.className = 'tick';
