@@ -75,7 +75,7 @@
 
   function solvedFields() {
     // Bereits gelöste Felder sind auf ALLEN Tagen grün.
-    return new Set(Object.values(solved).filter(value => typeof value === 'string'));
+    return new Set(Object.keys(solved).filter(d => solved[d] === answers[d]).map(d => solved[d]));
   }
 
   function showPhoto(forDay, animated = true) {
@@ -149,6 +149,16 @@
         button.className = 'cell';
         button.setAttribute('aria-label', `Feld ${code}${green.has(code) ? ', bereits gelöst' : ''}`);
         button.append(document.createTextNode(code));
+        if (testMode) {
+          const mappedDay = Object.keys(answers).find(d => answers[d] === code);
+          if (mappedDay) {
+            const hint = document.createElement('span');
+            hint.className = 'cell-test-day';
+            hint.textContent = ' (' + mappedDay + ')';
+            hint.style.cssText = 'font-size:.72em;white-space:nowrap;opacity:.72';
+            button.append(hint);
+          }
+        }
         button.disabled = max === 0;
         const photoDay = solvedPhotoFor(code);
         if (green.has(code)) {
