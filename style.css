@@ -717,3 +717,12 @@ margin:0!important;box-sizing:border-box!important;
 .wordle-overlay,.strands-overlay,.maze-overlay{overscroll-behavior:contain}
 .wordle-panel,.strands-panel,.maze-panel{max-height:calc(100dvh - 24px);overscroll-behavior:contain}
 .day8-overlay,.day8-gate,.day9-overlay{overflow:hidden;overscroll-behavior:none}
+
+/* Tag 9: kleines Glasornament als Suchlupe */
+.morse-paper{width:min(61vw,261px);height:min(42dvh,332px);overflow:visible}
+.morse-paper-front{overflow:visible}
+.morse-paper-list em{font-weight:800;letter-spacing:2.2px;text-shadow:.25px 0 currentColor,-.25px 0 currentColor}
+.morse-lens{position:absolute;left:7px;bottom:5px;width:43px;height:43px;border-radius:50%;overflow:hidden;border:3px double #a17a43;background:#273c54;box-shadow:inset 0 0 5px #fff9d0,0 1px 6px #5e4228aa;pointer-events:none}
+.morse-lens::after{content:"";position:absolute;inset:2px;border-radius:50%;background:linear-gradient(135deg,#fff9d548,transparent 45%,#e3f2ff14 75%);pointer-events:none}
+.morse-lens-canvas{width:100%;height:100%;display:block}
+.morse-paper-ornament{padding-left:26px}
