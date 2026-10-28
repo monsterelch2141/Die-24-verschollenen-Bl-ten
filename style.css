@@ -544,3 +544,15 @@ footer p { margin:0; }
 .day3-pass-form input{max-width:250px;width:100%;padding:10px;background:#fffaf0;border:1px solid #b58a4c;text-align:center;font:18px Georgia,serif}
 .day3-pass-status{color:#8b413a}
 @media(max-width:400px){.wordle-panel{padding:18px 8px}.wordle-grid{max-width:270px}.wordle-keyboard button{height:39px}}
+
+
+/* Wordle: jedes Feld dreht sich zeitversetzt um die horizontale Achse. */
+.wordle-tile{transform-style:preserve-3d;backface-visibility:visible}
+.wordle-tile.wordle-flip{animation:wordle-reveal .58s ease-in-out both}
+@keyframes wordle-reveal{
+ 0%{transform:rotateX(0deg)}
+ 48%{transform:rotateX(90deg);background:#fff9e9;color:#493821}
+ 52%{transform:rotateX(90deg)}
+ 100%{transform:rotateX(0deg)}
+}
+@media(prefers-reduced-motion:reduce){.wordle-tile.wordle-flip{animation:none}}
