@@ -598,3 +598,11 @@ html,body,button,input,select,textarea,a,[role="button"],.wordle-keyboard,.stran
 .strands-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:3}
 .strands-cell{z-index:1}
 .strands-cell.selected{z-index:2}
+
+/* Zahlen bleiben trotz Verbindungslinien jederzeit klar lesbar. */
+.strands-cell .strands-letter{position:relative;z-index:1}
+.strands-cell .strands-number{z-index:5;background:#fffaf0;border:1px solid rgba(105,76,42,.2);border-radius:5px;padding:1px 3px;right:0;bottom:-3px;color:#3e2c1b;font-weight:700;line-height:1.1;box-shadow:0 1px 2px rgba(35,25,15,.18);pointer-events:none}
+.strands-cell.place-found .strands-number{background:#e3f2e7}
+.strands-cell.span-found .strands-number{background:#ffedbd}
+.strands-cell.selected .strands-number{background:#fff3d5}
+.strands-lines{z-index:2}
