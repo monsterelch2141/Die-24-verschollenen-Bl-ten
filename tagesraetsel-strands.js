@@ -31,19 +31,20 @@ function sync(){
  if(unlocked())route.innerHTML='<strong>Deine Sternenroute (Testdaten)</strong><p>137 → 208 → 314 → 95 → 421 → 63 → 178 → 256</p><small>Dies ist eine vorläufige Route zum Testen.</small>';
  instruction.textContent=unlocked()?'Verbinde deine Sternenroute und wähle den richtigen Stern.':'Löse zuerst das Tagesrätsel, bevor du ein Sternenfeld auswählst.';
 }
-function close(){modal?.remove();modal=null;active=[];dragging=false;sync()}
+function close(){window.removeEventListener('resize',drawConnections);modal?.remove();modal=null;active=[];dragging=false;sync()}
 function match(cells,target){const expected=paths[target];return cells.length===expected.length&&(cells.every((v,i)=>v===expected[i])||cells.every((v,i)=>v===expected[expected.length-1-i]))}
 function wordOf(cells){return cells.map(id=>letters[id]).join('')}
 function adjacent(a,b){const ax=Math.floor(a/HEIGHT),ay=a%HEIGHT,bx=Math.floor(b/HEIGHT),by=b%HEIGHT;return Math.max(Math.abs(ax-bx),Math.abs(ay-by))===1}
 function paint(){
  if(!modal)return;
  const cells=modal.querySelectorAll('.strands-cell');
- cells.forEach((c,id)=>{
+ cells.forEach(c=>{const id=Number(c.dataset.id);
   c.className='strands-cell';
   if(state.found.includes(owners[id]))c.classList.add(owners[id]===SPAN?'span-found':'place-found');
   if(active.includes(id))c.classList.add('selected');
   if(state.hint&&state.hint===owners[id]&&!state.found.includes(owners[id]))c.classList.add('hinted');
  });
+ drawConnections();
  const word=modal.querySelector('#strands-current');word.textContent=active.length?wordOf(active):'Verbinde benachbarte Buchstaben';
  modal.querySelector('#strands-progress').textContent=state.found.length+' / 8 Wörter gefunden';
  modal.querySelector('#strands-bonus').textContent=(state.bonusWords.length%3)+' / 3 Bonuswörter';
@@ -53,6 +54,15 @@ function paint(){
   next.innerHTML='<p>✦ Alle acht Wörter sind entdeckt! Die kleinen Zahlen auf den Buchstaben des Sternenpfads führen zum nächsten Geheimnis.</p><button type="button" id="strands-password-button">✧ Lösung eingeben ✧</button><div id="strands-password-area"></div>';
   next.querySelector('button').onclick=showPassword;
  }
+}
+function drawConnections(){
+ const grid=modal?.querySelector('.strands-grid'),svg=modal?.querySelector('.strands-lines');if(!grid||!svg)return;
+ const rect=grid.getBoundingClientRect();if(!rect.width)return;
+ svg.setAttribute('viewBox','0 0 '+rect.width+' '+rect.height);svg.replaceChildren();
+ const center=id=>{const c=grid.querySelector('[data-id="'+id+'"]');if(!c)return null;const r=c.getBoundingClientRect();return [r.left+r.width/2-rect.left,r.top+r.height/2-rect.top]};
+ const draw=(ids,color,width)=>{if(ids.length<2)return;const points=ids.map(center);if(points.some(p=>!p))return;const line=document.createElementNS('http://www.w3.org/2000/svg','polyline');line.setAttribute('points',points.map(p=>p.join(',')).join(' '));line.setAttribute('stroke',color);line.setAttribute('stroke-width',width);line.setAttribute('stroke-linecap','round');line.setAttribute('stroke-linejoin','round');line.setAttribute('fill','none');svg.append(line)};
+ for(const word of state.found)draw(paths[word],word===SPAN?'#9d6421':'#487b62',3.5);
+ draw(active,'#9c682b',4.5);
 }
 function clearSelection(){active=[];paint()}
 async function validBonus(word){
@@ -83,7 +93,7 @@ function add(id){
 function openPuzzle(){
  if(modal)return;
  modal=document.createElement('div');modal.className='strands-overlay';
- modal.innerHTML='<section class="strands-panel" role="dialog" aria-modal="true" aria-label="Strands Tagesrätsel 2"><button type="button" class="strands-close" aria-label="Schließen">×</button><div class="quest-mark">✧ ✦ ✧</div><h2>Die Orte von Luminara</h2><p class="strands-subtitle">Finde sieben verborgene Orte und den Spangram, der den oberen mit dem unteren Rand verbindet. Alle Buchstaben gehören zu einem der acht Wörter.</p><div class="strands-counts"><span id="strands-progress"></span><span>✦ <span id="strands-bonus"></span></span></div><div class="strands-grid" aria-label="Strands Buchstabenfeld"></div><div id="strands-current" class="strands-current"></div><p id="strands-message" class="strands-message" role="status"></p><button type="button" id="strands-hint-button">✧ Hinweis freischalten</button><div id="strands-next" hidden></div></section>';
+ modal.innerHTML='<section class="strands-panel" role="dialog" aria-modal="true" aria-label="Strands Tagesrätsel 2"><button type="button" class="strands-close" aria-label="Schließen">×</button><div class="quest-mark">✧ ✦ ✧</div><h2>Die Orte von Luminara</h2><p class="strands-subtitle">Finde sieben verborgene Orte und den Spangram, der den oberen mit dem unteren Rand verbindet. Alle Buchstaben gehören zu einem der acht Wörter.</p><div class="strands-counts"><span id="strands-progress"></span><span>✦ <span id="strands-bonus"></span></span></div><div class="strands-grid" aria-label="Strands Buchstabenfeld"><svg class="strands-lines" aria-hidden="true"></svg></div><div id="strands-current" class="strands-current"></div><p id="strands-message" class="strands-message" role="status"></p><button type="button" id="strands-hint-button">✧ Hinweis freischalten</button><div id="strands-next" hidden></div></section>';
  document.body.append(modal);modal.querySelector('.strands-close').onclick=close;modal.addEventListener('click',e=>{if(e.target===modal)close()});
  const grid=modal.querySelector('.strands-grid');
  for(let y=0;y<HEIGHT;y++)for(let x=0;x<WIDTH;x++){
@@ -91,9 +101,9 @@ function openPuzzle(){
   b.innerHTML='<span class="strands-letter">'+letters[id]+'</span><span class="strands-number">'+nums[id]+'</span>';
   b.setAttribute('aria-label',letters[id]+', Zahl '+nums[id]);grid.append(b);
  }
- grid.addEventListener('pointerdown',e=>{const b=e.target.closest('.strands-cell');if(!b)return;e.preventDefault();dragging=true;active=[];add(Number(b.dataset.id));grid.setPointerCapture(e.pointerId)});
- grid.addEventListener('pointermove',e=>{if(!dragging)return;const b=document.elementFromPoint(e.clientX,e.clientY)?.closest('.strands-cell');if(b&&grid.contains(b))add(Number(b.dataset.id))});
- grid.addEventListener('pointerup',()=>{if(dragging){dragging=false;finish()}});
+ grid.addEventListener('pointerdown',e=>{const b=e.target.closest('.strands-cell');if(!b||e.isPrimary===false)return;e.preventDefault();dragging=true;active=[];add(Number(b.dataset.id));grid.setPointerCapture(e.pointerId)});
+ grid.addEventListener('pointermove',e=>{if(!dragging)return;e.preventDefault();const b=document.elementFromPoint(e.clientX,e.clientY)?.closest('.strands-cell');if(b&&grid.contains(b))add(Number(b.dataset.id))});
+ grid.addEventListener('pointerup',e=>{if(dragging){const b=document.elementFromPoint(e.clientX,e.clientY)?.closest('.strands-cell');if(b&&grid.contains(b))add(Number(b.dataset.id));dragging=false;finish()}});
  grid.addEventListener('pointercancel',()=>{dragging=false;clearSelection()});
  grid.addEventListener('click',e=>{if(e.detail!==0)return;const b=e.target.closest('.strands-cell');if(!b)return;add(Number(b.dataset.id))});
  modal.querySelector('#strands-hint-button').onclick=()=>{
@@ -104,6 +114,7 @@ function openPuzzle(){
   save();paint();
  };
  paint();
+ window.addEventListener('resize',drawConnections,{passive:true});
  if(state.found.length===8&&!unlocked())showPassword();
 }
 function showPassword(){
