@@ -2,7 +2,7 @@
 'use strict';
 const DAY=3, WORD='ZWEIG', PASS='2623597', ROUTE=[137,208,314,95,421,63,178,256,340,112,29,387,204,77,319,146,408,55];
 const key='advent-tag3-wordle-v1';
-const get=()=>{try{return JSON.parse(localStorage.getItem(key)||'{}')}catch{return {}}};
+const get=()=>{try{const saved=JSON.parse(localStorage.getItem(key)||'{}');if(saved.extra&&!saved.unlockedRows)saved.unlockedRows=7;return saved}catch{return {}}};
 let state=get(), current='', modal=null, status=null, tiles=null, keys={}, busy=false, revealing=false;
 const knownWords=new Set(['ZWEIG','KRANZ','FROST','GLANZ','KOMET','NACHT','STERN','WALDE','WALDS','LICHT','TRAUM','MONAT','WINDE','WINDS','WOLKE','WOLLE','BLUME','BLUTE','LIEBE','ROSEN','ROSES','REISE','WEISE','LEISE','PREIS','STEIN','SANDU','SAGEN','SAGTE','SINGT','KLING','KLANG','KLEIN','GROSS','GRUEN','BRAUN','WEISS','SCHON','SCHUH','STUHL','TISCH','HAUSE','HAUS','HUNDE','KATZE','MAUER','RAUCH','FEUER','WASSER','BLATT','BAUMS','BLICK','BRIEF','BRISE','BREIT','BROTE','BRUCH','DANKE','DENKT','DICHT','DINGE','DREHT','DURCH','EINER','EINEN','EISEN','ENGEL','ERNTE','ERSTE','ESSEN','FADEN','FAHRT','FALLE','FARBE','FEDER','FEIER','FERNE','FESTE','FINDE','FISCH','FLUSS','FRAGE','FREMD','FRIED','FROHE','FRUET','GABEL','GASSE','GEHEN','GEIST','GELBE','GENAU','GERNE','GLATT','GLAUB','GOLD','GRAUE','GRUND','GRUSS','HALLO','HALTE','HANDY','HART','HEUTE','HERDE','HERZE','HILFE','HIMMEL','HOBEL','HOFFE','HOLEN','HONIG','HOSEN','HOTEL','HUEGE','HUTEN','JUNGE','KABEL','KAMIN','KANAL','KANNE','KARTE','KERZE','KETTE','KIND','KISTE','KLOPF','KNAPP','KNOCH','KOCHT','KOPFE','KRAFT','KREIS','KRONE','KUGEL','KUNST','LACHE','LADEN','LAMPE','LANGE','LASSO','LAUFE','LAUNE','LEBEN','LEDER','LEGEN','LEHRE','LEINE','LEUTE','LINIE','LINKE','LOCKE','LUFT','MALEN','MARKE','MASKE','MEERE','MEILE','MEINE','MENGE','MERKE','MILCH','MINZE','MITTE','MORGEN','MOTIV','MUEDE','MUTIG','NADEL','NAMEN','NEBEL','NEBEN','NEHME','NEUES','NICHT','NORD','NOTEN','OBERE','OCHSE','OFFEN','OFTEN','OPFER','ORDEN','ORGAN','PAPPE','PARTY','PAUSE','PERLE','PFERD','PILZE','PLATZ','PUNKT','QUARK','RADIO','RASEN','RASTE','RAUHE','RECHT','REGEN','REIHE','REIME','REINE','REITE','RENNT','RESTE','RICHT','RIESE','RINDE','RINGE','RITTE','RODEL','ROHRE','ROLLE','RUNDE','SACHE','SALAT','SAMEN','SANFT','SAUER','SCHAF','SCHEU','SCHON','SEGEN','SEHEN','SEIDE','SEINE','SEITE','SELIG','SENDE','SIEHT','SILBE','SINNE','SITZE','SOHLE','SOLAR','SONNE','SORGE','SPASS','SPECK','SPIEL','SPITZ','SPRAY','SPULE','STAAT','STADT','STAND','STARK','STAUB','STEHT','STIEL','STIFT','STILL','STOFF','STOLZ','STROM','STUFE','STURM','SUCHT','SUMME','SUPER','TANZT','TAUBE','TAUFE','TEICH','TEILE','TEMPO','TEXTE','THEMA','TIGER','TOLLE','TORTE','TOTAL','TRAGE','TRANK','TREUE','TRICK','TRINK','TROST','TULPE','TURBO','TURME','UEBER','UNTER','VATER','VIELE','VOGEL','VOLLE','VORNE','WACHE','WAGEN','WAHRE','WALZE','WARME','WARTE','WEGEN','WEICH','WEIDE','WEINE','WELLE','WENDE','WERTE','WESEN','WETTE','WICHT','WIESE','WILLE','WINKE','WIRKT','WISSE','WOHNE','WORTE','WUNDE','WURDE','WURST','ZAHLT','ZANGE','ZEIGE','ZEILE','ZEIT','ZELTE','ZIEGE','ZIEHT','ZIMTE','ZIRKA','ZONEN','ZUGES','ZUNGE']);
 async function isGermanWord(word){
@@ -53,7 +53,7 @@ function score(guess){
 function renderGame(){
  if(!modal)return;
  const guesses=state.guesses||[];tiles.replaceChildren();
- const maxRows=state.extra?7:6;
+ const maxRows=Math.max(6,Number(state.unlockedRows)||6);
  for(let row=0;row<maxRows;row++){
   const guess=guesses[row]||(!state.word&&row===guesses.length?current:'');
   const colors=guesses[row]&&!(revealing&&row===guesses.length-1)?score(guess):[];
@@ -64,9 +64,26 @@ function renderGame(){
  for(const [k,b] of Object.entries(keys)){b.className=(b.classList.contains('wordle-wide')?'wordle-wide ':'')+(best[k]||'');}
  const next=modal.querySelector('.wordle-next');next.hidden=false;
  if(state.word&&!revealing){status.textContent='✦ Das Wort ist gefunden: '+WORD;next.innerHTML='<p>Du hast das geheime Wort entdeckt. Kannst du daraus den Schlüssel zur Sternenroute entschlüsseln?</p><button id="day3-password-open" type="button">✧ Lösung eingeben ✧</button><div id="day3-password-area"></div>';next.querySelector('button').onclick=showPassword;modal.querySelector('.wordle-keyboard').hidden=true;}
- else if(guesses.length>=6&&!state.extra&&!revealing){status.textContent='Sechs Versuche sind vergangen …';next.innerHTML='<p>Die Sterne sind heute gnädig. Na gut – noch eine Chance!</p><button id="day3-extra" type="button">✦ Siebten Versuch erhalten ✦</button>';next.querySelector('button').onclick=()=>{state.extra=true;save();renderGame()};modal.querySelector('.wordle-keyboard').hidden=true}
- else if(guesses.length>=7&&!revealing){status.textContent='Auch der siebte Versuch ist verbraucht. Das Rätsel bleibt vorerst verschlossen.';next.innerHTML='<p>Die Sternenwächter warten auf einen neuen Versuch an einem anderen Tag.</p>';modal.querySelector('.wordle-keyboard').hidden=true}
- else{next.hidden=true;modal.querySelector('.wordle-keyboard').hidden=busy||revealing;status.textContent=revealing?'Die Sterne prüfen dein Wort …':busy?'Das Wort wird geprüft …':((state.extra?7:6)-guesses.length)+' Versuche übrig';}
+ else if(guesses.length>=maxRows&&!revealing){
+  const extras=guesses.length-6;
+  const messages=[
+   'Die Sterne sind heute gnädig. Na gut – noch ein Versuch!',
+   'Die Sternenwächter runzeln die Stirn. Aber eine weitere Chance sei dir gewährt.',
+   'Nun wird es ernst. Dies ist deine allerletzte Chance. Ganz bestimmt.',
+   'Die Sternenwächter verlieren langsam die Geduld. Eine letzte, allerletzte Chance!',
+   'Selbst die Sterne können es kaum glauben. Noch EIN Versuch!',
+   'Das Sternenreich hält den Atem an. Wie oft möchtest du die letzte Chance noch bekommen?',
+   'Die Geduld der Sternenwächter ist legendär. Du stellst sie auf eine harte Probe.',
+   'Ein Stern ist vor Verzweiflung vom Himmel gefallen. Hier ist dein nächster Versuch.',
+   'Das Wort „allerletzt“ hat heute offenbar eine neue Bedeutung bekommen.',
+   'Die Sternenwächter haben aufgehört zu zählen. Du hoffentlich nicht.'
+  ];
+  status.textContent=extras===0?'Sechs Versuche sind vergangen …':'Auch dieser Versuch war es noch nicht …';
+  next.innerHTML='<p>'+messages[Math.min(extras,messages.length-1)]+'</p><button id="day3-extra" type="button">✦ Noch eine Chance ✦</button>';
+  next.querySelector('button').onclick=()=>{state.unlockedRows=guesses.length+1;save();renderGame()};
+  modal.querySelector('.wordle-keyboard').hidden=true;
+ }
+ else{next.hidden=true;modal.querySelector('.wordle-keyboard').hidden=busy||revealing;status.textContent=revealing?'Die Sterne prüfen dein Wort …':busy?'Das Wort wird geprüft …':Math.max(0,maxRows-guesses.length)+' Versuch'+(maxRows-guesses.length===1?'':'e')+' übrig';}
  if(ready()){next.innerHTML='<p>✧ Die Sternenroute ist freigeschaltet. Schließe das Rätsel und wähle das richtige Sternenfeld.</p>';modal.querySelector('.wordle-keyboard').hidden=true}
 }
 function showPassword(){
@@ -76,7 +93,7 @@ function showPassword(){
  area.querySelector('input').focus();
 }
 async function submit(){
- if(busy||revealing||state.word||(state.guesses||[]).length>=(state.extra?7:6))return;
+ if(busy||revealing||state.word||(state.guesses||[]).length>=Math.max(6,Number(state.unlockedRows)||6))return;
  if(current.length!==5){status.textContent='Bitte gib fünf Buchstaben ein.';return}
  busy=true;const guess=current;status.textContent='Das Wort wird geprüft …';
  const valid=await isGermanWord(guess);
