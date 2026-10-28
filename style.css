@@ -592,3 +592,9 @@ footer p { margin:0; }
 html,body,button,input,select,textarea,a,[role="button"],.wordle-keyboard,.strands-grid,.board{touch-action:manipulation}
 /* Strands braucht Pointer-Drag statt Browser-Scroll innerhalb des Rasters. */
 .strands-grid,.strands-cell{touch-action:none}
+
+/* Strands: SVG liegt ueber dem Raster, ohne eine eigene Rasterzelle zu belegen. */
+.strands-grid{position:relative}
+.strands-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:3}
+.strands-cell{z-index:1}
+.strands-cell.selected{z-index:2}
