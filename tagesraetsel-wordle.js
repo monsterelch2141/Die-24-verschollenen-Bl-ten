@@ -127,7 +127,7 @@ async function submit(){
  },i*360)}
  setTimeout(()=>{revealing=false;if(guess===WORD)state.word=true;save();renderGame()},5*360+540);
 }
-function type(k){if(busy||revealing||state.word||(state.guesses||[]).length>=(state.extra?7:6))return;if(k==='BACKSPACE')current=current.slice(0,-1);else if(/^[A-Z]$/.test(k)&&current.length<5)current+=k;renderGame()}
+function type(k){if(busy||revealing||state.word||(state.guesses||[]).length>=Math.max(6,Number(state.unlockedRows)||6))return;if(k==='BACKSPACE')current=current.slice(0,-1);else if(/^[A-Z]$/.test(k)&&current.length<5)current+=k;renderGame()}
 function physical(e){if(!modal||e.target.closest('input'))return;if(e.key==='Escape'){close();return}if(e.key==='Enter')submit();else if(e.key==='Backspace')type('BACKSPACE');else if(/^[a-zA-Z]$/.test(e.key))type(e.key.toUpperCase())}
 open.onclick=()=>{build();if(state.word&&!ready())showPassword()};
 board.addEventListener('click',e=>{if(!allowed()||ready())return;const cell=e.target.closest('.cell');if(!cell)return;e.stopImmediatePropagation();e.preventDefault();feedback.className='feedback error';feedback.textContent='✧ Löse erst das Tagesrätsel, bevor du das nächste Häuschen auswählst. ✧';bar.scrollIntoView({behavior:'smooth',block:'nearest'})},true);
