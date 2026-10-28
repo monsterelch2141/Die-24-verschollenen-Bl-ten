@@ -25,8 +25,8 @@ const unlocked=()=>state.route===true;
 function save(){try{localStorage.setItem(store,JSON.stringify(state))}catch{}sync()}
 function sync(){
  bar.hidden=!selected();if(!selected())return;
- open.textContent=unlocked()?'✧ Sternenroute erneut ansehen ✧':state.found.includes(SPAN)?'✧ Lösung eingeben ✧':'✧ Zum Tagesrätsel ✧';
- hint.textContent=unlocked()?'Die Sternenroute ist freigeschaltet. Wähle den Zielstern.':state.found.includes(SPAN)?'Alle Geheimnisse gefunden. Nun fehlt noch der Zahlenschlüssel.':'Finde die verborgenen Orte und den verbindenden Sternenpfad.';
+ open.textContent=unlocked()?'✧ Sternenroute erneut ansehen ✧':state.found.length===8?'✧ Lösung eingeben ✧':'✧ Zum Tagesrätsel ✧';
+ hint.textContent=unlocked()?'Die Sternenroute ist freigeschaltet. Wähle den Zielstern.':state.found.length===8?'Alle Geheimnisse gefunden. Nun fehlt noch der Zahlenschlüssel.':'Finde die verborgenen Orte und den verbindenden Sternenpfad.';
  route.hidden=!unlocked();
  if(unlocked())route.innerHTML='<strong>Deine Sternenroute (Testdaten)</strong><p>137 → 208 → 314 → 95 → 421 → 63 → 178 → 256</p><small>Dies ist eine vorläufige Route zum Testen.</small>';
  instruction.textContent=unlocked()?'Verbinde deine Sternenroute und wähle den richtigen Stern.':'Löse zuerst das Tagesrätsel, bevor du ein Sternenfeld auswählst.';
@@ -48,8 +48,8 @@ function paint(){
  modal.querySelector('#strands-progress').textContent=state.found.length+' / 8 Wörter gefunden';
  modal.querySelector('#strands-bonus').textContent=(state.bonusWords.length%3)+' / 3 Bonuswörter';
  const hintButton=modal.querySelector('#strands-hint-button');hintButton.disabled=state.bonusWords.length<3;hintButton.textContent='✧ Hinweis freischalten (3 Bonuswörter)';
- const next=modal.querySelector('#strands-next');next.hidden=!state.found.includes(SPAN);
- if(state.found.includes(SPAN)){
+ const next=modal.querySelector('#strands-next');next.hidden=state.found.length!==8;
+ if(state.found.length===8){
   next.innerHTML='<p>✦ Alle acht Wörter sind entdeckt! Die kleinen Zahlen auf den Buchstaben des Sternenpfads führen zum nächsten Geheimnis.</p><button type="button" id="strands-password-button">✧ Lösung eingeben ✧</button><div id="strands-password-area"></div>';
   next.querySelector('button').onclick=showPassword;
  }
@@ -104,7 +104,7 @@ function openPuzzle(){
   save();paint();
  };
  paint();
- if(state.found.includes(SPAN)&&!unlocked())showPassword();
+ if(state.found.length===8&&!unlocked())showPassword();
 }
 function showPassword(){
  const area=modal?.querySelector('#strands-password-area');if(!area)return;
