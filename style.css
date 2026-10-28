@@ -606,3 +606,27 @@ html,body,button,input,select,textarea,a,[role="button"],.wordle-keyboard,.stran
 .strands-cell.span-found .strands-number{background:#ffedbd}
 .strands-cell.selected .strands-number{background:#fff3d5}
 .strands-lines{z-index:2}
+
+/* Tag 7: Labyrinth der Sterne */
+.day7-quest{margin:18px auto;padding:20px 14px;border:1px solid #c5a16b;border-radius:16px;background:linear-gradient(150deg,#fff8e8,#f1e2c6);text-align:center;max-width:580px}
+.day7-quest[hidden]{display:none}
+.day7-quest h3{font-family:Georgia,serif;color:#6c4d2b}
+.day7-quest button,.maze-panel button{border:1px solid #aa8652;border-radius:9px;background:#f5e7cb;color:#553b20;padding:10px 14px;font:600 15px Georgia,serif}
+#day7-route{margin-top:12px}
+.maze-overlay{position:fixed;inset:0;z-index:10010;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(17,23,37,.83);overflow-y:auto}
+.maze-panel{position:relative;max-width:570px;width:100%;max-height:96dvh;overflow-y:auto;background:linear-gradient(150deg,#fff8e9,#eee0c6);border:2px solid #c29d65;border-radius:18px;box-shadow:0 15px 55px #0008;padding:18px 12px;text-align:center;color:#4e3824}
+.maze-panel h2{font:600 clamp(22px,5vw,30px) Georgia,serif;margin:7px 0}
+.maze-panel p{margin:8px auto;font:15px Georgia,serif}
+.maze-close{position:absolute;right:10px;top:9px;font-size:25px!important;padding:2px 12px!important}
+.maze-stage{position:relative;width:min(100%,min(72dvh,460px));margin:12px auto 6px;aspect-ratio:1;touch-action:none}
+.maze-canvas{display:block;width:100%;height:100%;border:3px solid #8e6a39;border-radius:6px;touch-action:none;user-select:none;-webkit-user-select:none;background:#f9f0db}
+.maze-flash{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.8);font:700 clamp(55px,16vw,100px) Georgia,serif;color:#fff5d4;text-shadow:0 3px 10px #1d1823,0 0 22px #9d641f;pointer-events:none;opacity:0;z-index:4;white-space:nowrap}
+.maze-flash.show{animation:maze-reveal 2s ease-out forwards}
+@keyframes maze-reveal{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}12%{opacity:1;transform:translate(-50%,-50%) scale(1.07)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
+.maze-status{min-height:22px}
+.maze-finish{border-top:1px solid #c7aa80;margin-top:12px;padding:10px}
+.maze-finish[hidden]{display:none}
+.maze-form{display:flex;flex-direction:column;gap:9px;align-items:center}
+.maze-form input{padding:10px;border:1px solid #b48d54;border-radius:8px;text-align:center;background:#fffaf0;font:18px Georgia,serif;width:min(100%,250px)}
+.maze-result{min-height:20px}
+@media(max-width:390px){.maze-overlay{padding:5px}.maze-panel{padding:13px 7px}.maze-stage{width:min(100%,70dvh)}}
