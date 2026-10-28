@@ -556,3 +556,34 @@ footer p { margin:0; }
  100%{transform:rotateX(0deg)}
 }
 @media(prefers-reduced-motion:reduce){.wordle-tile.wordle-flip{animation:none}}
+
+
+/* Strands: Sternenatlas auf Pergament, 8 x 7 Buchstaben mit kleinen Zahlen */
+.day2-quest{margin:14px 0 16px;padding:16px 10px;background:linear-gradient(145deg,#fdf4df,#ead4ac);border:1px solid #bc965d;box-shadow:inset 0 0 0 3px #fff8e4}
+.day2-quest[hidden],#day2-route[hidden],#strands-next[hidden]{display:none!important}
+.day2-quest h3{margin:7px 0;font:600 23px 'Cormorant Garamond',Georgia,serif}
+.day2-quest p{margin:8px auto;font-size:19px}
+.day2-quest button,.strands-panel button:not(.strands-cell):not(.strands-close){background:#75532f;color:#fff5df;border:1px solid #bda071;padding:10px 15px;cursor:pointer;border-radius:3px}
+.day2-quest #day2-route{margin:12px auto 0;padding:12px;background:#fff8e8;border:1px solid #cfad79;overflow-wrap:anywhere}
+.strands-overlay{position:fixed;inset:0;z-index:100001;background:#20180ee0;display:flex;align-items:center;justify-content:center;padding:12px;overflow-y:auto}
+.strands-panel{position:relative;width:min(100%,530px);max-height:96vh;overflow-y:auto;padding:22px 13px;background:radial-gradient(ellipse at top,#fff8e9,#e9d4b0);border:2px solid #b58a4c;box-shadow:0 0 0 5px #ead3a5,0 15px 70px #0009;text-align:center}
+.strands-panel h2{margin:8px 0;font-size:22px}
+.strands-subtitle{font-size:16px;line-height:1.3;margin:5px auto 12px}
+.strands-close{position:absolute;top:4px;right:9px;font-size:32px;border:0;background:transparent;color:#684826;cursor:pointer}
+.strands-counts{display:flex;justify-content:space-between;gap:8px;max-width:430px;margin:10px auto;font:600 15px Georgia,serif;color:#79512e}
+.strands-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px;width:min(100%,440px);margin:10px auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.strands-cell{position:relative;aspect-ratio:1;min-width:0;border:1px solid #c6a677;border-radius:50%;background:#fff9eb;color:#4b3924;cursor:crosshair;touch-action:none;display:flex;align-items:center;justify-content:center;transition:background .16s,transform .16s}
+.strands-letter{font:600 clamp(14px,3.5vw,22px) Georgia,serif}
+.strands-number{position:absolute;right:2px;bottom:1px;font:600 clamp(7px,1.6vw,10px) Georgia,serif;color:#8d7255}
+.strands-cell.selected{background:#d3ad64;transform:scale(1.06);border-color:#886028}
+.strands-cell.place-found{background:#b5d5c1;border-color:#6c9a78}
+.strands-cell.span-found{background:#e4bc6a;border-color:#aa7934}
+.strands-cell.hinted:not(.place-found):not(.span-found){outline:2px dashed #b88639;outline-offset:-2px}
+.strands-current{min-height:25px;font:600 18px Georgia,serif;letter-spacing:.08em}
+.strands-message{min-height:34px;font-size:16px;margin:6px auto}
+#strands-hint-button:disabled{opacity:.5;cursor:not-allowed}
+#strands-next{margin:13px auto 0;border-top:1px solid #d3b98d;padding-top:12px}
+#strands-next p{font-size:17px}
+.strands-pass-form{display:flex;flex-direction:column;align-items:center;gap:9px}
+.strands-pass-form input{width:min(100%,250px);padding:10px;background:#fffaf0;border:1px solid #b58a4c;text-align:center;font:18px Georgia,serif}
+@media(max-width:390px){.strands-panel{padding:17px 7px}.strands-grid{gap:2px}.strands-letter{font-size:14px}.strands-number{font-size:7px;right:1px}}
