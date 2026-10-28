@@ -704,3 +704,16 @@ html:has(.day9-overlay),html:has(.day9-overlay) body{overflow:hidden!important;o
 .morse-paper-front{transform:none!important;backface-visibility:visible;inset:0}
 .morse-paper-grip{cursor:grab;touch-action:none}
 .morse-paper-flip{touch-action:manipulation}
+
+/* Einheitlicher iPhone-Safari-Vollbildstandard für sämtliche Tagesrätsel */
+html:has(.wordle-overlay),html:has(.strands-overlay),html:has(.maze-overlay),html:has(.day8-overlay),html:has(.day8-gate),html:has(.day9-overlay){overflow:hidden!important;overscroll-behavior:none}
+:is(.wordle-overlay,.strands-overlay,.maze-overlay,.day8-overlay,.day8-gate,.day9-overlay){
+position:fixed!important;inset:0!important;top:0!important;left:0!important;
+width:100vw!important;width:100dvw!important;
+height:100vh!important;height:100dvh!important;
+max-width:none!important;max-height:none!important;
+margin:0!important;box-sizing:border-box!important;
+}
+.wordle-overlay,.strands-overlay,.maze-overlay{overscroll-behavior:contain}
+.wordle-panel,.strands-panel,.maze-panel{max-height:calc(100dvh - 24px);overscroll-behavior:contain}
+.day8-overlay,.day8-gate,.day9-overlay{overflow:hidden;overscroll-behavior:none}
