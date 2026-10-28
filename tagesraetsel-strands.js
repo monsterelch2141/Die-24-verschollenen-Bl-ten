@@ -57,7 +57,7 @@ function paint(){
 function clearSelection(){active=[];paint()}
 async function validBonus(word){
  if(word.length<4||word.length>14||! /^[A-Z]+$/.test(word))return false;
- try{const response=await fetch('https://de.wiktionary.org/w/api.php?action=parse&format=json&formatversion=2&prop=wikitext&page='+encodeURIComponent(word.toLowerCase())+'&origin=*');if(!response.ok)return false;const json=await response.json();return /\\{\\{Sprache\\|Deutsch\\}\\}/i.test(json?.parse?.wikitext||'')}catch{return false}
+ try{const response=await fetch('https://de.wiktionary.org/w/api.php?action=parse&format=json&formatversion=2&prop=wikitext&page='+encodeURIComponent(word.toLowerCase())+'&origin=*');if(!response.ok)return false;const json=await response.json();return /\{\{Sprache\|Deutsch\}\}/i.test(json?.parse?.wikitext||'')}catch{return false}
 }
 async function finish(){
  if(checking||!active.length)return;
