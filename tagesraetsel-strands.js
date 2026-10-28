@@ -109,7 +109,7 @@ function openPuzzle(){
  if(modal)return;
  modal=document.createElement('div');modal.className='strands-overlay';
  modal.innerHTML='<section class="strands-panel" role="dialog" aria-modal="true" aria-label="Strands Tagesrätsel 2"><button type="button" class="strands-close" aria-label="Schließen">×</button><div class="quest-mark">✧ ✦ ✧</div><h2>Die Orte von Luminara</h2><p class="strands-subtitle">Finde sieben verborgene Orte und den Spangram, der den oberen mit dem unteren Rand verbindet. Alle Buchstaben gehören zu einem der acht Wörter.</p><div class="strands-counts"><span id="strands-progress"></span><span>✦ <span id="strands-bonus"></span></span></div><div class="strands-grid" aria-label="Strands Buchstabenfeld"><svg class="strands-lines" aria-hidden="true"></svg></div><div id="strands-current" class="strands-current"></div><p id="strands-message" class="strands-message" role="status"></p><button type="button" id="strands-hint-button">✧ Hinweis freischalten</button><div id="strands-next" hidden></div></section>';
- document.body.append(modal);modal.querySelector('.strands-close').onclick=close;modal.addEventListener('click',e=>{if(e.target===modal)close()});
+ document.documentElement.append(modal);modal.querySelector('.strands-close').onclick=close;modal.addEventListener('click',e=>{if(e.target===modal)close()});
  const grid=modal.querySelector('.strands-grid');
  for(let y=0;y<HEIGHT;y++)for(let x=0;x<WIDTH;x++){
   const id=x*HEIGHT+y,b=document.createElement('button');b.type='button';b.className='strands-cell';b.dataset.id=id;
