@@ -587,3 +587,8 @@ footer p { margin:0; }
 .strands-pass-form{display:flex;flex-direction:column;align-items:center;gap:9px}
 .strands-pass-form input{width:min(100%,250px);padding:10px;background:#fffaf0;border:1px solid #b58a4c;text-align:center;font:18px Georgia,serif}
 @media(max-width:390px){.strands-panel{padding:17px 7px}.strands-grid{gap:2px}.strands-letter{font-size:14px}.strands-number{font-size:7px;right:1px}}
+
+/* Schnelles Tippen ohne Doppeltipp-Zoom; Zwei-Finger-Zoom bleibt erlaubt. */
+html,body,button,input,select,textarea,a,[role="button"],.wordle-keyboard,.strands-grid,.board{touch-action:manipulation}
+/* Strands braucht Pointer-Drag statt Browser-Scroll innerhalb des Rasters. */
+.strands-grid,.strands-cell{touch-action:none}
