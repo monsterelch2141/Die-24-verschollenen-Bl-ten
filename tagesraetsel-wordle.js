@@ -5,11 +5,30 @@ const key='advent-tag3-wordle-v1';
 const get=()=>{try{const saved=JSON.parse(localStorage.getItem(key)||'{}');if(saved.extra&&!saved.unlockedRows)saved.unlockedRows=7;return saved}catch{return {}}};
 let state=get(), current='', modal=null, status=null, tiles=null, keys={}, busy=false, revealing=false;
 const knownWords=new Set(['ZWEIG','KRANZ','FROST','GLANZ','KOMET','NACHT','STERN','WALDE','WALDS','LICHT','TRAUM','MONAT','WINDE','WINDS','WOLKE','WOLLE','BLUME','BLUTE','LIEBE','ROSEN','ROSES','REISE','WEISE','LEISE','PREIS','STEIN','SANDU','SAGEN','SAGTE','SINGT','KLING','KLANG','KLEIN','GROSS','GRUEN','BRAUN','WEISS','SCHON','SCHUH','STUHL','TISCH','HAUSE','HAUS','HUNDE','KATZE','MAUER','RAUCH','FEUER','WASSER','BLATT','BAUMS','BLICK','BRIEF','BRISE','BREIT','BROTE','BRUCH','DANKE','DENKT','DICHT','DINGE','DREHT','DURCH','EINER','EINEN','EISEN','ENGEL','ERNTE','ERSTE','ESSEN','FADEN','FAHRT','FALLE','FARBE','FEDER','FEIER','FERNE','FESTE','FINDE','FISCH','FLUSS','FRAGE','FREMD','FRIED','FROHE','FRUET','GABEL','GASSE','GEHEN','GEIST','GELBE','GENAU','GERNE','GLATT','GLAUB','GOLD','GRAUE','GRUND','GRUSS','HALLO','HALTE','HANDY','HART','HEUTE','HERDE','HERZE','HILFE','HIMMEL','HOBEL','HOFFE','HOLEN','HONIG','HOSEN','HOTEL','HUEGE','HUTEN','JUNGE','KABEL','KAMIN','KANAL','KANNE','KARTE','KERZE','KETTE','KIND','KISTE','KLOPF','KNAPP','KNOCH','KOCHT','KOPFE','KRAFT','KREIS','KRONE','KUGEL','KUNST','LACHE','LADEN','LAMPE','LANGE','LASSO','LAUFE','LAUNE','LEBEN','LEDER','LEGEN','LEHRE','LEINE','LEUTE','LINIE','LINKE','LOCKE','LUFT','MALEN','MARKE','MASKE','MEERE','MEILE','MEINE','MENGE','MERKE','MILCH','MINZE','MITTE','MORGEN','MOTIV','MUEDE','MUTIG','NADEL','NAMEN','NEBEL','NEBEN','NEHME','NEUES','NICHT','NORD','NOTEN','OBERE','OCHSE','OFFEN','OFTEN','OPFER','ORDEN','ORGAN','PAPPE','PARTY','PAUSE','PERLE','PFERD','PILZE','PLATZ','PUNKT','QUARK','RADIO','RASEN','RASTE','RAUHE','RECHT','REGEN','REIHE','REIME','REINE','REITE','RENNT','RESTE','RICHT','RIESE','RINDE','RINGE','RITTE','RODEL','ROHRE','ROLLE','RUNDE','SACHE','SALAT','SAMEN','SANFT','SAUER','SCHAF','SCHEU','SCHON','SEGEN','SEHEN','SEIDE','SEINE','SEITE','SELIG','SENDE','SIEHT','SILBE','SINNE','SITZE','SOHLE','SOLAR','SONNE','SORGE','SPASS','SPECK','SPIEL','SPITZ','SPRAY','SPULE','STAAT','STADT','STAND','STARK','STAUB','STEHT','STIEL','STIFT','STILL','STOFF','STOLZ','STROM','STUFE','STURM','SUCHT','SUMME','SUPER','TANZT','TAUBE','TAUFE','TEICH','TEILE','TEMPO','TEXTE','THEMA','TIGER','TOLLE','TORTE','TOTAL','TRAGE','TRANK','TREUE','TRICK','TRINK','TROST','TULPE','TURBO','TURME','UEBER','UNTER','VATER','VIELE','VOGEL','VOLLE','VORNE','WACHE','WAGEN','WAHRE','WALZE','WARME','WARTE','WEGEN','WEICH','WEIDE','WEINE','WELLE','WENDE','WERTE','WESEN','WETTE','WICHT','WIESE','WILLE','WINKE','WIRKT','WISSE','WOHNE','WORTE','WUNDE','WURDE','WURST','ZAHLT','ZANGE','ZEIGE','ZEILE','ZEIT','ZELTE','ZIEGE','ZIEHT','ZIMTE','ZIRKA','ZONEN','ZUGES','ZUNGE']);
-async function isGermanWord(word){
- if(knownWords.has(word))return true;
- const url='https://de.wiktionary.org/w/api.php?action=parse&format=json&formatversion=2&prop=wikitext&page='+encodeURIComponent(word.toLowerCase())+'&origin=*';
- try{const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),6500);let response;try{response=await fetch(url,{signal:controller.signal})}finally{clearTimeout(timeout)}if(!response.ok)throw Error('unavailable');const data=await response.json();const wiki=data?.parse?.wikitext||'';return /\{\{Sprache\|Deutsch\}\}/i.test(wiki)}catch{return null}
+// Häufige deutsche Lehnwörter, Früchte, Städte, Eigennamen und Fachbegriffe.
+const additionalGermanWords=new Set(['MANGO','PARIS','LEGAT','APFEL','BANAN','BANANEN','KIWIS','KIWIS','KIWIS','PAPAYA','GUAVE','OLIVE','MELON','FEIGE','DATTE','KAKAO','ZITRO','BEERE','BIRNE','TRAUB','PFLAU','ANANA','LIMES','LIMON','HONIG','LACHS','BERNE','ROMAN','ROMER','ROMEO','TOKIO','OSAKA','SEOUL','BONNE','BONNS','KOELN','KOLIN','ESSEN','MAINZ','TRIER','ULM','BERLIN','WIEN','GRAZ','BASEL','GENUA','MAILA','DOVER','DELHI','KAIRO','DUBAI','MIAMI','TAMPA','TEXAS','NEPAL','INDIA','CHILE','CHINA','JAPAN','KENIA','KONGO','GHANA','GABUN','HAITI','MALTA','SAMOA','TONGA','KATAR','SYRIEN','NIGER','BENIN','TOGO','SUDAN','IRANS','ISRAE','KRETA','IBIZA','SYLT','RUEGE','ELBAS','MOSEL','RHEIN','DONAU','ALPEN','HARZ','EIFEL','TAUNU','SPREE','ELBE','ODER','ISAR','SAAR','RUHR','INSEL','DELTA','ATLAS','OZEAN','NORDS','OSTEN','WESTE','SUEDE','LEGAT','ERBEN','ERBTE','ERBES','ERBIN','NOTAR','AKTEN','RECHT','KONTO','AKTIE','KREDIT','ZINSEN','RENTE','SALDO','DEPOT','KASSE','EUROS','EURO','MOTTO','MOTIV','TANGO','SALSA','OPERA','PIZZA','PASTA','SUSHI','CURRY','TACOS','KEBAB','DÖNER'.replace('Ö','OE')]);
+async function wiktionaryEntry(title){
+ const url='https://de.wiktionary.org/w/api.php?action=parse&format=json&formatversion=2&prop=wikitext&redirects=1&page='+encodeURIComponent(title)+'&origin=*';
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6000);
+ try{
+  const response=await fetch(url,{signal:controller.signal});
+  if(!response.ok)return false;
+  const data=await response.json();
+  const wiki=String(data?.parse?.wikitext||'');
+  // Deutscher Eintrag, einschließlich geografischer Eigennamen und Lehnwörter.
+  return /\{\{Sprache\s*\|\s*Deutsch\s*\}\}/i.test(wiki)||/\{\{=de=\}\}/i.test(wiki);
+ }finally{clearTimeout(timer)}
 }
+async function isGermanWord(word){
+ if(knownWords.has(word)||additionalGermanWords.has(word))return true;
+ // Großschreibung ist für Nomen und Ortsnamen entscheidend.
+ try{
+  if(await wiktionaryEntry(word[0]+word.slice(1).toLowerCase()))return true;
+  if(await wiktionaryEntry(word.toLowerCase()))return true;
+  return false;
+ }catch{return null}
+}
+
 const game=document.querySelector('.game'), select=document.getElementById('day'), board=document.getElementById('board'), instruction=document.querySelector('.instruction'), feedback=document.getElementById('feedback');
 if(!game||!select||!board)return;
 const bar=document.createElement('section');bar.className='day3-quest';bar.hidden=true;bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Die Prüfung des dritten Sterns</h3><p id="day3-hint">Ein verborgenes Wort weist dir den Weg durch die Sterne.</p><button type="button" id="day3-open">✧ Zum Tagesrätsel ✧</button><div id="day3-route" hidden></div>';
