@@ -648,3 +648,13 @@ body.day8-active{overflow:hidden;overscroll-behavior:none}
 .day8-input-row input{min-width:150px;max-width:270px;flex:1;background:#15161c;color:#f1e5c9;border:1px solid #645437;border-radius:8px;padding:10px;font-size:16px}
 .day8-input-row button{border:1px solid #80683e;background:#25221c;color:#e8d4a5;border-radius:8px;padding:10px;font:14px Georgia,serif}
 .day8-status{font:14px Georgia,serif;min-height:17px;margin:0;text-align:center}
+
+/* Tag 8: weisses Zeichen-Tor */
+body.day8-gate-active{overflow:hidden;overscroll-behavior:none}
+.day8-gate{position:fixed;inset:0;z-index:12000;background:#fff;touch-action:none;overscroll-behavior:none;display:flex;flex-direction:column;transition:transform .75s cubic-bezier(.65,0,.25,1)}
+.day8-gate-top{height:58px;display:flex;justify-content:space-between;padding:10px 17px;flex-shrink:0}
+.day8-gate-top button{border:1px solid #d7d7d7;border-radius:12px;background:#fff;color:#555;font-size:30px;min-width:48px;touch-action:manipulation}
+.day8-gate-canvas{display:block;flex:1;width:100%;min-height:0;touch-action:none;background:#fff;user-select:none;-webkit-user-select:none}
+.day8-gate-leave{transform:translateX(-100%)}
+body.day8-gate-transition .day8-overlay{animation:day8-enter .75s cubic-bezier(.65,0,.25,1) both}
+@keyframes day8-enter{from{transform:translateX(100%)}to{transform:translateX(0)}}
