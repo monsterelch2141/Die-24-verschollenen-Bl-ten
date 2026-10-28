@@ -693,3 +693,14 @@ body.day9-active{overflow:hidden}
 .morse-paper-list span{font:clamp(10px,2.5vw,14px) Georgia,serif;display:flex;justify-content:space-between;gap:5px}
 .morse-paper-list em{font-style:normal;letter-spacing:2px}
 .morse-paper-ornament{text-align:center;font-size:12px;opacity:.65}
+
+/* Tag 9: iPhone-Safari-Vollbild und verstecktes Mondpergament */
+html:has(.day9-overlay),html:has(.day9-overlay) body{overflow:hidden!important;overscroll-behavior:none}
+.day9-overlay{position:fixed!important;inset:0!important;top:0!important;left:0!important;width:100vw!important;width:100dvw!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;box-sizing:border-box!important;z-index:2147483000!important}
+.morse-moon{position:absolute;z-index:4;right:12%;top:10%;width:clamp(53px,15vw,91px);aspect-ratio:1;border:0;border-radius:50%;cursor:pointer;background:radial-gradient(circle at 34% 31%,#fff9db 0%,#e9dcb3 38%,#adacc0 72%,#666b8b 100%);box-shadow:0 0 19px #e8e4ca77,0 0 65px #d4d5e733,inset -10px -7px 17px #60698266;touch-action:manipulation}
+.morse-moon::before{content:"";position:absolute;left:20%;top:25%;width:19%;height:19%;border-radius:50%;background:#7b7e8c24;box-shadow:22px 12px 0 1px #7b7e8c22,9px 28px 0 -2px #7b7e8c2b}
+.morse-paper[hidden]{display:none!important}
+.morse-paper{left:7%;top:54%;height:min(44dvh,350px);filter:drop-shadow(0 12px 18px #0008)}
+.morse-paper-front{transform:none!important;backface-visibility:visible;inset:0}
+.morse-paper-grip{cursor:grab;touch-action:none}
+.morse-paper-flip{touch-action:manipulation}
