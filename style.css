@@ -726,3 +726,40 @@ margin:0!important;box-sizing:border-box!important;
 .morse-lens::after{content:"";position:absolute;inset:2px;border-radius:50%;background:linear-gradient(135deg,#fff9d548,transparent 45%,#e3f2ff14 75%);pointer-events:none}
 .morse-lens-canvas{width:100%;height:100%;display:block}
 .morse-paper-ornament{padding-left:26px}
+
+/* Tag 10 – das Archiv der verschollenen Briefe */
+.day10-quest{margin:18px auto;padding:22px 15px;border:1px solid #bd995f;border-radius:16px;background:linear-gradient(145deg,#fff5dd,#ebd8b7);text-align:center;max-width:620px;color:#563b26}
+.day10-quest[hidden],.day10-route[hidden]{display:none}
+.day10-quest h3{font:26px Georgia,serif;margin:8px 0}
+.day10-open{background:#61462d;color:#fff2d5;border:1px solid #9e7849;border-radius:9px;padding:12px 18px;font:16px Georgia,serif}
+html:has(.day10-overlay),html:has(.day10-overlay) body{overflow:hidden!important;overscroll-behavior:none}
+.day10-overlay{position:fixed!important;inset:0!important;width:100dvw!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;z-index:2147483000!important;background:#101629;color:#f5e6c8;display:flex;flex-direction:column;box-sizing:border-box;overflow:hidden;overscroll-behavior:none}
+.day10-top{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:9px 16px;background:#0c1222;border-bottom:1px solid #89714d;font:clamp(16px,4vw,22px) Georgia,serif;min-height:52px}
+.day10-close{background:#1d263a;border:1px solid #8b7551;color:#f5e6c8;border-radius:50%;font-size:25px;width:39px;height:39px}
+.day10-scroll{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;flex:1;min-height:0;padding:18px 12px max(24px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at 45% 10%,#283654,#101629 65%)}
+.day10-intro{text-align:center;max-width:660px;margin:0 auto 22px}
+.day10-intro>span{font:12px Georgia,serif;letter-spacing:2px;color:#d5b982}
+.day10-intro h2{font:clamp(26px,6vw,37px) Georgia,serif;margin:11px 0;color:#fff0cf}
+.day10-intro p{font:15px/1.55 Georgia,serif;color:#e1d2b5}
+.day10-count{color:#c3a97c}
+.day10-list{max-width:650px;margin:auto;display:grid;gap:12px}
+.day10-mail{background:linear-gradient(145deg,#f8edd6,#e5cda5);border:2px solid #ab8a59;border-radius:10px;color:#4a3422;box-shadow:0 5px 15px #0005;overflow:hidden}
+.day10-mail.is-selected{border-color:#f4d181}
+.day10-mail-head{display:flex;align-items:stretch;gap:4px}
+.day10-mail-toggle{flex:1;min-width:0;display:flex;align-items:center;gap:10px;text-align:left;background:transparent;color:#49341f;border:0;padding:12px 9px;font-family:Georgia,serif}
+.day10-seal{font-size:24px;color:#866038}
+.day10-mail-label{flex:1;min-width:0}
+.day10-mail-label strong{display:block;font-size:16px}
+.day10-mail-label small{display:block;margin-top:4px;font-size:12px;color:#765c3d}
+.day10-chevron{font-size:20px}
+.day10-move{display:flex;flex-direction:column;border-left:1px solid #c6a980}
+.day10-move button{flex:1;min-width:38px;background:#ead6b4;color:#634627;border:0;font-size:21px}
+.day10-move button+button{border-top:1px solid #c6a980}
+.day10-mail-body{padding:5px 17px 17px;border-top:1px solid #c9ac7b;font:15px/1.6 Georgia,serif}
+.day10-mail-body p{margin:10px 0}
+.day10-mail-body strong{color:#7d4829}
+.day10-submit{max-width:650px;margin:24px auto;text-align:center;background:#19243b;border:1px solid #957a50;border-radius:13px;padding:20px 13px;font:17px Georgia,serif}
+.day10-form{display:flex;justify-content:center;flex-wrap:wrap;gap:9px}
+.day10-form input{min-width:140px;max-width:250px;flex:1;background:#0c1426;border:1px solid #aa8b5b;border-radius:8px;padding:11px;color:#fff;font-size:16px}
+.day10-form button{background:#b69562;color:#1e1a17;border:0;border-radius:8px;padding:11px;font:15px Georgia,serif}
+.day10-status{min-height:20px;color:#f1d7a3;font-size:14px}
