@@ -3,7 +3,7 @@
 const DAY=2, WIDTH=8, HEIGHT=7, SPAN='STERNENPFAD';
 const WORDS=['STERNENPFAD','MONDHAIN','NEBELTOR','EISFELS','ROSENAU','DORNA','FROST','LUMEN'];
 const lengths=WORDS.map(w=>w.length);
-const path=[];for(let x=0;x<WIDTH;x++)for(let j=0;j<HEIGHT;j++)path.push((x*HEIGHT)+(x%2===0?j:HEIGHT-1-j));
+const path=[55,54,48,47,53,45,37,44,50,49,42,35,36,43,51,52,46,38,32,40,41,34,33,39,31,25,19,27,20,26,18,12,13,6,5,4,10,11,17,23,24,30,29,28,21,15,16,22,14,7,0,1,8,2,3,9];
 const paths={},letters=Array(WIDTH*HEIGHT).fill(''),owners=Array(WIDTH*HEIGHT).fill('');
 let offset=0;WORDS.forEach((word,i)=>{const cells=path.slice(offset,offset+word.length);paths[word]=cells;cells.forEach((id,k)=>{letters[id]=word[k];owners[id]=word});offset+=word.length});
 const numbers=Array.from({length:100},(_,i)=>i+1);let seed=20261202;
@@ -65,10 +65,25 @@ function drawConnections(){
  draw(active,'#9c682b',4.5);
 }
 function clearSelection(){active=[];paint()}
+const acceptedBonus=new Set(['ROSS','NAME','MANGO','PARIS','LEGAT']);
+const rejectedBonus=new Set(['NEBE','SURE']);
 async function validBonus(word){
- if(word.length<4||word.length>14||! /^[A-Z]+$/.test(word))return false;
- try{const response=await fetch('https://de.wiktionary.org/w/api.php?action=parse&format=json&formatversion=2&prop=wikitext&page='+encodeURIComponent(word.toLowerCase())+'&origin=*');if(!response.ok)return false;const json=await response.json();return /\{\{Sprache\|Deutsch\}\}/i.test(json?.parse?.wikitext||'')}catch{return false}
+ if(word.length<4||word.length>14||!/^[A-ZÄÖÜ]+$/.test(word)||rejectedBonus.has(word))return false;
+ if(acceptedBonus.has(word))return true;
+ // Duden hat keine frei verfuegbare Browser-API; pruefe deutsche Wortarten im Wiktionary.
+ for(const title of [...new Set([word[0]+word.slice(1).toLowerCase(),word.toLowerCase()])]){
+  try{
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),4500);
+   let response;try{response=await fetch('https://de.wiktionary.org/w/api.php?action=parse&format=json&formatversion=2&prop=wikitext&redirects=1&page='+encodeURIComponent(title)+'&origin=*',{signal:controller.signal})}finally{clearTimeout(timer)}
+   if(!response.ok)continue;
+   const json=await response.json(),wiki=String(json?.parse?.wikitext||'');
+   const german=wiki.match(/\{\{Sprache\s*\|\s*Deutsch\s*\}\}([\s\S]*?)(?=\{\{Sprache\s*\||$)/i)?.[1]||'';
+   if(german&&/\{\{Wortart\|\s*(?:Substantiv|Verb|Adjektiv|Adverb|Pronomen|Numerale|Interjektion|Konjunktion|Präposition|Artikel)\s*\|\s*Deutsch/i.test(german))return true;
+  }catch{}
+ }
+ return false;
 }
+
 async function finish(){
  if(checking||!active.length)return;
  const cells=[...active],word=wordOf(cells);active=[];checking=true;
@@ -108,7 +123,7 @@ function openPuzzle(){
  grid.addEventListener('click',e=>{if(e.detail!==0)return;const b=e.target.closest('.strands-cell');if(!b)return;add(Number(b.dataset.id))});
  modal.querySelector('#strands-hint-button').onclick=()=>{
   if(state.bonusWords.length<3)return;
-  const target=WORDS.find(w=>!state.found.includes(w));if(!target)return;
+  const target=WORDS.find(w=>w!==SPAN&&!state.found.includes(w))||WORDS.find(w=>!state.found.includes(w));if(!target)return;
   state.bonusWords=state.bonusWords.slice(3);state.hint=target;
   modal.querySelector('#strands-message').textContent='✧ Die markierten Buchstaben gehören zu einem gesuchten Wort. Finde ihre Reihenfolge!';
   save();paint();
