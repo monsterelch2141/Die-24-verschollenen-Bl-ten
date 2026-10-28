@@ -51,7 +51,7 @@ function paint(){
  const hintButton=modal.querySelector('#strands-hint-button');hintButton.disabled=state.bonusWords.length<3;hintButton.textContent='✧ Hinweis freischalten (3 Bonuswörter)';
  const next=modal.querySelector('#strands-next');next.hidden=state.found.length!==8;
  if(state.found.length===8){
-  next.innerHTML='<p>✦ Alle acht Wörter sind entdeckt! Die kleinen Zahlen auf den Buchstaben des Sternenpfads führen zum nächsten Geheimnis.</p><button type="button" id="strands-password-button">✧ Lösung eingeben ✧</button><div id="strands-password-area"></div>';
+  next.innerHTML='<p>✦ Alle acht Wörter sind entdeckt!</p><button type="button" id="strands-password-button">✧ Lösung eingeben ✧</button><div id="strands-password-area"></div>';
   next.querySelector('button').onclick=showPassword;
  }
 }
