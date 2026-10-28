@@ -50,7 +50,7 @@ function close(){modal?.remove();modal=null;document.removeEventListener('keydow
 function build(){
  if(modal)return;
  modal=document.createElement('div');modal.className='wordle-overlay';modal.innerHTML='<section class="wordle-panel" role="dialog" aria-modal="true" aria-label="Tagesrätsel 3"><button class="wordle-close" type="button" aria-label="Schließen">×</button><div class="quest-mark">✧ ✦ ✧</div><h2>Das Wort der Sternenwächter</h2><p>Fünf Buchstaben. Sechs Versuche. Welche Spur führt zu den verschollenen Blüten?</p><div class="wordle-grid" aria-label="Wordle-Spielbrett"></div><p class="wordle-status" role="status" aria-live="polite"></p><div class="wordle-keyboard"></div><div class="wordle-next" hidden></div></section>';
- document.body.append(modal);modal.querySelector('.wordle-close').onclick=close;
+ document.documentElement.append(modal);modal.querySelector('.wordle-close').onclick=close;
  modal.addEventListener('click',e=>{if(e.target===modal)close()});
  tiles=modal.querySelector('.wordle-grid');status=modal.querySelector('.wordle-status');
  const keyboard=modal.querySelector('.wordle-keyboard');keys={};
