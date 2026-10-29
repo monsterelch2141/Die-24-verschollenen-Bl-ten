@@ -7,7 +7,7 @@ const normalize=s=>String(s||'').toLocaleLowerCase('de').normalize('NFD').replac
 let ranking=null,loading=null;
 function loadRanking(){
  if(loading)return loading;
- loading=fetch('contexto-ranking.json?v=2',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Ranking noch nicht veröffentlicht');return r.json()}).then(data=>{
+ loading=fetch('contexto-ranking.json?v=3',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Ranking noch nicht veröffentlicht');return r.json()}).then(data=>{
   if(!data||Object.keys(data).length<20000||data.schlagloch!==1)throw Error('Ranking unvollständig');
   ranking=data;return data;
  }).catch(e=>{loading=null;throw e});
