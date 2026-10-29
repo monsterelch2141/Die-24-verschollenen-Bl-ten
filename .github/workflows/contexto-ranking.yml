@@ -1,10 +1,6 @@
 name: Build Contexto semantic ranking
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - generate-contexto.py
-      - .github/workflows/contexto-ranking.yml
 permissions:
   contents: write
 jobs:
