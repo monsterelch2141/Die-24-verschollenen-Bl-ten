@@ -26,7 +26,8 @@ function draw(){
  for(let y=0;y<N;y++)for(let x=0;x<N;x++){
  const j=(y*N+x)*4;
  const inside=(mask[j+3]/255);
- const lower=((x-s.baseX+(inside>.45?P/2:0))%P+P)%P<P/2;
+ const alignment=Math.max(0,1-Math.abs(dx)/12);
+ const lower=((x-s.baseX+(inside>.45?P/2*alignment:0))%P+P)%P<P/2;
  const upper=((x-s.topX)%P+P)%P<P/2;
  // Two transparent ink layers, rather than a separately drawn letter.
  const ink=(lower?0.57:0)+(upper?0.43:0);
@@ -36,7 +37,7 @@ function draw(){
  ctx.putImageData(img,0,0);
  ctx.strokeStyle='#caa66b';ctx.lineWidth=5;ctx.strokeRect(2,2,N-4,N-4);
  const registered=Math.abs(dx)<2;
- if(registered&&!s.found){s.found=true;overlay.querySelector('.day11-message').textContent='✦ Das Raster enthüllt einen Buchstaben!';setTimeout(()=>{if(overlay)render()},0)}
+ if(registered&&!s.found){s.found=true;overlay.querySelector('.day11-message').textContent='✦ Die acht Zeichen wurden im Raster sichtbar!';setTimeout(()=>{if(overlay)render()},0)}
 }
 function render(){
  if(!overlay)return;
