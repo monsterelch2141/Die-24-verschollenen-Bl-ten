@@ -20,12 +20,53 @@ for(const feature of shapes){const name=normalize(feature.properties?.name||feat
 for(const item of guesses){const p=project(item.lon,item.lat);if(p.visible>0){ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fillStyle=color(item.km);ctx.fill();ctx.strokeStyle='#fff2d2';ctx.lineWidth=1.5;ctx.stroke()}}
 ctx.restore();ctx.strokeStyle='#b7a67b';ctx.lineWidth=3;ctx.beginPath();ctx.arc(W/2,W/2,R,0,Math.PI*2);ctx.stroke()}
 function updateList(){if(!modal)return;modal.querySelector('.day1-history').innerHTML=guesses.map(g=>'<div class="day1-guess"><strong>'+g.name+'</strong><span style="color:'+color(g.km)+'">●</span><span>'+g.km.toLocaleString('de-DE')+' km</span><span>'+arrow(g.direction)+'</span></div>').join('');renderGlobe()}
-async function loadData(){countries=[...fallback];try{const response=await fetch('https://restcountries.com/v3.1/all?fields=name,translations,latlng,cca2',{signal:AbortSignal.timeout(8500)});if(response.ok){const all=await response.json();countries=all.filter(x=>x.latlng?.length>=2).map(x=>({name:x.translations?.deu?.common||x.name.common,en:x.name.common,lat:x.latlng[0],lon:x.latlng[1]}));countries.push(...fallback.filter(x=>!countries.some(y=>normalize(y.name)===normalize(x.name))));}}catch{}
-try{const response=await fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson',{signal:AbortSignal.timeout(9000)});if(response.ok)shapes=(await response.json()).features||[]}catch{}
-if(modal){const dl=modal.querySelector('datalist');dl.innerHTML=countries.map(c=>'<option value="'+c.name.replace(/"/g,'&quot;')+'"></option>').join('');renderGlobe()}}
+async function loadData(){
+  countries=[...fallback];
+  const endpoints=[
+    'https://restcountries.com/v3.1/all?fields=name,translations,latlng,cca2,independent',
+    'https://raw.githubusercontent.com/mledoze/countries/master/countries.json'
+  ];
+  for(const url of endpoints){
+    try{
+      const response=await fetch(url,{signal:AbortSignal.timeout(15000)});
+      if(!response.ok)continue;
+      const all=await response.json();
+      if(!Array.isArray(all)||all.length<190)continue;
+      const loaded=all.filter(x=>Array.isArray(x.latlng)&&x.latlng.length>=2&&Number.isFinite(x.latlng[0])&&Number.isFinite(x.latlng[1]))
+        .map(x=>({name:x.translations?.deu?.common||x.translations?.deu?.official||x.translations?.de||x.name?.common||x.name,
+          en:x.name?.common||x.name?.official||x.name,lat:x.latlng[0],lon:x.latlng[1],code:x.cca2||x.cca2}));
+      if(loaded.length<190)continue;
+      countries=loaded;
+      break;
+    }catch(error){console.warn('Länderdaten konnten von einer Quelle nicht geladen werden:',error)}
+  }
+  for(const item of fallback){
+    if(!countries.some(x=>normalize(x.name)===normalize(item.name)||normalize(x.en)===normalize(item.en)))
+      countries.push(item);
+  }
+  // Gebräuchliche deutsche Namen, die bei manchen Datenquellen abweichen.
+  const aliases={
+    malediven:'MV',bangladesch:'BD',srilanka:'LK',sudkorea:'KR',nordkorea:'KP',
+    tschechien:'CZ',elfenbeinkuste:'CI',vereinigtestaaten:'US',usa:'US',
+    grossbritannien:'GB',vereinigteskonigreich:'GB',weissrussland:'BY',
+    kapverde:'CV',osttimor:'TL',eswatini:'SZ',swasiland:'SZ',
+    myanmar:'MM',burma:'MM',vatikanstadt:'VA',palastina:'PS',
+    kosovo:'XK',tansania:'TZ',moldau:'MD',brunei:'BN',laos:'LA'
+  };
+  window.ADVENT_WORLDLE_ALIASES=aliases;
+  try{
+    const response=await fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson',{signal:AbortSignal.timeout(9000)});
+    if(response.ok)shapes=(await response.json()).features||[];
+  }catch{}
+  if(modal){
+    const dl=modal.querySelector('datalist');
+    dl.innerHTML=countries.map(x=>'<option value="'+String(x.name).replace(/"/g,'&quot;')+'"></option>').join('');
+    renderGlobe();
+  }
+}
 function open(){if(modal)return;modal=document.createElement('div');modal.className='day1-overlay';modal.innerHTML='<header class="day1-top"><span>✧ Die Welt der verborgenen Sterne ✧</span><button type="button" class="day1-close" aria-label="Schließen">×</button></header><main class="day1-scroll"><div class="day1-globe"><canvas width="560" height="560" aria-label="Drehbarer Globus"></canvas></div><p class="day1-caption">Drehe die Weltkugel und suche das verborgene Land.</p><form class="day1-country-form"><input list="day1-countries" placeholder="Land eingeben" aria-label="Land eingeben" autocomplete="off" required><datalist id="day1-countries"></datalist><button type="submit">Raten</button></form><div class="day1-history"></div><section class="day1-capital" hidden><h2>✧ Das Land ist gefunden! ✧</h2><p>Wie heißt die Hauptstadt dieses Landes?</p><form class="day1-capital-form"><input aria-label="Hauptstadt" placeholder="Hauptstadt eingeben" required autocomplete="off"><button type="submit">Sternenroute freischalten</button></form></section><p class="day1-status" role="status"></p></main>';document.documentElement.append(modal);document.body.classList.add('day1-active');canvas=modal.querySelector('canvas');ctx=canvas.getContext('2d');modal.querySelector('.day1-close').onclick=()=>{modal.remove();modal=null;ctx=null;document.body.classList.remove('day1-active')};
 canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,lon:rotation[0],lat:rotation[1]};canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!drag)return;const k=canvas.getBoundingClientRect().width;rotation[0]=drag.lon-(e.clientX-drag.x)*180/k;rotation[1]=clamp(drag.lat+(e.clientY-drag.y)*140/k,-85,85);renderGlobe()});canvas.addEventListener('pointerup',()=>drag=null);canvas.addEventListener('pointercancel',()=>drag=null);
-modal.querySelector('.day1-country-form').onsubmit=e=>{e.preventDefault();const input=modal.querySelector('.day1-country-form input'),q=normalize(input.value);const aliases={chile:'Chile',tschechien:'Czechia',sudkorea:'South Korea',nordkorea:'North Korea',elfenbeinkuste:'Côte d’Ivoire',vereinigtestaaten:'United States of America',grossbritannien:'United Kingdom'};const search=normalize(aliases[q]||q);const c=countries.find(v=>normalize(v.name)===q||normalize(v.en)===q||normalize(v.name)===search||normalize(v.en)===search)||fallback.find(v=>normalize(v.name)===q||normalize(v.en)===q);if(!c){modal.querySelector('.day1-status').textContent='Dieses Land wurde nicht erkannt. Bitte wähle ein Land aus der Liste.';return}input.value='';modal.querySelector('.day1-status').textContent='';if(guesses.some(g=>normalize(g.name)===normalize(c.name)))return;const km=dist(c,TARGET),direction=bearing(c,TARGET);guesses.unshift({...c,km,direction});rotation=[c.lon,c.lat];updateList();if(km<30||normalize(c.name)==='srilanka'){capitalStep=true;modal.querySelector('.day1-capital').hidden=false;modal.querySelector('.day1-country-form').hidden=true;modal.querySelector('.day1-caption').textContent='✦ Das gesuchte Land ist gefunden!';}};
+modal.querySelector('.day1-country-form').onsubmit=e=>{e.preventDefault();const input=modal.querySelector('.day1-country-form input'),q=normalize(input.value);const aliases={chile:'Chile',tschechien:'Czechia',sudkorea:'South Korea',nordkorea:'North Korea',elfenbeinkuste:'Côte d’Ivoire',vereinigtestaaten:'United States of America',grossbritannien:'United Kingdom'};const search=normalize(aliases[q]||q);const iso=window.ADVENT_WORLDLE_ALIASES?.[q];const c=countries.find(v=>normalize(v.name)===q||normalize(v.en)===q||normalize(v.name)===search||normalize(v.en)===search||(iso&&v.code===iso))||fallback.find(v=>normalize(v.name)===q||normalize(v.en)===q);if(!c){modal.querySelector('.day1-status').textContent='Dieses Land wurde nicht erkannt. Bitte wähle ein Land aus der Liste.';return}input.value='';modal.querySelector('.day1-status').textContent='';if(guesses.some(g=>normalize(g.name)===normalize(c.name)))return;const km=dist(c,TARGET),direction=bearing(c,TARGET);guesses.unshift({...c,km,direction});rotation=[c.lon,c.lat];updateList();if(km<30||normalize(c.name)==='srilanka'){capitalStep=true;modal.querySelector('.day1-capital').hidden=false;modal.querySelector('.day1-country-form').hidden=true;modal.querySelector('.day1-caption').textContent='✦ Das gesuchte Land ist gefunden!';}};
 modal.querySelector('.day1-capital-form').onsubmit=e=>{e.preventDefault();const v=normalize(modal.querySelector('.day1-capital-form input').value);if(['srijayawardenepurakotte','srijayewardenepurakotte','jayawardenepurakotte','jayewardenepurakotte','kotte'].includes(v)){solved=true;localStorage.setItem(KEY,'yes');modal.querySelector('.day1-status').textContent='✦ Sternenroute freigeschaltet.';sync()}else modal.querySelector('.day1-status').textContent='Das ist noch nicht die gesuchte Hauptstadt.'};
 updateList();loadData()}
 bar.querySelector('.day1-open').onclick=open;board.addEventListener('click',e=>{if(!selected()||solved||!e.target.closest('.cell'))return;e.stopImmediatePropagation();e.preventDefault();feedback.className='feedback error';feedback.textContent='✧ Löse zuerst das Tagesrätsel. ✧'},true);
