@@ -833,3 +833,25 @@ html:has(.day11-overlay),html:has(.day11-overlay) body{overflow:hidden!important
 .day11-layer.active{background:#d5b780;color:#2b241b}
 .day11-tabs{flex-wrap:wrap;max-width:420px}
 .day11-tab{padding:9px 12px;min-width:42px}
+
+/* Tag 1: Worldle, globe and fullscreen */
+.day1-quest{margin:18px auto;padding:20px 14px;border:1px solid #bda16f;border-radius:15px;background:linear-gradient(145deg,#fff4d9,#e8d3ae);text-align:center;color:#543c23}
+.day1-quest[hidden],.day1-route[hidden],.day1-capital[hidden],.day1-country-form[hidden]{display:none!important}
+.day1-quest h3{font:25px Georgia,serif;margin:8px 0}.day1-quest p{font:16px/1.5 Georgia,serif}
+.day1-open{background:#51402e;color:#fff0ce;border:1px solid #b99963;border-radius:8px;padding:12px 17px;font:16px Georgia,serif}
+html:has(.day1-overlay),html:has(.day1-overlay) body{overflow:hidden!important;overscroll-behavior:none}
+.day1-overlay{position:fixed!important;inset:0!important;width:100dvw!important;height:100dvh!important;z-index:2147483000!important;background:#091222;color:#f2dcad;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box}
+.day1-top{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;min-height:52px;flex-shrink:0;background:#080e1c;border-bottom:1px solid #806b4a;font:clamp(16px,4vw,22px) Georgia,serif}
+.day1-close{background:#17233a;color:#ead5aa;border:1px solid #8c734d;border-radius:50%;width:39px;height:39px;font-size:26px}
+.day1-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:10px 13px max(30px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at 50% 30%,#263f55,#0a1021 70%);text-align:center}
+.day1-globe{width:min(88vw,390px);margin:0 auto;touch-action:none}
+.day1-globe canvas{width:100%;display:block;aspect-ratio:1;touch-action:none;filter:drop-shadow(0 0 18px #b6a27745)}
+.day1-caption{font:15px/1.4 Georgia,serif;margin:0 auto 13px;color:#dec99f}
+.day1-country-form,.day1-capital-form{display:flex;gap:8px;max-width:520px;margin:12px auto;justify-content:center}
+.day1-country-form input,.day1-capital-form input{min-width:0;flex:1;background:#111b2e;border:1px solid #a38a5e;border-radius:8px;padding:12px;color:#fff4d8;font:16px Georgia,serif}
+.day1-country-form button,.day1-capital-form button{border:1px solid #d6b67d;border-radius:8px;background:#b99c69;color:#201b15;padding:10px 13px;font:15px Georgia,serif}
+.day1-history{max-width:540px;margin:15px auto;display:flex;flex-direction:column;gap:7px}
+.day1-guess{display:grid;grid-template-columns:minmax(95px,1fr) 20px 105px 80px;gap:5px;align-items:center;text-align:left;border:1px solid #7d6b50;border-radius:8px;background:#152237;padding:9px 10px;font:13px Georgia,serif}
+.day1-guess strong{overflow-wrap:anywhere}.day1-capital{margin:18px auto;max-width:520px;padding:14px;border:1px solid #b59a6a;border-radius:12px;background:#18263b}
+.day1-capital h2{font:23px Georgia,serif}.day1-capital p{font:16px Georgia,serif}
+.day1-status{font:15px Georgia,serif;color:#f0d28b;min-height:25px}
