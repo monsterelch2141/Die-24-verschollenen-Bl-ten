@@ -855,3 +855,12 @@ html:has(.day1-overlay),html:has(.day1-overlay) body{overflow:hidden!important;o
 .day1-guess strong{overflow-wrap:anywhere}.day1-capital{margin:18px auto;max-width:520px;padding:14px;border:1px solid #b59a6a;border-radius:12px;background:#18263b}
 .day1-capital h2{font:23px Georgia,serif}.day1-capital p{font:16px Georgia,serif}
 .day1-status{font:15px Georgia,serif;color:#f0d28b;min-height:25px}
+
+/* Tag 4: Contexto */
+.day4-contexto-quest{text-align:center;margin:22px auto;padding:20px;border:1px solid #bb985f;background:#fff5df;color:#603d25}
+.day4-contexto-quest button,.contexto-form button{border:1px solid #a67b42;border-radius:8px;padding:10px 18px;background:#80592e;color:#fff8e8;cursor:pointer}
+.contexto-overlay{position:fixed;inset:0;z-index:100000;background:#1a110dc9;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.contexto-panel{position:relative;width:min(520px,100%);max-height:90dvh;overflow:auto;background:#fff5e1;border:2px solid #ba965e;border-radius:14px;box-shadow:0 20px 70px #0008;padding:24px 20px;color:#5b3b25;text-align:center}
+.contexto-panel h2{font-size:26px;margin:10px 0}.contexto-panel p{line-height:1.35}.contexto-close{position:absolute;top:6px;right:12px;border:0;background:none;font-size:32px;color:#704e33;cursor:pointer}
+.contexto-form{display:flex;gap:8px;margin:16px 0}.contexto-form input{flex:1;min-width:0;border:1px solid #b49b7d;border-radius:8px;padding:10px;font:inherit;font-size:19px}
+.contexto-count{text-align:left;font-weight:700;margin:12px 0}.contexto-guesses{display:grid;gap:8px}.contexto-guess{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:8px 10px;background:#f4e5cc;border-radius:7px;text-align:left}.contexto-guess span{font-weight:bold}.contexto-meter{grid-column:1/-1;height:7px;border-radius:8px;background:#e2d2ba;overflow:hidden}.contexto-meter i{display:block;height:100%;border-radius:8px}.contexto-finished{font-weight:700;color:#386d35}
