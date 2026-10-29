@@ -763,3 +763,29 @@ html:has(.day10-overlay),html:has(.day10-overlay) body{overflow:hidden!important
 .day10-form input{min-width:140px;max-width:250px;flex:1;background:#0c1426;border:1px solid #aa8b5b;border-radius:8px;padding:11px;color:#fff;font-size:16px}
 .day10-form button{background:#b69562;color:#1e1a17;border:0;border-radius:8px;padding:11px;font:15px Georgia,serif}
 .day10-status{min-height:20px;color:#f1d7a3;font-size:14px}
+
+/* Tag 10: interaktives Detektiv-Postfach */
+.day10-desk{display:grid;grid-template-columns:minmax(112px,35%) minmax(0,1fr);gap:10px;max-width:750px;margin:0 auto 18px;align-items:start}
+.day10-inbox{display:flex;flex-direction:column;gap:6px;max-height:460px;overflow-y:auto}
+.day10-inbox-item{display:flex;align-items:flex-start;gap:7px;text-align:left;background:#e6d0aa;border:1px solid #b28e58;color:#49321d;border-radius:7px;padding:9px 6px;font:12px Georgia,serif;min-width:0}
+.day10-inbox-item.active{background:#fff1cf;border-color:#ffda8e;box-shadow:0 0 0 1px #c5a16b}
+.day10-inbox-item>span:last-child{min-width:0;overflow-wrap:anywhere}
+.day10-inbox-item strong{display:block;font-size:13px}
+.day10-inbox-item small{display:block;font-size:11px;margin-top:3px}
+.day10-detail{background:linear-gradient(145deg,#fff2d7,#e5c99b);border:2px solid #b28b50;border-radius:9px;color:#48301b;padding:15px 12px;min-height:275px;box-shadow:0 7px 22px #0004}
+.day10-letter-meta{border-bottom:1px solid #c9aa78;padding-bottom:10px}
+.day10-letter-meta h3{font:21px Georgia,serif;margin:8px 0}
+.day10-letter-meta small{font:12px Georgia,serif}
+.day10-letter-text{font:15px/1.65 Georgia,serif;margin-top:13px}
+.day10-investigation{max-width:750px;margin:0 auto 25px;padding:18px 12px;background:#19243a;border:1px solid #a78c5c;border-radius:12px}
+.day10-investigation h3{font:22px Georgia,serif;color:#f6e4ba;margin:5px 0 12px}
+.day10-questions{display:grid;gap:8px}
+.day10-question,.day10-reveal,.day10-accuse{background:#d8bb85;color:#322617;border:1px solid #e9d09f;border-radius:8px;padding:12px;text-align:left;font:15px Georgia,serif}
+.day10-question.visited{background:#8b795d;color:#fff2d6}
+.day10-answer,.day10-verdict{font:15px/1.6 Georgia,serif;color:#f1d5a4}
+.day10-case,.day10-code{margin-top:18px;padding-top:14px;border-top:1px solid #816c4d}
+.day10-case[hidden],.day10-code[hidden],.day10-reveal[hidden]{display:none!important}
+.day10-choices{display:flex;gap:8px;flex-wrap:wrap}
+.day10-choices select{background:#f3e4c6;color:#3e2b19;border:1px solid #ae8d59;border-radius:7px;padding:10px;font-size:15px;min-width:125px;flex:1}
+.day10-accuse{text-align:center}
+@media(max-width:390px){.day10-desk{grid-template-columns:115px minmax(0,1fr)}.day10-detail{padding:10px 8px}.day10-letter-text{font-size:13px}.day10-inbox-item{padding:7px 4px}}
