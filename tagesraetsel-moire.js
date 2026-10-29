@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const DAY=11,KEY='advent-tag11-moire-v4',ANSWER='LUMINARA',ROUTE=[137,208,314,95,421,63,178,256];
+const DAY=11,KEY='advent-tag11-moire-v5',ANSWER='LUMINARA',ROUTE=[137,208,314,95,421,63,178,256];
 const chars=['R','A','N','L','U','I','A','M'];
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
 if(!day||!board||!instruction)return;
