@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const DAY=10,KEY='advent-tag10-detektiv-v1',ROUTE=[137,208,314,95,421,63,178,256],ANSWER='486219';
+const DAY=10,KEY='advent-tag10-detektiv-v1',ROUTE=[137,208,314,95,421,63,178,256],ANSWER='486291';
 const mails=[
 {id:'start',from:'Seraphin',subject:'Dringend: Das Geschenk ist verschwunden!',stamp:'18:45',body:'Liebe Freunde, morgen wollten wir Lena im Namen Luminaras eine kleine Überraschung überreichen: eine Schatulle mit einem leuchtenden Blütenanhänger. Heute Abend ist sie aus der Sternwarte verschwunden. Ich hatte sie am Nachmittag in den Glasschrank gelegt. Bitte helft mir herauszufinden, wer sie genommen hat und wo sie geblieben ist. Die Schatulle soll auf keinen Fall verloren gehen!'},
 {id:'laura',from:'Laura',subject:'Meine Vorbereitungen',stamp:'18:52',body:'Ich habe den Festsaal dekoriert und dafür <b>vier</b> Schleifen an den Türkranz gebunden. Als ich später die Sternwarte verließ, sah ich Silas mit einer großen Keksdose Richtung Küche laufen. Er behauptet, er habe nur nach Zimt gesucht. Nymera war zu diesem Zeitpunkt noch beim Brunnen. Die Schatulle habe ich nicht angerührt.'},
