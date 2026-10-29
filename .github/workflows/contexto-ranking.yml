@@ -22,8 +22,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Keep the generated file while updating to the latest main.
+          # Other website commits may have landed during model inference.
+          git fetch origin main
+          git reset --soft origin/main
           git add contexto-ranking.json
           if ! git diff --cached --quiet; then
             git commit -m "Generate 35k precomputed semantic Contexto ranks"
-            git push
+            git push origin HEAD:main
           fi
