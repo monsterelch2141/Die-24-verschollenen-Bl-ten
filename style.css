@@ -789,3 +789,38 @@ html:has(.day10-overlay),html:has(.day10-overlay) body{overflow:hidden!important
 .day10-choices select{background:#f3e4c6;color:#3e2b19;border:1px solid #ae8d59;border-radius:7px;padding:10px;font-size:15px;min-width:125px;flex:1}
 .day10-accuse{text-align:center}
 @media(max-width:390px){.day10-desk{grid-template-columns:115px minmax(0,1fr)}.day10-detail{padding:10px 8px}.day10-letter-text{font-size:13px}.day10-inbox-item{padding:7px 4px}}
+
+/* Tag 11: Moire-Siegel als vollflaechiges iPhone-Raetsel */
+.day11-quest{margin:18px auto;padding:20px 14px;border:1px solid #bda16f;border-radius:15px;background:linear-gradient(145deg,#fff4d9,#e8d3ae);text-align:center;color:#543c23}
+.day11-quest[hidden],.day11-route[hidden],.day11-form[hidden]{display:none!important}
+.day11-quest h3{font:25px Georgia,serif;margin:8px 0}
+.day11-open{background:#51402e;color:#fff0ce;border:1px solid #b99963;border-radius:8px;padding:12px 17px;font:16px Georgia,serif}
+html:has(.day11-overlay),html:has(.day11-overlay) body{overflow:hidden!important;overscroll-behavior:none}
+.day11-overlay{position:fixed!important;inset:0!important;width:100dvw!important;height:100dvh!important;z-index:2147483000!important;background:#0a1021;color:#f0dbb0;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box}
+.day11-top{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;min-height:48px;background:#090f1d;border-bottom:1px solid #846b44;font:clamp(16px,4vw,22px) Georgia,serif;flex-shrink:0}
+.day11-close{background:#17233a;color:#ead5aa;border:1px solid #8c734d;border-radius:50%;width:38px;height:38px;font-size:25px}
+.day11-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:17px 12px max(28px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at 50% 20%,#243650,#0a1021 65%)}
+.day11-intro{text-align:center;max-width:600px;margin:0 auto}
+.day11-intro h2{font:clamp(25px,6vw,35px) Georgia,serif;margin:4px 0 9px}
+.day11-intro p{font:15px/1.5 Georgia,serif;color:#ddcaa4}
+.day11-found{font-weight:bold!important;color:#eac27a!important}
+.day11-tabs{display:flex;gap:8px;justify-content:center;margin:15px auto}
+.day11-tab{border:1px solid #977c50;border-radius:8px;background:#18253a;color:#f4d9a4;padding:11px 18px;font:17px Georgia,serif}
+.day11-tab.active{background:#bca071;color:#1e2635}
+.day11-tab.found{border-color:#f8dc87;box-shadow:0 0 10px #eacb7444}
+.day11-stage{position:relative;max-width:min(84vw,390px);margin:0 auto}
+.day11-canvas{display:block;width:100%;aspect-ratio:1;touch-action:none;border-radius:50%;box-shadow:0 0 25px #e0bf6944}
+.day11-stage-mark{position:absolute;left:50%;top:-9px;transform:translateX(-50%);color:#f1d99b;pointer-events:none}
+.day11-controls,.day11-result{max-width:580px;margin:15px auto;padding:15px;border:1px solid #816c49;border-radius:12px;background:#121d30}
+.day11-controls label{display:block;margin:12px 0;font:15px Georgia,serif}
+.day11-controls input[type=range]{display:block;width:100%;margin-top:9px;accent-color:#d9b774;touch-action:pan-x}
+.day11-readouts{display:flex;justify-content:space-between;font:14px Georgia,serif;color:#e7d3a8}
+.day11-controls p{font:13px/1.5 Georgia,serif;color:#c4b18e}
+.day11-message,.day11-status{min-height:18px;color:#f5d78b!important}
+.day11-result{text-align:center;font:16px Georgia,serif}
+.day11-result h3{font:22px Georgia,serif;margin:4px 0 12px}
+.day11-scraps{font:700 clamp(19px,5vw,27px) Georgia,serif;letter-spacing:2px}
+.day11-scraps span{color:#7f8493}.day11-scraps span.known{color:#f2d69a}
+.day11-form{margin-top:20px;border-top:1px solid #766446;padding-top:12px}
+.day11-form input{background:#090f1d;border:1px solid #977a4d;border-radius:8px;padding:11px;color:#fff;font-size:16px;max-width:220px;width:55%}
+.day11-form button{background:#c6a673;border:0;border-radius:8px;padding:12px;color:#20190f;font:14px Georgia,serif}
