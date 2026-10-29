@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const DAY=11,KEY='advent-tag11-moire-v3',ANSWER='LUMINARA',ROUTE=[137,208,314,95,421,63,178,256];
+const DAY=11,KEY='advent-tag11-moire-v4',ANSWER='LUMINARA',ROUTE=[137,208,314,95,421,63,178,256];
 const chars=['R','A','N','L','U','I','A','M'];
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
 if(!day||!board||!instruction)return;
@@ -9,15 +9,16 @@ const bar=document.createElement('section');bar.className='day11-quest';bar.hidd
 const selected=()=>Number(day.value)===DAY;
 function sync(){bar.hidden=!selected();if(!selected())return;bar.querySelector('.day11-route').hidden=!solved;if(solved)bar.querySelector('.day11-route').innerHTML='<strong>Sternenroute (Testdaten)</strong><p>'+ROUTE.join(' → ')+'</p><small>Vorläufige Route zum Testen.</small>';instruction.textContent=solved?'Verbinde deine Sternenroute und wähle den richtigen Stern.':'Löse zuerst das Tagesrätsel, bevor du ein Sternenfeld auswählst.'}
 const N=400,P=8;
-const glyphs=[[-100,-103,-24],[18,-110,32],[111,-76,-39],[-78,8,17],[69,12,-14],[-110,110,40],[10,110,-29],[112,101,14]];
-let overlay=null,active=0,layer='top',pointer=null,canvas=null,ctx=null,maskCanvas=null,maskCtx=null;
-const states=[{baseX:0,baseY:0,topX:19,topY:0,found:false}];
+const glyphs=[[-100,-103,-24,-52],[18,-110,32,35],[111,-76,-39,-24],[-78,8,17,57],[69,12,-14,13],[-110,110,40,-39],[10,110,-29,47],[112,101,14,-7]];
+let overlay=null,pointer=null,canvas=null,ctx=null,maskCanvas=null,maskCtx=null;
+const states=[{baseX:0,baseY:0,topX:0,topY:0}];
 function close(){overlay?.remove();overlay=null;document.body.classList.remove('day11-active')}
 function makeMask(){maskCanvas=document.createElement('canvas');maskCanvas.width=N;maskCanvas.height=N;maskCtx=maskCanvas.getContext('2d',{willReadFrequently:true});}
 function draw(){
  if(!ctx)return;
- const s=states[active],m=maskCtx;m.clearRect(0,0,N,N);m.fillStyle='#fff';m.textAlign='center';m.textBaseline='middle';m.font='bold 73px Georgia';glyphs.forEach((g,i)=>{m.save();m.translate(N/2+g[0],N/2+g[1]);m.rotate(g[2]*Math.PI/180);m.fillText(chars[i],0,0);m.restore()});
+ const s=states[0],m=maskCtx;m.clearRect(0,0,N,N);m.fillStyle='#fff';m.textAlign='center';m.textBaseline='middle';m.font='bold 73px Georgia';glyphs.forEach((g,i)=>{m.save();m.translate(N/2+g[0],N/2+g[1]);m.rotate(g[2]*Math.PI/180);m.fillText(chars[i],0,0);m.restore()});
  const mask=m.getImageData(0,0,N,N).data;
+ const masks=glyphs.map((g,i)=>{m.clearRect(0,0,N,N);m.save();m.translate(N/2+g[0],N/2+g[1]);m.rotate(g[2]*Math.PI/180);m.fillText(chars[i],0,0);m.restore();return m.getImageData(0,0,N,N).data});
  const img=ctx.createImageData(N,N),data=img.data;
  // Physikalische Rasterüberlagerung: In den Buchstaben verschiebt sich die Phase
  // der unteren Streifen um eine halbe Periode. Die obere Folie maskiert
@@ -25,9 +26,9 @@ function draw(){
  const dx=s.topX-s.baseX,dy=s.topY-s.baseY;
  for(let y=0;y<N;y++)for(let x=0;x<N;x++){
  const j=(y*N+x)*4;
- const inside=(mask[j+3]/255);
- const alignment=Math.max(0,1-Math.abs(dx)/12);
- const lower=((x-s.baseX+(inside>.45?P/2*alignment:0))%P+P)%P<P/2;
+ let phase=0;
+ for(let i=0;i<glyphs.length;i++)if(masks[i][j+3]>110){const distance=Math.abs(dx-glyphs[i][3]);phase=(P/2)*Math.max(0,1-distance/10);break}
+ const lower=((x-s.baseX+phase)%P+P)%P<P/2;
  const upper=((x-s.topX)%P+P)%P<P/2;
  // Two transparent ink layers, rather than a separately drawn letter.
  const ink=(lower?0.57:0)+(upper?0.43:0);
@@ -36,16 +37,12 @@ function draw(){
  }
  ctx.putImageData(img,0,0);
  ctx.strokeStyle='#caa66b';ctx.lineWidth=5;ctx.strokeRect(2,2,N-4,N-4);
- const registered=Math.abs(dx)<2;
- if(registered&&!s.found){s.found=true;overlay.querySelector('.day11-message').textContent='✦ Die acht Zeichen wurden im Raster sichtbar!';setTimeout(()=>{if(overlay)render()},0)}
+ 
 }
 function render(){
  if(!overlay)return;
  
- overlay.querySelector('.day11-found').textContent=(states[0].found?'Das Raster ist entschlüsselt.':'Acht Buchstaben sind verborgen.');
- overlay.querySelector('.day11-scraps').innerHTML='Notiere die entdeckten Buchstaben selbst.';
- overlay.querySelector('.day11-form').hidden=!states[0].found;
- overlay.querySelectorAll('.day11-layer').forEach(b=>b.classList.toggle('active',b.dataset.layer===layer));
+ 
  draw();
 }
 function open(){
