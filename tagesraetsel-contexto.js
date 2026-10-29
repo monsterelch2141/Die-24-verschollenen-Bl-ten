@@ -1,44 +1,17 @@
 (()=>{
 'use strict';
-const DAY=4,KEY='advent-tag4-contexto-v1',SOLUTION='schlagloch',ROUTE=[137,208,314,95,421,63,178,256,340,112,29,387,204,77,319,146,408,55];
+const DAY=4,KEY='advent-tag4-contexto-v2',SOLUTION='schlagloch',ROUTE=[137,208,314,95,421,63,178,256,340,112,29,387,204,77,319,146,408,55];
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
 if(!day||!board||!instruction)return;
 const normalize=s=>String(s||'').toLocaleLowerCase('de').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ß/g,'ss').replace(/[^a-z]/g,'');
-const ranks=[
-['schlagloch',1],['strassenschaden',2],['fahrbahnschaden',3],['loch',4],['asphaltschaden',5],['strassenloch',6],['fahrbahnloch',7],['strassenkrater',8],['krater',9],['bodenloch',11],['asphaltloch',12],['strassenreparatur',14],['strassenbelag',16],['fahrbahn',18],['asphalt',20],['strasse',10],['strassenbau',25],['strassenverkehr',30],['baustelle',34],['strassenoberflache',37],['pflaster',41],['riss',44],['unebenheit',48],['delle',52],['mulde',55],['vertiefung',58],['grube',64],['schaden',70],['reparatur',82],['beton',90],['stein',110],['kies',130],['schotter',140],['autofahren',150],['auto',28],['reifen',22],['rad',42],['fahrrad',55],['stossdampfer',260],['fahrzeug',33],['verkehr',37],['autobahn',31],['weg',45],['gehweg',49],['brucke',410],['tunnel',470],['stadt',530],['dorf',580],['baumaschine',600],['bagger',625],['unfall',80],['gefahr',73],['wasser',160],['regen',135],['winter',145],['frost',118],['erde',130],['boden',96],['landschaft',1100],['natur',1400],['haus',1650],['garten',1750],['blume',2200],['baum',2400],['himmel',2900],['stern',3200],['liebe',3700],['musik',4200],['essen',4800],['computer',5400],['buch',6000]
-];
-const dictionary=new Map(ranks.map(([w,n])=>[normalize(w),n]));
-const aliases={pothole:2,schlaglocher:1,schlagloecher:1,locher:4,loecher:4,straßenschaden:2,straßenbelag:16,straße:10,straßenbau:25,straßeverkehr:30,straßenreparatur:14,fahrbahnbelag:19,teer:45,teerstrasse:32,teerstraße:32,asphaltstrasse:28,asphaltstraße:28,lochig:38,holperig:40,holperstrecke:46,holperpiste:35,schlag:350,loechrig:38,schlaglochartig:5,schlagloechern:1};
-for(const [w,n] of Object.entries(aliases))dictionary.set(normalize(w),n);
-function score(word){
- const w=normalize(word);
- if(dictionary.has(w))return dictionary.get(w);
- if(w===SOLUTION)return 1;
- // Semantische Themenfelder; nur nach erfolgreicher Wörterbuchprüfung verwenden.
- const themes=[
- [/schlagloch|fahrbahnschaden|strassenschaden|strassenloch|asphaltschaden|loch|krater|vertief|mulde|delle|riss|bruch|uneben|holper|schad|defekt|kaputt|reparier|flick|ausbesser/,15],
- [/strass|strass|fahrbahn|asphalt|belag|pflaster|teer|verkehr|reifen|auto|rad|fahrzeug|stossdampf|federung|autobahn|gehweg|baustell|strassenbau/,55],
- [/bau|beton|kies|schotter|stein|weg|unfall|gefahr|hindernis|erschutter|stoss|schutt|boden|erd|wasser|regen|frost|winter/,140],
- [/transport|stadt|dorf|reise|fahren|laufen|landschaft|natur/,450]
- ];
- for(const [pattern,base] of themes)if(pattern.test(w))return base+Math.min(75,w.length*2);
- return 900+Math.min(4000,w.length*170);
-}
-const verifiedCache=new Map();
-async function validWord(word){
- const w=normalize(word);
- if(dictionary.has(w)||w===SOLUTION)return true;
- if(verifiedCache.has(w))return verifiedCache.get(w);
- // Wiktionary statt Duden: dessen Wörterbuch besitzt keine frei nutzbare öffentliche Validierungs-API.
- try{
-   const url='https://de.wiktionary.org/w/api.php?action=query&format=json&origin=*&titles='+encodeURIComponent(word.toLocaleLowerCase('de-DE'));
-   const response=await fetch(url,{signal:AbortSignal.timeout(6000)});
-   if(!response.ok)throw Error('Wörterbuch nicht erreichbar');
-   const data=await response.json();
-   const exists=Object.values(data.query?.pages||{}).some(page=>!('missing' in page));
-   verifiedCache.set(w,exists);
-   return exists;
- }catch{return null}
+let ranking=null,loading=null;
+function loadRanking(){
+ if(loading)return loading;
+ loading=fetch('contexto-ranking.json?v=1',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Ranking noch nicht veröffentlicht');return r.json()}).then(data=>{
+  if(!data||Object.keys(data).length<20000||data.schlagloch!==1)throw Error('Ranking unvollständig');
+  ranking=data;return data;
+ }).catch(e=>{loading=null;throw e});
+ return loading;
 }
 let saved={};try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{}
 let entries=Array.isArray(saved.entries)?saved.entries:[],solved=!!saved.solved,modal=null;
@@ -66,15 +39,18 @@ function open(){
  const status=modal.querySelector('.contexto-status');
  if(w.length<2){status.textContent='Bitte gib ein vollständiges Wort ein.';return}
  if(entries.some(e=>normalize(e.word)===w)){status.textContent='Dieses Wort hast du schon versucht.';return}
- button.disabled=true;status.textContent='Wort wird im Wörterbuch geprüft …';
- const valid=await validWord(word);
- if(!modal||!modal.isConnected)return;
- button.disabled=false;
- if(valid===false){status.textContent='Dieses Wort wurde im deutschen Wörterbuch nicht gefunden. Versuch es mit einem anderen Wort.';return}
- if(valid===null){status.textContent='Die Wörterbuchprüfung ist gerade nicht erreichbar. Bitte versuche es erneut.';return}
- const rank=score(word);entries.push({word,rank});input.value='';
- status.textContent=rank===1?'✦ Das gesuchte Wort ist gefunden!':rank<=25?'Ganz heiß!':rank<=200?'Du bist auf einer guten Spur.':'Suche weiter – die Zahl zeigt deine Nähe.';
- if(rank===1){solved=true;sync()}save();render();
+ button.disabled=true;
+ try{
+  status.textContent='Rangliste wird geladen …';
+  const ranks=await loadRanking();
+  if(!modal||!modal.isConnected)return;
+  const rank=ranks[w];
+  if(!rank){status.textContent='Dieses Wort steht nicht im deutschen Spielwörterbuch. Bitte versuche ein anderes Wort.';return}
+  entries.push({word,rank});input.value='';
+  status.textContent=rank===1?'✦ Das gesuchte Wort ist gefunden!':rank<=25?'Ganz heiß!':rank<=200?'Du bist auf einer guten Spur.':'Suche weiter – die Zahl zeigt deine Nähe.';
+  if(rank===1){solved=true;sync()}save();render();
+ }catch(err){status.textContent='Die vorberechnete Rangliste ist noch nicht verfügbar. Bitte später erneut versuchen.'}
+ finally{if(button.isConnected)button.disabled=false}
  };
  render();modal.querySelector('input')?.focus();
 }
