@@ -864,3 +864,14 @@ html:has(.day1-overlay),html:has(.day1-overlay) body{overflow:hidden!important;o
 .contexto-panel h2{font-size:26px;margin:10px 0}.contexto-panel p{line-height:1.35}.contexto-close{position:absolute;top:6px;right:12px;border:0;background:none;font-size:32px;color:#704e33;cursor:pointer}
 .contexto-form{display:flex;gap:8px;margin:16px 0}.contexto-form input{flex:1;min-width:0;border:1px solid #b49b7d;border-radius:8px;padding:10px;font:inherit;font-size:19px}
 .contexto-count{text-align:left;font-weight:700;margin:12px 0}.contexto-guesses{display:grid;gap:8px}.contexto-guess{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:8px 10px;background:#f4e5cc;border-radius:7px;text-align:left}.contexto-guess span{font-weight:bold}.contexto-meter{grid-column:1/-1;height:7px;border-radius:8px;background:#e2d2ba;overflow:hidden}.contexto-meter i{display:block;height:100%;border-radius:8px}.contexto-finished{font-weight:700;color:#386d35}
+
+
+/* Tag 3: Octordle uses the same parchment tiles as the original Wordle. */
+.wordle-octordle{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:690px;margin:12px auto;align-items:start}
+.wordle-panel:has(.wordle-octordle){width:min(96vw,760px);padding:18px 12px}
+.wordle-octo-board{min-width:0;padding:7px 5px;border:1px solid #c6a978;background:#f9eed8;border-radius:7px}
+.wordle-octo-heading{font:700 14px Georgia,serif;color:#634928;margin:2px 0 5px}
+.wordle-octo-board .wordle-grid{width:100%;max-width:180px;gap:2px;margin:0 auto}
+.wordle-octo-board .wordle-tile{border-width:1px;font:700 clamp(9px,2vw,14px) Georgia,serif;min-width:0}
+.wordle-panel:has(.wordle-octordle) .wordle-keyboard{position:sticky;bottom:0;padding:7px 3px;background:#f1dfbf;border:1px solid #c5a578;border-radius:8px;z-index:2}
+@media(max-width:450px){.wordle-octordle{gap:6px}.wordle-octo-board{padding:5px 3px}.wordle-octo-board .wordle-grid{gap:1px}.wordle-octo-board .wordle-tile{font-size:10px}.wordle-panel:has(.wordle-octordle){padding:14px 6px}}
