@@ -875,3 +875,6 @@ html:has(.day1-overlay),html:has(.day1-overlay) body{overflow:hidden!important;o
 .wordle-octo-board .wordle-tile{border-width:1px;font:700 clamp(9px,2vw,14px) Georgia,serif;min-width:0}
 .wordle-panel:has(.wordle-octordle) .wordle-keyboard{position:sticky;bottom:0;padding:7px 3px;background:#f1dfbf;border:1px solid #c5a578;border-radius:8px;z-index:2}
 @media(max-width:450px){.wordle-octordle{gap:6px}.wordle-octo-board{padding:5px 3px}.wordle-octo-board .wordle-grid{gap:1px}.wordle-octo-board .wordle-tile{font-size:10px}.wordle-panel:has(.wordle-octordle){padding:14px 6px}}
+
+/* Antiwordle: locked correct letters are red, as in the linked rules. */
+.wordle-panel[data-level="2"] .wordle-tile.correct,.wordle-panel[data-level="2"] .wordle-keyboard button.correct{background:#ad5449;border-color:#874138;color:#fff}
