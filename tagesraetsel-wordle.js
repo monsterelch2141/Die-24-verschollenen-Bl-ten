@@ -107,6 +107,7 @@ function drawBoard(container,history,word,rows,active){
 function renderGame(){
  if(!modal)return;
  nextState();const lv=state.level,h=guesses(),done=levelDone(),next=modal.querySelector('.wordle-next');
+ modal.querySelector('.wordle-panel').dataset.level=String(lv);
  const desc=modal.querySelector('.wordle-level-description');
  desc.textContent=lv===1?'Level 1 von 3 · Wordle: Finde das Wort in sechs Versuchen.':lv===2?'Level 2 von 3 · Antiwordle: Vermeide das Lösungswort sechs Versuche lang! Grau ist verboten, Gelb muss umziehen, Rot bleibt stehen.':'Level 3 von 3 · Octordle: Acht Wörter gleichzeitig, insgesamt 13 Versuche. Ein Tipp zählt für alle acht Felder.';
  tiles.replaceChildren();tiles.className=lv===3?'wordle-octordle':'wordle-grid';
