@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 const DAY=3, WORD='ZWEIG', PASS='40', ROUTE=[137,208,314,95,421,63,178,256,340,112,29,387,204,77,319,146,408,55];
-const key='advent-tag3-wordle-v1';
+const key='advent-tag3-wordle-v2';
 const get=()=>{try{const saved=JSON.parse(localStorage.getItem(key)||'{}');if(saved.extra&&!saved.unlockedRows)saved.unlockedRows=7;return saved}catch{return {}}};
 let state=get(), current='', modal=null, status=null, tiles=null, keys={}, busy=false, revealing=false;
 const ANTI='FROST', OCT=['KERZE','NEBEL','KLANG','BRIEF','REISE','HONIG','MONAT','STERN'];
@@ -96,9 +96,10 @@ function build(){
 }
 function drawBoard(container,history,word,rows,active){
  const grid=document.createElement('div');grid.className='wordle-grid';
+ const solvedAt=history.indexOf(word);const shown=solvedAt>=0?history.slice(0,solvedAt+1):history;
  for(let row=0;row<rows;row++){
-  const g=history[row]||(!levelDone()&&row===history.length?active:'');
-  const colors=history[row]?score(g,word):[];
+  const g=shown[row]||(!levelDone()&&solvedAt<0&&row===shown.length?active:'');
+  const colors=shown[row]?score(g,word):[];
   for(let i=0;i<5;i++){const t=document.createElement('span');t.className='wordle-tile '+(colors[i]||'');t.textContent=g[i]||'';grid.append(t)}
  }
  container.append(grid);
@@ -157,8 +158,8 @@ function renderGame(){
  }
  if(lv===3&&h.length>=13){
   status.textContent='Die 13 Versuche sind aufgebraucht.';
-  next.hidden=false;next.innerHTML='<p>Die Sternenwächter lassen dich nicht im Stich. Na gut – noch ein Versuch!</p><button type="button">✦ Noch eine Chance ✦</button>';
-  next.querySelector('button').onclick=()=>{state.octoExtra=(state.octoExtra||0)+1;save();renderGame()};keyboard.hidden=!(state.octoExtra>0);return;
+  next.hidden=false;next.innerHTML='<p>Alle 13 Versuche sind verbraucht. Du kannst Level 3 neu beginnen.</p><button type="button">✦ Level 3 wiederholen ✦</button>';
+  next.querySelector('button').onclick=()=>{state.levelGuesses[3]=[];current='';save();renderGame()};return;
  }
  status.textContent=busy?'Das Wort wird geprüft …':lv===3?(13-h.length)+' von 13 Versuchen übrig · '+OCT.filter(w=>h.includes(w)).length+'/8 gefunden':lv===2?(6-h.length)+' Antiwordle-Versuche übrig':(Math.max(6,Number(state.unlockedRows)||6)-h.length)+' Versuche übrig';
 }
@@ -171,7 +172,7 @@ function showPassword(){
 }
 async function submit(){
  if(busy||revealing||ready()||levelDone())return;
- const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:13+(state.octoExtra||0);
+ const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:13;
  if(h.length>=max)return;
  if(current.length!==5){status.textContent='Bitte gib fünf Buchstaben ein.';return}
  if(lv===2){const err=antiConstraint(current);if(err){status.textContent=err;return}}
