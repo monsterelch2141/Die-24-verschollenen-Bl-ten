@@ -890,3 +890,30 @@ html:has(.day1-overlay),html:has(.day1-overlay) body{overflow:hidden!important;o
 .wordle-panel[data-level="3"] .wordle-keyboard button:not(.wordle-wide){text-shadow:0 1px 2px #fff,0 -1px 2px #fff;font-weight:800}
 
 .wordle-key-letter{position:relative;z-index:1;pointer-events:none}
+
+
+/* Tag 5: Größenprüfung im Pergament-Stil */
+.day5-quest{margin:18px auto;padding:21px 15px;text-align:center;background:linear-gradient(145deg,#fff6e4,#ead4ae);border:1px solid #b99a65;border-radius:12px;color:#543c23}
+.day5-quest[hidden],.day5-route[hidden]{display:none!important}
+.day5-quest h3{font:25px Georgia,serif;margin:8px auto}
+.day5-open,.day5-action{border:1px solid #b89a67;background:#705033;color:#fff2d6;border-radius:7px;padding:12px 18px;font:16px Georgia,serif;cursor:pointer}
+.day5-overlay{position:fixed;inset:0;z-index:200000;background:#1b160fdc;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box}
+.day5-panel{position:relative;width:min(96vw,650px);max-height:95dvh;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;background:radial-gradient(ellipse at top,#fff9eb,#ead5b1);border:2px solid #b58a4c;border-radius:12px;box-shadow:0 12px 65px #0009;text-align:center;padding:21px 18px;color:#503b27;font:16px Georgia,serif}
+.day5-panel h2{font:27px Georgia,serif;margin:8px 0 12px}.day5-panel h3{font:23px Georgia,serif;margin:10px auto}
+.day5-close{position:absolute;right:9px;top:5px;font-size:30px;border:0;background:transparent;color:#60462b;cursor:pointer}
+.day5-count{font-weight:bold;color:#856039}
+.day5-stage{height:290px;display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch;margin:18px auto 15px;max-width:520px;background:linear-gradient(to bottom,transparent 91%,#9c7956 91%,#9c7956 92%,transparent 92%);border-bottom:1px solid #bfa680}
+.day5-object{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0;position:relative}
+.day5-silhouette{display:flex;align-items:flex-end;justify-content:center;width:100%;max-width:170px;min-height:5%;color:#594735;transition:height .13s ease}
+.day5-silhouette svg{display:block;height:100%;width:100%;max-width:170px;overflow:visible}
+.day5-actual{color:#a36d42}
+.day5-object>span{height:45px;flex-shrink:0;margin-top:4px;font:14px/1.35 Georgia,serif}
+.day5-slider-label{display:block;font-weight:bold;margin:15px auto 5px}
+.day5-slider{display:block;width:min(100%,450px);margin:13px auto;accent-color:#795332;touch-action:pan-x}
+.day5-estimate{font-size:18px}.day5-points{font:700 30px Georgia,serif;color:#7e5830}
+.day5-progress{font-size:13px;color:#775d42}.day5-success{font-size:20px;color:#537048;font-weight:bold}
+.day5-secret{font-size:clamp(27px,7vw,38px)!important;letter-spacing:2px;color:#78522b}
+.day5-secret-form label{display:block;margin:12px auto}.day5-secret-form input{display:block;margin:10px auto;padding:12px;border:1px solid #b79a73;background:#fff8ec;border-radius:6px;font:17px Georgia,serif;width:min(90%,320px)}
+.day5-error{color:#a23e31}
+html:has(.day5-overlay){overflow:hidden!important}
+@media(max-height:700px){.day5-stage{height:200px}.day5-panel{padding:12px}}
