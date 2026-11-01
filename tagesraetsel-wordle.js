@@ -80,7 +80,7 @@ function antiConstraint(guess){
 function build(){
  if(modal)return;
  modal=document.createElement('div');modal.className='wordle-overlay';
- modal.innerHTML='<section class="wordle-panel" role="dialog" aria-modal="true" aria-label="Wortprüfung in drei Leveln"><button class="wordle-close" type="button" aria-label="Schließen">×</button><div class="quest-mark">✧ ✦ ✧</div><h2>Das Wort der Sternenwächter</h2><p class="wordle-level-description"></p><div class="wordle-grid" aria-label="Wortspielbrett"></div><p class="wordle-status" role="status" aria-live="polite"></p><div class="wordle-keyboard"></div><div class="wordle-next" hidden></div></section>';
+ modal.innerHTML='<section class="wordle-panel" role="dialog" aria-modal="true" aria-label="Das Wort der Sternenwächter"><button class="wordle-close" type="button" aria-label="Schließen">×</button><div class="quest-mark">✧ ✦ ✧</div><h2>Das Wort der Sternenwächter</h2><p class="wordle-level-description"></p><div class="wordle-grid" aria-label="Wortspielbrett"></div><p class="wordle-status" role="status" aria-live="polite"></p><div class="wordle-keyboard"></div><div class="wordle-next" hidden></div></section>';
  document.documentElement.append(modal);modal.querySelector('.wordle-close').onclick=close;
  modal.addEventListener('click',e=>{if(e.target===modal)close()});
  tiles=modal.querySelector('.wordle-grid');status=modal.querySelector('.wordle-status');
@@ -109,14 +109,14 @@ function renderGame(){
  nextState();const lv=state.level,h=guesses(),done=levelDone(),next=modal.querySelector('.wordle-next');
  modal.querySelector('.wordle-panel').dataset.level=String(lv);
  const desc=modal.querySelector('.wordle-level-description');
- desc.textContent=lv===1?'Level 1 von 3 · Wordle: Finde das Wort in sechs Versuchen.':lv===2?'Level 2 von 3 · Antiwordle: Vermeide das Lösungswort sechs Versuche lang! Grau ist verboten, Gelb muss umziehen, Rot bleibt stehen.':'Level 3 von 3 · Octordle: Acht Wörter gleichzeitig, insgesamt 13 Versuche. Ein Tipp zählt für alle acht Felder.';
+ desc.textContent=lv===1?'Fünf Buchstaben. Sechs Versuche. Welche Spur führt zu den verschollenen Blüten?':lv===2?'Antiwordle: Vermeide das Lösungswort sechs Versuche lang! Grau ist verboten, Gelb muss umziehen, Rot bleibt stehen.':'Octordle: Acht Wörter gleichzeitig, insgesamt 13 Versuche. Ein Tipp zählt für alle acht Felder.';
  tiles.replaceChildren();tiles.className=lv===3?'wordle-octordle':'wordle-grid';
  if(lv===3){
   OCT.forEach((word,i)=>{
    const pane=document.createElement('div');pane.className='wordle-octo-board';
    const heading=document.createElement('div');heading.className='wordle-octo-heading';heading.textContent='Wort '+(i+1)+(h.includes(word)?' ✓':'');
    pane.append(heading);
-   drawBoard(pane,h,word,13,h.includes(word)?'':current);
+   drawBoard(pane,h,word,Math.max(13,Number(state.octoRows)||13),h.includes(word)?'':current);
    tiles.append(pane);
   });
  }else{
@@ -129,10 +129,24 @@ function renderGame(){
  }
  const best={},rank={absent:1,present:2,correct:3};
  if(lv!==3)h.forEach(g=>score(g,lv===1?WORD:ANTI).forEach((c,i)=>{if(!best[g[i]]||rank[c]>rank[best[g[i]]])best[g[i]]=c}));
- for(const [c,b] of Object.entries(keys))b.className=best[c]||'';
+ for(const [c,b] of Object.entries(keys)){
+  b.className=best[c]||'';
+  b.querySelector('.wordle-octo-key-colors')?.remove();
+  if(lv===3){
+   const segments=document.createElement('span');segments.className='wordle-octo-key-colors';segments.setAttribute('aria-hidden','true');
+   OCT.forEach(word=>{
+    const segment=document.createElement('span');segment.className='wordle-octo-key-segment';
+    const solvedAt=h.indexOf(word),history=solvedAt>=0?h.slice(0,solvedAt+1):h;
+    let bestColor='';history.forEach(g=>score(g,word).forEach((color,i)=>{if(g[i]===c&&(!bestColor||rank[color]>rank[bestColor]))bestColor=color}));
+    if(bestColor)segment.classList.add(bestColor);
+    segments.append(segment);
+   });
+   b.append(segments);
+  }
+ }
  next.hidden=true;next.replaceChildren();
  const keyboard=modal.querySelector('.wordle-keyboard');
- keyboard.hidden=busy||revealing||done||ready()||(lv===3&&h.length>=13)||(lv===1&&h.length>=Math.max(6,Number(state.unlockedRows)||6));
+ keyboard.hidden=busy||revealing||done||ready()||(lv===3&&h.length>=Math.max(13,Number(state.octoRows)||13))||(lv===1&&h.length>=Math.max(6,Number(state.unlockedRows)||6));
  if(ready()){
   status.textContent='✧ Die Sternenroute ist freigeschaltet.';
   next.hidden=false;next.innerHTML='<p>Verbinde nun die Punkte deiner Sternenroute und wähle das richtige Sternenfeld.</p>';return;
@@ -157,12 +171,13 @@ function renderGame(){
   next.hidden=false;next.innerHTML='<p>Entschlüssle nun das vierte Wort. Addiere die Alphabetpositionen seiner fünf Buchstaben, um den Zahlenschlüssel zu erhalten.</p><button type="button">✧ Lösung eingeben ✧</button><div id="day3-password-area"></div>';
   next.querySelector('button').onclick=showPassword;return;
  }
- if(lv===3&&h.length>=13){
-  status.textContent='Die 13 Versuche sind aufgebraucht.';
-  next.hidden=false;next.innerHTML='<p>Alle 13 Versuche sind verbraucht. Du kannst Level 3 neu beginnen.</p><button type="button">✦ Level 3 wiederholen ✦</button>';
-  next.querySelector('button').onclick=()=>{state.levelGuesses[3]=[];current='';save();renderGame()};return;
+ if(lv===3&&h.length>=Math.max(13,Number(state.octoRows)||13)){
+  const extra=h.length-13;
+  status.textContent='Die '+h.length+' Versuche sind aufgebraucht.';
+  next.hidden=false;next.innerHTML='<p>'+(extra===0?'Na gut – einen Versuch hast du noch!':extra<3?'Die Sternenwächter gewähren dir noch eine Chance.':'Die Sternenwächter haben das Zählen längst aufgegeben. Noch ein Versuch!')+'</p><button type="button">✦ Noch eine Chance ✦</button>';
+  next.querySelector('button').onclick=()=>{state.octoRows=h.length+1;save();renderGame()};return;
  }
- status.textContent=busy?'Das Wort wird geprüft …':lv===3?(13-h.length)+' von 13 Versuchen übrig · '+OCT.filter(w=>h.includes(w)).length+'/8 gefunden':lv===2?(6-h.length)+' Antiwordle-Versuche übrig':(Math.max(6,Number(state.unlockedRows)||6)-h.length)+' Versuche übrig';
+ status.textContent=busy?'Das Wort wird geprüft …':lv===3?(Math.max(13,Number(state.octoRows)||13)-h.length)+' Versuche übrig · '+OCT.filter(w=>h.includes(w)).length+'/8 gefunden':lv===2?(6-h.length)+' Antiwordle-Versuche übrig':(Math.max(6,Number(state.unlockedRows)||6)-h.length)+' Versuche übrig';
 }
 function advance(level){state.level=level;state.levelGuesses[level]||=[];current='';save();renderGame()}
 function showPassword(){
@@ -173,7 +188,7 @@ function showPassword(){
 }
 async function submit(){
  if(busy||revealing||ready()||levelDone())return;
- const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:13;
+ const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:Math.max(13,Number(state.octoRows)||13);
  if(h.length>=max)return;
  if(current.length!==5){status.textContent='Bitte gib fünf Buchstaben ein.';return}
  if(lv===2){const err=antiConstraint(current);if(err){status.textContent=err;return}}
@@ -185,7 +200,7 @@ async function submit(){
 }
 function type(k){
  if(busy||revealing||ready()||levelDone())return;
- const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:13+(state.octoExtra||0);
+ const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:Math.max(13,Number(state.octoRows)||13);
  if(h.length>=max)return;
  if(k==='BACKSPACE')current=current.slice(0,-1);else if(/^[A-Z]$/.test(k)&&current.length<5)current+=k;renderGame();
 }
