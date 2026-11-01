@@ -52,10 +52,10 @@ const score=(a,b)=>Math.max(0,Math.min(100,Math.round(100-40*Math.abs(Math.log2(
 const current=()=>ROUNDS[state.round%3][state.scores.length];
 function sync(){
  bar.hidden=!selected();if(!selected())return;
- const solved=state.solved===true;
+ const solved=state.unlocked===true;
  bar.querySelector('.day5-open').textContent=solved?'✧ Ergebnis erneut ansehen ✧':'✧ Größenprüfung beginnen ✧';
  bar.querySelector('.day5-route').hidden=!solved;
- if(solved)bar.querySelector('.day5-route').innerHTML='<strong>Schlüsselwort: SCHOKOLADE</strong><p>Das Maß der Dinge wurde entschlüsselt. Nutze das Schlüsselwort für die Sternenroute.</p>';
+ if(solved)bar.querySelector('.day5-route').innerHTML='<strong>Sternenroute (Testdaten)</strong><p>137 → 208 → 314 → 95 → 421 → 63 → 178 → 256</p><small>Verbinde die Punkte und finde den Zielstern.</small>';
  instruction.textContent=solved?'Nutze das Schlüsselwort und verbinde anschließend die Sternenroute.':'Bestehe die Größenprüfung, bevor du ein Sternenfeld auswählst.';
 }
 function open(){
@@ -70,7 +70,8 @@ function render(){
  if(!overlay)return;
  const content=overlay.querySelector('.day5-content');content.replaceChildren();
  if(state.solved){
-  content.innerHTML='<p class="day5-success">✦ Die Prüfung ist bestanden! ✦</p><p>Du hast mindestens 400 von 500 Punkten erreicht.</p><p>Dein Schlüsselwort lautet:</p><h2 class="day5-secret">SCHOKOLADE</h2><p>Dieses Wort öffnet die Sternenroute.</p>';
+  content.innerHTML='<p class="day5-success">✦ Die Prüfung ist bestanden! ✦</p><p>Du hast mindestens 400 von 500 Punkten erreicht.</p><p>Dein Schlüsselwort lautet:</p><h2 class="day5-secret">SCHOKOLADE</h2>'+(state.unlocked?'<p>✧ Die Sternenroute ist freigeschaltet.</p>':'<form class="day5-secret-form"><label>Schlüsselwort eingeben<input type="text" autocomplete="off" required placeholder="Geheimes Wort"></label><button class="day5-action" type="submit">✧ Sternenroute freischalten ✧</button></form><p class="day5-error" role="status"></p>');
+  const form=content.querySelector('form');if(form)form.onsubmit=e=>{e.preventDefault();const v=form.querySelector('input').value.trim().toLocaleUpperCase('de');if(v===SECRET){state.unlocked=true;save();sync();render()}else content.querySelector('.day5-error').textContent='Das Schlüsselwort stimmt noch nicht.'};
   return;
  }
  if(state.reveal){
@@ -108,7 +109,7 @@ function render(){
  content.querySelector('.day5-action').onclick=()=>{state.reveal=true;save();render()};
 }
 bar.querySelector('.day5-open').onclick=open;
-board.addEventListener('click',e=>{if(!selected()||state.solved)return;const cell=e.target.closest('.cell');if(!cell)return;e.stopImmediatePropagation();e.preventDefault();feedback.className='feedback error';feedback.textContent='✧ Bestehe zuerst die Größenprüfung. ✧';bar.scrollIntoView({behavior:'smooth',block:'nearest'})},true);
+board.addEventListener('click',e=>{if(!selected()||state.unlocked)return;const cell=e.target.closest('.cell');if(!cell)return;e.stopImmediatePropagation();e.preventDefault();feedback.className='feedback error';feedback.textContent='✧ Bestehe zuerst die Größenprüfung. ✧';bar.scrollIntoView({behavior:'smooth',block:'nearest'})},true);
 day.addEventListener('change',()=>setTimeout(sync,0));
 document.getElementById('previous')?.addEventListener('click',()=>setTimeout(sync,0));
 document.getElementById('next')?.addEventListener('click',()=>setTimeout(sync,0));
