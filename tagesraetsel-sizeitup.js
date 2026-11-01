@@ -18,13 +18,16 @@ const ROUNDS=[
  ],
  [
  {base:'Rose',bh:.65,bk:'rose',name:'Flamingo',h:1.25,kind:'flamingo',note:'Beispielhöhe einer Rose und eines Flamingos'},
- {base:'Riesenrad im Wiener Prater',bh:64.75,bk:'wheel',name:'Christusstatue Rio (ohne Sockel)',h:30,kind:'christ',note:'Höhe der Christusstatue ohne Sockel'},
- {base:'DIN-A4-Blatt',bh:.297,bk:'paper',name:'Postkarte (DIN A6)',h:.148,bk2:'',kind:'postcard',note:'Verglichen wird die längere Blattseite'},
+ {base:'Gartenzwerg',bh:.4,bk:'gnome',name:'Karnevalswagen',h:4,kind:'float',note:'Beispielmaße: 40 cm Gartenzwerg und 4 m hoher Karnevalswagen'},
+ {base:'DIN-A4-Blatt',bh:.297,bk:'paper',name:'Sektflasche (0,75 l)',h:.32,kind:'bottle',note:'Längsseite des A4-Blatts und Höhe einer typischen 0,75-l-Flasche'},
  {base:'Fußballtor',bh:2.44,bk:'goal',name:'Basketballkorb',h:3.05,kind:'hoop',note:'Offizielle Höhe des Fußballtors und des Korbrings'},
  {base:'Burj Khalifa',bh:828,bk:'skyscraper',name:'Fernsehturm Berlin',h:368,kind:'tv',note:'Höhen beider Bauwerke'}
  ]
 ];
 const paths={
+ gnome:'<path d="M48 2 L22 40 L38 42 L32 56 L38 70 L32 94 L68 94 L62 70 L68 56 L62 42 L78 40Z"/>',
+ float:'<path d="M8 67 L14 34 L26 34 L30 15 L40 33 L51 25 L62 34 L72 12 L78 35 L89 35 L95 67 L95 83 L8 83Z"/>',
+ bottle:'<path d="M42 3 L58 3 L58 20 L63 29 L65 88 L57 96 L43 96 L35 88 L37 29 L42 20Z"/>',
  cathedral:'<path d="M8 96 L8 45 L20 45 L20 15 L25 5 L30 15 L30 45 L40 45 L40 35 L50 20 L60 35 L60 45 L70 45 L70 15 L75 5 L80 15 L80 45 L92 45 L92 96Z"/>',
  statue:'<path d="M18 96 L18 78 L82 78 L82 96Z M30 78 L36 40 L44 33 L46 15 L50 4 L54 15 L55 31 L66 43 L72 78Z"/>',
  snowdrop:'<path d="M47 96 L48 30 L51 30 L52 96Z M49 31 Q40 20 30 31 Q36 51 48 50 Q62 49 69 28 Q58 20 49 31Z"/>',
