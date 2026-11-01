@@ -88,7 +88,7 @@ function build(){
  for(const row of ['QWERTZUIOP','ASDFGHJKL','YXCVBNM']){
   const line=document.createElement('div');line.className='wordle-keyrow';
   if(row==='YXCVBNM'){const enter=document.createElement('button');enter.type='button';enter.textContent='↵';enter.className='wordle-wide';enter.onclick=submit;line.append(enter)}
-  for(const ch of row){const b=document.createElement('button');b.type='button';b.textContent=ch;b.onclick=()=>type(ch);line.append(b);keys[ch]=b}
+  for(const ch of row){const b=document.createElement('button');b.type='button';b.innerHTML='<span class="wordle-key-letter">'+ch+'</span>';b.onclick=()=>type(ch);line.append(b);keys[ch]=b}
   if(row==='YXCVBNM'){const del=document.createElement('button');del.type='button';del.textContent='⌫';del.className='wordle-wide';del.onclick=()=>type('BACKSPACE');line.append(del)}
   keyboard.append(line);
  }
