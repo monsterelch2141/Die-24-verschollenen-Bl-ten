@@ -43,7 +43,7 @@ if(!Number.isFinite(state.estimate))state.estimate=1.81;
 const save=()=>localStorage.setItem(KEY,JSON.stringify(state));
 const selected=()=>Number(day.value)===DAY;
 const bar=document.createElement('section');bar.className='day5-quest';bar.hidden=true;
-bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Das Maß der verborgenen Dinge</h3><p>Fünf geheimnisvolle Größenvergleiche warten auf dich.</p><button type="button" class="day5-open">✧ Größenprüfung beginnen ✧</button><div class="day5-route" hidden></div>';
+bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Das Maß der verborgenen Dinge</h3><p>Fünf Größenvergleiche erwarten dich. Erreiche mindestens 400 von 500 Punkten, um die Sternenroute freizuschalten.</p><button type="button" class="day5-open">✧ Größenprüfung beginnen ✧</button><div class="day5-route" hidden></div>';
 instruction.before(bar);
 let overlay=null;
 const svg=(kind)=>'<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><g fill="currentColor">'+paths[kind]+'</g></svg>';
@@ -70,7 +70,7 @@ function render(){
  if(!overlay)return;
  const content=overlay.querySelector('.day5-content');content.replaceChildren();
  if(state.solved){
-  content.innerHTML='<p class="day5-success">✦ Die Prüfung ist bestanden! ✦</p><p>Du hast mindestens 400 von 500 Punkten erreicht.</p><p>Dein Schlüsselwort lautet:</p><h2 class="day5-secret">SCHOKOLADE</h2>'+(state.unlocked?'<p>✧ Die Sternenroute ist freigeschaltet.</p>':'<form class="day5-secret-form"><label>Schlüsselwort eingeben<input type="text" autocomplete="off" required placeholder="Geheimes Wort"></label><button class="day5-action" type="submit">✧ Sternenroute freischalten ✧</button></form><p class="day5-error" role="status"></p>');
+  content.innerHTML='<p class="day5-success">✦ Die Prüfung ist bestanden! ✦</p><p>Du hast mindestens 400 von 500 Punkten erreicht.</p><p>Das Geheimnis zeigt sich in einem einzigen Zeichen:</p><div class="day5-secret" role="img" aria-label="Geheimer Bildhinweis">🍫</div>'+(state.unlocked?'<p>✧ Die Sternenroute ist freigeschaltet.</p>':'<form class="day5-secret-form"><label>Schlüsselwort eingeben<input type="text" autocomplete="off" required placeholder="Geheimes Wort"></label><button class="day5-action" type="submit">✧ Sternenroute freischalten ✧</button></form><p class="day5-error" role="status"></p>');
   const form=content.querySelector('form');if(form)form.onsubmit=e=>{e.preventDefault();const v=form.querySelector('input').value.trim().toLocaleUpperCase('de');if(v===SECRET){state.unlocked=true;save();sync();render()}else content.querySelector('.day5-error').textContent='Das Schlüsselwort stimmt noch nicht.'};
   return;
  }
@@ -96,7 +96,7 @@ function render(){
  }
  const item=current();if(!item)return;
  const sliderValue=Math.round((Math.log(state.estimate/.12)/Math.log(12/.12))*1000);
- content.innerHTML='<p class="day5-count">Vergleich '+(state.scores.length+1)+' von 5</p><h3>Wie groß ist '+item.name+'?</h3><p>Verändere die Silhouette, bis das Größenverhältnis zu Quatsch Quatsch stimmt.</p><div class="day5-stage"><div class="day5-object"><div class="day5-silhouette day5-person">'+svg('person')+'</div><span>Quatsch Quatsch<br>1,81 m</span></div><div class="day5-object"><div class="day5-silhouette day5-guess">'+svg(item.kind)+'</div><span>'+item.name+'</span></div></div><label class="day5-slider-label">Größe anpassen<input class="day5-slider" type="range" min="0" max="1000" value="'+sliderValue+'" step="1"></label><p class="day5-estimate">Deine Schätzung: <strong>'+format(state.estimate)+'</strong></p><button class="day5-action" type="button">✦ Schätzung festlegen ✦</button><p class="day5-progress">Bisher '+state.scores.reduce((a,b)=>a+b,0)+' Punkte gesammelt</p>';
+ content.innerHTML='<p class="day5-count">Vergleich '+(state.scores.length+1)+' von 5 · Ziel: 400 von 500 Punkten</p><h3>Wie groß ist '+item.name+'?</h3><p>Verändere die Silhouette, bis das Größenverhältnis zu Quatsch Quatsch stimmt.</p><div class="day5-stage"><div class="day5-object"><div class="day5-silhouette day5-person">'+svg('person')+'</div><span>Quatsch Quatsch<br>1,81 m</span></div><div class="day5-object"><div class="day5-silhouette day5-guess">'+svg(item.kind)+'</div><span>'+item.name+'</span></div></div><label class="day5-slider-label">Größe anpassen<input class="day5-slider" type="range" min="0" max="1000" value="'+sliderValue+'" step="1"></label><p class="day5-estimate">Deine Schätzung: <strong>'+format(state.estimate)+'</strong></p><button class="day5-action" type="button">✦ Schätzung festlegen ✦</button><p class="day5-progress">Bisher '+state.scores.reduce((a,b)=>a+b,0)+' Punkte gesammelt</p>';
  const slider=content.querySelector('.day5-slider'),person=content.querySelector('.day5-person'),guess=content.querySelector('.day5-guess'),label=content.querySelector('.day5-estimate strong');
  function scale(){
   const max=Math.max(1.81,state.estimate);
