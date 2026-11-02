@@ -32,13 +32,13 @@ function render(){
  hintBox.querySelector('[data-hint="word"]').disabled=solved||used>=5;
  hintBox.querySelector('[data-hint="category"]').disabled=solved||used>=5||categoryUsed;
  hintBox.querySelector('[data-hint="letter"]').disabled=solved||used>=5||letterUsed;
- hintBox.querySelector('.contexto-hint-results').innerHTML=hints.map(h=>'<div>'+ (h.type==='word'?'Top-10-Wort: <strong>'+h.word+'</strong> (Platz '+h.rank+')':h.type==='category'?'Kategorie: <strong>Straßenverkehr</strong>':'Anfangsbuchstabe: <strong>S</strong>')+'</div>').join('');
+ hintBox.querySelector('.contexto-hint-results').innerHTML=hints.map(h=>'<div>'+ (h.type==='word'?'Worttipp: <strong>'+h.word+'</strong> (Platz '+h.rank+')':h.type==='category'?'Kategorie: <strong>Straßenverkehr</strong>':'Anfangsbuchstabe: <strong>S</strong>')+'</div>').join('');
  modal.querySelector('.contexto-finished').hidden=!solved;
  modal.querySelector('.contexto-form').hidden=solved;
 }
 function open(){
  if(modal)return;
- modal=document.createElement('div');modal.className='contexto-overlay';modal.innerHTML='<div class="contexto-panel" role="dialog" aria-modal="true" aria-label="Contexto – Das Wort im Nebel"><button class="contexto-close" type="button" aria-label="Schließen">×</button><div class="quest-mark">✧ ✦ ✧</div><h2>Das Wort im Nebel</h2><p>Errate das geheime Wort. <strong>Platz 1</strong> ist die Lösung. Kleine Zahlen bedeuten große Nähe!</p><form class="contexto-form"><input aria-label="Wort eingeben" placeholder="Dein Wort …" autocomplete="off" required><button type="submit">Raten</button></form><p class="contexto-status" role="status"></p><div class="contexto-hints"><p class="contexto-hint-count"></p><div class="contexto-hint-buttons"><button type="button" data-hint="word">Top-10-Wort</button><button type="button" data-hint="category">Kategorie</button><button type="button" data-hint="letter">Anfangsbuchstabe</button></div><div class="contexto-hint-results"></div></div><div class="contexto-count"></div><div class="contexto-guesses"></div><p class="contexto-finished" hidden>✦ Du hast das verborgene Wort gefunden! Die Sternenroute ist freigeschaltet.</p></div>';
+ modal=document.createElement('div');modal.className='contexto-overlay';modal.innerHTML='<div class="contexto-panel" role="dialog" aria-modal="true" aria-label="Contexto – Das Wort im Nebel"><button class="contexto-close" type="button" aria-label="Schließen">×</button><div class="quest-mark">✧ ✦ ✧</div><h2>Das Wort im Nebel</h2><p>Errate das geheime Wort. <strong>Platz 1</strong> ist die Lösung. Kleine Zahlen bedeuten große Nähe!</p><form class="contexto-form"><input aria-label="Wort eingeben" placeholder="Dein Wort …" autocomplete="off" required><button type="submit">Raten</button></form><p class="contexto-status" role="status"></p><div class="contexto-hints"><p class="contexto-hint-count"></p><div class="contexto-hint-buttons"><button type="button" data-hint="word">Worttipp</button><button type="button" data-hint="category">Kategorie</button><button type="button" data-hint="letter">Anfangsbuchstabe</button></div><div class="contexto-hint-results"></div></div><div class="contexto-count"></div><div class="contexto-guesses"></div><p class="contexto-finished" hidden>✦ Du hast das verborgene Wort gefunden! Die Sternenroute ist freigeschaltet.</p></div>';
  document.body.append(modal);modal.querySelector('.contexto-close').onclick=()=>{modal.remove();modal=null};
  modal.querySelector('.contexto-form').onsubmit=async e=>{
  e.preventDefault();
@@ -70,10 +70,26 @@ function open(){
    try{
     const ranks=await loadRanking();
     if(!modal||!modal.isConnected)return;
-    const best=Math.min(11,...entries.map(e=>e.rank),...hints.filter(h=>h.type==='word').map(h=>h.rank));
-    
-    const choices=Object.entries(ranks).filter(([w,rank])=>rank>=2&&rank<=10&&(best<=2?rank>2:rank<best)&&!entries.some(e=>normalize(e.word)===w)&&!modalHintWords.has(w)).sort((a,b)=>b[1]-a[1]);
-    if(!choices.length){modal.querySelector('.contexto-status').textContent='Kein weiteres unverbrauchtes Top-10-Wort verfügbar.';return}
+    const best=Math.min(Infinity,...entries.map(e=>e.rank),...hints.filter(h=>h.type==='word').map(h=>h.rank));
+    const wordHintCount=hints.filter(h=>h.type==='word').length;
+    // Hint progression: broad association first, closer words later.
+    // On the third word hint, guarantee a safe lower top-10 word if not already there.
+    const safeWords=['verkehr','fahrrad','boden','baustelle','holpern','fahrzeug','reparatur','schotter','delle','grube','mulde','frost','panne','platten','platt','buckel','huckel','ausweichen','fahrbahn','auto','schaden','reifen','strasse','loch'];
+    const safe=Object.entries(ranks).filter(([w,rank])=>safeWords.includes(w)&&rank>1&&!entries.some(e=>normalize(e.word)===w)&&!modalHintWords.has(w));
+    let choices,target;
+    if(best<=2){
+      choices=safe.filter(([w,rank])=>rank>=3&&rank<=10);
+      target=8;
+    }else if(wordHintCount>=2&&best>10){
+      choices=safe.filter(([w,rank])=>rank>=7&&rank<=10&&rank<best);
+      target=9;
+    }else{
+      target=!Number.isFinite(best)||best>500?65:best>100?best-25:best>50?best-20:best>20?best-10:best>10?best-4:best-1;
+      target=Math.max(2,target);
+      choices=safe.filter(([w,rank])=>rank<best);
+    }
+    choices.sort((a,b)=>Math.abs(a[1]-target)-Math.abs(b[1]-target)||b[1]-a[1]);
+    if(!choices.length){modal.querySelector('.contexto-status').textContent='Kein weiterer sinnvoller Worttipp verfügbar, ohne die Lösung zu verraten.';return}
     const [word,rank]=choices[0];hints.push({type,word,rank});modalHintWords.add(word);
    }catch(e){modal.querySelector('.contexto-status').textContent='Die Rangliste konnte nicht geladen werden.';return}
    finally{btn.disabled=false}
