@@ -980,3 +980,15 @@ html:has(.day5-overlay){overflow:hidden!important}
 .day5-stage.day5-wide-stage .day5-object>.day5-silhouette{transform:scale(.42);transform-origin:center bottom}
 .day5-stage.day5-wide-stage .day5-layer-stack .day5-layer{transform:translateX(-50%) scale(.42);transform-origin:center bottom}
 .day5-stage.day5-wide-stage .day5-object{overflow:visible}
+
+
+.day5-stage.day5-goal-overlay-stage{display:flex;align-items:center;justify-content:center;overflow:hidden;height:245px;padding:10px}
+.day5-goal-comparison{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px}
+.day5-goal-display{position:relative;width:220px;height:158px;flex:none}
+.day5-goal-frame{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);border:4px solid #4779b0;box-sizing:border-box}
+.day5-goal-net{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 11px,#4779b033 11px 12px),repeating-linear-gradient(90deg,transparent 0 11px,#4779b033 11px 12px)}
+.day5-board{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);border:3px solid #d15a4e;background:#d15a4e1c;box-sizing:border-box}
+.day5-board-inner{position:absolute;left:30%;top:28%;width:40%;height:40%;border:2px solid currentColor;color:#d15a4e}
+.day5-ring{position:absolute;left:50%;top:76%;width:38%;height:11px;border:3px solid currentColor;color:#d15a4e;border-radius:50%;transform:translateX(-50%);box-sizing:border-box}
+.day5-board-true{border-color:#398e70;background:#398e701c;opacity:.6}.day5-board-true .day5-board-inner,.day5-board-true .day5-ring{color:#398e70}
+.day5-goal-caption{font:12px/1.3 Georgia,serif;color:#574737;text-align:center}
