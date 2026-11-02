@@ -133,8 +133,11 @@ function render(){
  }
  const item=current();if(!item)return;
  if(!Number.isFinite(state.estimate)||state.estimate<=0)state.estimate=item.bh;
- const sliderValue=Math.max(0,Math.min(100000,Math.round((Math.log(state.estimate/(item.bh/1000))/Math.log(1000000))*100000)));
- content.innerHTML='<p class="day5-count">Vergleich '+(state.scores.length+1)+' von 5 · Ziel: 400 von 500 Punkten</p><h3>Wie groß ist '+item.name+'?</h3><p>Verändere die rechte Silhouette, bis die beiden Größen im richtigen Verhältnis stehen.</p><div class="day5-stage"><div class="day5-object"><div class="day5-silhouette day5-person">'+svg(item.bk)+'</div><span>'+item.base+'<br>'+format(item.bh)+'</span></div><div class="day5-object"><div class="day5-silhouette day5-guess">'+svg(item.kind)+'</div><span>'+item.name+'</span></div></div><label class="day5-slider-label">Größe anpassen<input class="day5-slider" type="range" min="0" max="100000" value="'+sliderValue+'" step="1"></label><div class="day5-fine"><button type="button" class="day5-minus" aria-label="Kleiner">−</button><label>Geschätzte Größe <input class="day5-number" type="number" min="0.00001" step="any" inputmode="decimal" value="'+Number(state.estimate.toFixed(5))+'"></label><span>Meter</span><button type="button" class="day5-plus" aria-label="Größer">+</button></div><p class="day5-estimate">Deine Schätzung: <strong>'+format(state.estimate)+'</strong></p><button class="day5-action" type="button">✦ Schätzung festlegen ✦</button><p class="day5-progress">Bisher '+state.scores.reduce((a,b)=>a+b,0)+' Punkte gesammelt</p>';
+ const unit=item.bh>=10?1:.01;
+ const minEstimate=unit;
+ const maxEstimate=Math.max(item.bh*5,item.h*2,minEstimate*100);
+ const sliderValue=Math.max(0,Math.min(10000,Math.round((state.estimate-minEstimate)/(maxEstimate-minEstimate)*10000)));
+ content.innerHTML='<p class="day5-count">Vergleich '+(state.scores.length+1)+' von 5 · Ziel: 400 von 500 Punkten</p><h3>Wie groß ist '+item.name+'?</h3><p>Verändere die rechte Silhouette, bis die beiden Größen im richtigen Verhältnis stehen.</p><div class="day5-stage"><div class="day5-object"><div class="day5-silhouette day5-person">'+svg(item.bk)+'</div><span>'+item.base+'<br>'+format(item.bh)+'</span></div><div class="day5-object"><div class="day5-silhouette day5-guess">'+svg(item.kind)+'</div><span>'+item.name+'</span></div></div><label class="day5-slider-label">Größe anpassen<input class="day5-slider" type="range" min="0" max="10000" value="'+sliderValue+'" step="1"></label><div class="day5-fine"><button type="button" class="day5-minus" aria-label="Kleiner">−</button><label>Geschätzte Größe <input class="day5-number" type="number" min="0.00001" step="any" inputmode="decimal" value="'+Number(state.estimate.toFixed(5))+'"></label><span>Meter</span><button type="button" class="day5-plus" aria-label="Größer">+</button></div><p class="day5-estimate">Deine Schätzung: <strong>'+format(state.estimate)+'</strong></p><button class="day5-action" type="button">✦ Schätzung festlegen ✦</button><p class="day5-progress">Bisher '+state.scores.reduce((a,b)=>a+b,0)+' Punkte gesammelt</p>';
  const number=content.querySelector('.day5-number');
  const slider=content.querySelector('.day5-slider'),person=content.querySelector('.day5-person'),guess=content.querySelector('.day5-guess'),label=content.querySelector('.day5-estimate strong');
  function scale(){
@@ -144,11 +147,11 @@ function render(){
   label.textContent=format(state.estimate);
   number.value=Number(state.estimate.toFixed(5));
  }
- slider.oninput=()=>{state.estimate=(item.bh/1000)*Math.pow(1000000,Number(slider.value)/100000);scale()};
+ slider.oninput=()=>{const raw=minEstimate+(maxEstimate-minEstimate)*Number(slider.value)/10000;state.estimate=Math.max(unit,Math.round(raw/unit)*unit);scale()};
  slider.onchange=save;
- number.onchange=()=>{const v=Number(number.value);if(Number.isFinite(v)&&v>0){state.estimate=v;slider.value=Math.max(0,Math.min(100000,Math.round(Math.log(v/(item.bh/1000))/Math.log(1000000)*100000)));save()}scale()};
- content.querySelector('.day5-minus').onclick=()=>{state.estimate=Math.max(.00001,state.estimate*.995);slider.value=Math.max(0,Math.min(100000,Math.round(Math.log(state.estimate/(item.bh/1000))/Math.log(1000000)*100000)));scale();save()};
- content.querySelector('.day5-plus').onclick=()=>{state.estimate*=1.005;slider.value=Math.max(0,Math.min(100000,Math.round(Math.log(state.estimate/(item.bh/1000))/Math.log(1000000)*100000)));scale();save()};
+ number.onchange=()=>{const v=Number(number.value);if(Number.isFinite(v)&&v>0){state.estimate=v;slider.value=Math.max(0,Math.min(10000,Math.round((v-minEstimate)/(maxEstimate-minEstimate)*10000)));save()}scale()};
+ content.querySelector('.day5-minus').onclick=()=>{state.estimate=Math.max(unit,Math.round((state.estimate-unit)/unit)*unit);slider.value=Math.max(0,Math.min(10000,Math.round((state.estimate-minEstimate)/(maxEstimate-minEstimate)*10000)));scale();save()};
+ content.querySelector('.day5-plus').onclick=()=>{state.estimate=Math.round((state.estimate+unit)/unit)*unit;slider.value=Math.max(0,Math.min(10000,Math.round((state.estimate-minEstimate)/(maxEstimate-minEstimate)*10000)));scale();save()};
  scale();
  content.querySelector('.day5-action').onclick=()=>{state.reveal=true;save();render()};
 }
