@@ -1013,3 +1013,11 @@ html:has(.day5-overlay){overflow:hidden!important}
   transform:translate(-50%,-50%);
   transform-origin:center center;
 }
+
+/* Contexto: compact, accessible hint controls */
+.contexto-hints{margin:12px 0 16px;padding:12px;border:1px solid #c9b18c;border-radius:12px;background:#f4e8d2}
+.contexto-hint-count{margin:0 0 8px;font-size:.88em;color:#76593b}
+.contexto-hint-buttons{display:flex;flex-wrap:wrap;gap:7px}
+.contexto-hint-buttons button{flex:1 1 110px;padding:9px 6px;border-radius:9px;border:1px solid #b99b73;background:#fff9ed;color:#664c31;font:inherit;font-size:.8em;cursor:pointer}
+.contexto-hint-buttons button:disabled{opacity:.42;cursor:default}
+.contexto-hint-results{font-size:.9em;line-height:1.5;margin-top:8px}
