@@ -1021,3 +1021,33 @@ html:has(.day5-overlay){overflow:hidden!important}
 .contexto-hint-buttons button{flex:1 1 110px;padding:9px 6px;border-radius:9px;border:1px solid #b99b73;background:#fff9ed;color:#664c31;font:inherit;font-size:.8em;cursor:pointer}
 .contexto-hint-buttons button:disabled{opacity:.42;cursor:default}
 .contexto-hint-results{font-size:.9em;line-height:1.5;margin-top:8px}
+
+
+/* Day 13: antique-paper Sudoku */
+.day13-sudoku-quest{text-align:center;padding:16px 12px;margin:12px auto;color:#624c36}
+.day13-sudoku-quest h3{font:normal 1.6rem Georgia,serif;margin:6px 0}
+.day13-sudoku-quest p{font:italic .94rem Georgia,serif}
+.day13-sudoku-open{border:1px solid #a88a5e;border-radius:10px;padding:12px 22px;background:#ead8b6;color:#4f3926;font:1rem Georgia,serif;cursor:pointer}
+.day13-overlay{position:fixed;inset:0;z-index:99999;background:#201b18d9;display:flex;align-items:center;justify-content:center;padding:12px;overflow-y:auto;box-sizing:border-box}
+.day13-panel{position:relative;width:min(100%,570px);max-height:calc(100dvh - 24px);overflow-y:auto;box-sizing:border-box;padding:18px 18px 22px;border:2px solid #b59a6b;border-radius:16px;background:#f6efdf;color:#4d3a29;box-shadow:0 20px 70px #0008;text-align:center;font-family:Georgia,serif}
+.day13-panel h2{font:normal clamp(1.4rem,5vw,2rem) Georgia,serif;margin:4px 0 7px}
+.day13-panel .quest-mark{color:#a68550}
+.day13-subtitle{font-size:.86rem;line-height:1.4;margin:5px 0 14px}
+.day13-close{position:absolute;right:12px;top:8px;background:transparent;border:0;color:#694d32;font-size:30px;cursor:pointer}
+.day13-grid{position:relative;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));grid-template-rows:repeat(9,minmax(0,1fr));width:min(100%,440px);aspect-ratio:1;margin:0 auto;border:2px solid #765e41;background:#fffbf2;box-sizing:border-box}
+.day13-cell{min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;border:0;border-right:1px solid #cbbda5;border-bottom:1px solid #cbbda5;border-radius:0;background:transparent;color:#41647a;font:500 clamp(16px,4.7vw,27px) Georgia,serif;cursor:pointer;padding:0;position:relative}
+.day13-cell.given{color:#45372c;font-weight:700}
+.day13-cell.selected{background:#e8d6a8}
+.day13-cell.note{color:#a18359;font-size:clamp(11px,3vw,16px)}
+.day13-cell.invalid{background:#f6d3ce;color:#a13c35}
+.day13-cell.block-right{border-right:2px solid #765e41}
+.day13-cell.block-bottom{border-bottom:2px solid #765e41}
+.day13-red-frame{z-index:2;pointer-events:none;border:3px solid #b44239;box-shadow:inset 0 0 0 1px #fff8;box-sizing:border-box;align-self:stretch;justify-self:stretch}
+.day13-pad{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:5px;max-width:440px;margin:15px auto 11px}
+.day13-pad button{aspect-ratio:1;border:1px solid #c9b18c;border-radius:50%;background:#fffaf0;color:#614b34;font:normal clamp(17px,4.5vw,25px) Georgia,serif;cursor:pointer;padding:0}
+.day13-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}
+.day13-actions button{flex:1 1 85px;padding:9px 6px;border:1px solid #c0a57d;border-radius:9px;background:#efe1c6;color:#5b432b;font:14px Georgia,serif;cursor:pointer}
+.day13-actions button.active{background:#d2b47d;border-color:#987444}
+.day13-hint-count{font-size:12px;color:#876f51;margin:12px 0 4px}
+.day13-status{font-size:14px;min-height:1.3em;margin:6px 0 0}
+@media(max-width:380px){.day13-panel{padding:14px 10px}.day13-pad{gap:3px}.day13-actions button{font-size:12px;flex-basis:75px}}
