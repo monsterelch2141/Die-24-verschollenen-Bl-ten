@@ -973,3 +973,10 @@ html:has(.day5-overlay){overflow:hidden!important}
 .day5-stage .day5-silhouette{width:max-content!important;max-width:none!important;min-height:0!important;flex:0 0 auto}
 .day5-stage .day5-silhouette .day5-png{height:100%!important;width:auto!important;max-width:none!important;object-fit:contain!important;object-position:center bottom}
 .day5-stage .day5-layer{left:50%;right:auto;transform:translateX(-50%);margin:0}
+
+
+/* Day 5: extra-wide football goal comparison. Both silhouettes shrink by the
+   same visual factor; their relative heights and aspect ratios remain intact. */
+.day5-stage.day5-wide-stage .day5-object>.day5-silhouette{transform:scale(.42);transform-origin:center bottom}
+.day5-stage.day5-wide-stage .day5-layer-stack .day5-layer{transform:translateX(-50%) scale(.42);transform-origin:center bottom}
+.day5-stage.day5-wide-stage .day5-object{overflow:visible}
