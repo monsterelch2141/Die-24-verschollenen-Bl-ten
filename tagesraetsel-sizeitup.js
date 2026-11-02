@@ -110,7 +110,7 @@ function render(){
  if(state.reveal){
   const item=current(),pts=score(state.estimate,item.h),total=state.scores.reduce((a,b)=>a+b,0)+pts;
   const mx=Math.max(item.bh,state.estimate,item.h);
-  const hBase=Math.max(2,item.bh/mx*94),hGuess=Math.max(2,state.estimate/mx*94),hTrue=Math.max(2,item.h/mx*94);
+  const hBase=Math.max(.5,item.bh/mx*94),hGuess=Math.max(.5,state.estimate/mx*94),hTrue=Math.max(.5,item.h/mx*94);
   content.innerHTML='<p class="day5-count">Vergleich '+(state.scores.length+1)+' von 5</p><h3>'+item.name+'</h3><p class="day5-points">'+pts+' / 100 Punkte</p><div class="day5-stage day5-reveal-stage"><div class="day5-object"><div class="day5-silhouette day5-person" style="height:'+hBase+'%">'+svg(item.bk)+'</div><span>'+item.base+'<br>'+format(item.bh)+'</span></div><div class="day5-object"><div class="day5-layer-stack"><div class="day5-silhouette day5-guess day5-layer" style="height:'+hGuess+'%">'+svg(item.kind)+'</div><div class="day5-silhouette day5-actual day5-layer" style="height:'+hTrue+'%">'+svg(item.kind)+'</div></div><span>'+item.name+'</span></div></div><div class="day5-legend"><span>● Deine Schätzung: <strong>'+format(state.estimate)+'</strong></span><span>● Tatsächlich: <strong>'+format(item.h)+'</strong></span></div><p>'+item.note+'</p><p>Zwischenstand: '+total+' / 500 Punkte</p><button class="day5-action" type="button">✧ Weiter ✧</button>';
   content.querySelector('.day5-action').onclick=()=>{
    state.scores.push(pts);state.reveal=false;state.estimate=NaN;
@@ -137,8 +137,8 @@ function render(){
  const slider=content.querySelector('.day5-slider'),person=content.querySelector('.day5-person'),guess=content.querySelector('.day5-guess'),label=content.querySelector('.day5-estimate strong');
  function scale(){
   const max=Math.max(item.bh,state.estimate);
-  person.style.height=Math.max(7,item.bh/max*94)+'%';
-  guess.style.height=Math.max(7,state.estimate/max*94)+'%';
+  person.style.height=Math.max(.5,item.bh/max*94)+'%';
+  guess.style.height=Math.max(.5,state.estimate/max*94)+'%';
   label.textContent=format(state.estimate);
   number.value=Number(state.estimate.toFixed(5));
  }
