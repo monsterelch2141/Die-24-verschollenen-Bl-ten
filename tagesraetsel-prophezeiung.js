@@ -1,0 +1,15 @@
+(()=>{'use strict';
+const DAY=12,KEY='advent-tag12-prophezeiung-v1',ANSWER='63217',ROUTE=[137,208,314,95,421,63,178,256];
+const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
+if(!day||!board||!instruction)return;
+let solved=localStorage.getItem(KEY)==='yes',modal=null;
+const bar=document.createElement('section');bar.className='day12-prophezeiung-quest';bar.hidden=true;
+bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Die Prophezeiung der zwei Ufer</h3><button type="button" class="day12-prophezeiung-open">Schlüsselwort eingeben</button><div class="day12-prophezeiung-route" hidden></div>';
+instruction.before(bar);
+const selected=()=>Number(day.value)===DAY;
+function sync(){bar.hidden=!selected();if(!selected())return;const route=bar.querySelector('.day12-prophezeiung-route');route.hidden=!solved;if(solved)route.innerHTML='<strong>Sternenroute (Testdaten)</strong><p>'+ROUTE.join(' → ')+'</p>';instruction.textContent=solved?'Verbinde deine Sternenroute und wähle den richtigen Stern.':'Löse zuerst das Tagesrätsel, bevor du ein Sternenfeld auswählst.';}
+function open(){if(modal)return;modal=document.createElement('div');modal.className='contexto-overlay';modal.innerHTML='<div class="contexto-panel" role="dialog" aria-modal="true" aria-label="Die Prophezeiung der zwei Ufer"><button type="button" class="contexto-close" aria-label="Schließen">×</button><div class="quest-mark">✧ ✦ ✧</div><h2>Die Prophezeiung der zwei Ufer</h2><form class="contexto-form"><input aria-label="Schlüsselwort" placeholder="Schlüsselwort eingeben …" autocomplete="off" required><button type="submit">Bestätigen</button></form><p class="contexto-status" role="status"></p></div>';document.body.append(modal);modal.querySelector('.contexto-close').onclick=()=>{modal.remove();modal=null};const form=modal.querySelector('form');if(solved){form.hidden=true;modal.querySelector('.contexto-status').textContent='✦ Die Sternenroute ist bereits freigeschaltet.';}form.onsubmit=e=>{e.preventDefault();if(form.querySelector('input').value.trim()===ANSWER){solved=true;localStorage.setItem(KEY,'yes');modal.querySelector('.contexto-status').textContent='✦ Schlüsselwort richtig! Die Sternenroute ist freigeschaltet.';form.hidden=true;sync();}else modal.querySelector('.contexto-status').textContent='Das Schlüsselwort ist noch nicht richtig.';};form.querySelector('input').focus();}
+bar.querySelector('button').onclick=open;
+board.addEventListener('click',e=>{if(!selected()||solved||!e.target.closest('.cell'))return;e.stopImmediatePropagation();e.preventDefault();feedback.className='feedback error';feedback.textContent='✧ Löse zuerst das Tagesrätsel. ✧';},true);
+day.addEventListener('change',()=>setTimeout(sync,0));day.addEventListener('input',sync);document.getElementById('previous')?.addEventListener('click',()=>setTimeout(sync,0));document.getElementById('next')?.addEventListener('click',()=>setTimeout(sync,0));sync();
+})();
