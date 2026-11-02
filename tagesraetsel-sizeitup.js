@@ -20,7 +20,7 @@ const ROUNDS=[
  {base:'Rose',bh:.65,bk:'rose',name:'Flamingo',h:1.25,kind:'flamingo',note:'Beispielhöhe einer Rose und eines Flamingos'},
  {base:'Gartenzwerg',bh:.4,bk:'gnome',name:'Karnevalswagen',h:4,kind:'float',note:'Beispielmaße: 40 cm Gartenzwerg und 4 m hoher Karnevalswagen'},
  {base:'DIN-A4-Blatt',bh:.297,bk:'paper',name:'Sektflasche (0,75 l)',h:.32,kind:'bottle',note:'Längsseite des A4-Blatts und Höhe einer typischen 0,75-l-Flasche'},
- {base:'Fußballtor',bh:2.44,bk:'goal',name:'Basketballkorb',h:3.05,kind:'hoop',note:'Offizielle Höhe des Fußballtors und des Korbrings'},
+ {base:'Fußballtor',bh:2.44,bk:'goal',name:'Basketballbrett',h:1.05,kind:'hoop',note:'Verglichen wird die Höhe des Basketballbretts (105 cm) mit der Torhöhe (244 cm), nicht die Aufhängehöhe des Korbrings'},
  {base:'Burj Khalifa',bh:828,bk:'skyscraper',name:'Fernsehturm Berlin',h:368,kind:'tv',note:'Höhen beider Bauwerke'}
  ]
 ];
@@ -111,8 +111,8 @@ function prepareImages(root){
 }
 
 const format=h=>h<1?Math.round(h*100)+' cm':h.toLocaleString('de-DE',{maximumFractionDigits:2})+' m';
-const PENALTIES=[115,78,35];
-const score=(a,b)=>Math.max(0,Math.min(100,Math.round(100-PENALTIES[state.round%3]*Math.abs(Math.log2(a/b)))));
+const PENALTIES=[80,57,35];
+const score=(a,b)=>{const ratio=Math.abs(Math.log2(a/b));if(ratio<1e-9)return 100;return Math.max(0,Math.min(100,Math.round(100-PENALTIES[state.round%3]*ratio)));};
 const current=()=>ROUNDS[state.round%3][state.scores.length];
 function sync(){
  bar.hidden=!selected();if(!selected())return;
