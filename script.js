@@ -293,7 +293,18 @@
   if (testReset) testReset.addEventListener('click', () => {
     if (!testMode || !confirm('Testfortschritt vollständig zurücksetzen? Alle grünen Felder, die Reisekarte und die Blumenvase beginnen wieder bei null.')) return;
     solved = {};
-    try { localStorage.removeItem(key); localStorage.removeItem('advent_blumen_gefunden'); } catch (_) {}
+    try {
+      // Alle eigenständigen Tagesrätsel speichern ihren Fortschritt separat.
+      // Auch ältere Versionsschlüssel entfernen, damit kein gelöstes Rätsel übrig bleibt.
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const storedKey = localStorage.key(i);
+        if (storedKey && (
+          storedKey.startsWith('advent-tag') ||
+          storedKey === key ||
+          storedKey === 'advent_blumen_gefunden'
+        )) localStorage.removeItem(storedKey);
+      }
+    } catch (_) {}
     allRevealed = false;
     day = 1;
     try { sessionStorage.removeItem(dayMemoryKey); } catch (_) {}
