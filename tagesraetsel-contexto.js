@@ -74,7 +74,7 @@ function open(){
     const wordHintCount=hints.filter(h=>h.type==='word').length;
     // Hint progression: broad association first, closer words later.
     // On the third word hint, guarantee a safe lower top-10 word if not already there.
-    const safeWords=['verkehr','fahrrad','boden','baustelle','holpern','fahrzeug','reparatur','schotter','delle','grube','mulde','frost','panne','platten','platt','buckel','huckel','ausweichen','fahrbahn','auto','schaden','reifen','strasse','loch'];
+    const safeWords=['verkehr','fahrrad','boden','baustelle','holpern','fahrzeug','reparatur','schotter','delle','grube','mulde','frost','panne','platten','platt','buckel','huckel','ausweichen','fahrbahn','strassenbelag','auto','schaden','reifen','strasse','loch'];
     const safe=Object.entries(ranks).filter(([w,rank])=>safeWords.includes(w)&&rank>1&&!entries.some(e=>normalize(e.word)===w)&&!modalHintWords.has(w));
     let choices,target;
     if(best<=2){
