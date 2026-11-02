@@ -30,12 +30,21 @@ function allGuesses(){
  return guesses;
 }
 
-const bar=document.createElement('section');bar.className='day4-contexto-quest';bar.hidden=true;bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Das Wort im Nebel</h3><p>Finde das verborgene Wort. Je kleiner die Platznummer, desto näher bist du dem Ziel.</p><button type="button" class="day4-contexto-open">✧ Das Wortgeheimnis betreten ✧</button><div class="day4-contexto-route" hidden></div>';
+const bar=document.createElement('section');bar.className='day4-contexto-quest';bar.hidden=true;bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Das Wort im Nebel</h3><p>Ein Geheimnis wartet hinter dem Nebel. Nur ein Schlüsselwort kann es lüften.</p><button type="button" class="day4-contexto-open">✧ Das Wortgeheimnis betreten ✧</button><div class="day4-contexto-route" hidden></div>';
 instruction.before(bar);
 function selected(){return Number(day.value)===DAY}
 function sync(){bar.hidden=!selected();if(!selected())return;const route=bar.querySelector('.day4-contexto-route');route.hidden=!solved;if(solved)route.innerHTML='<strong>Sternenroute (Testdaten)</strong><p>'+ROUTE.join(' → ')+'</p>';instruction.textContent=solved?'Verbinde deine Sternenroute und wähle den richtigen Stern.':'Löse zuerst das Tagesrätsel, bevor du ein Sternenfeld auswählst.'}
 function render(){
  if(!modal)return;
+ const revealed=entries.length>0||hints.length>0||solved;
+ modal.querySelector('.contexto-explanation').hidden=!revealed;
+ modal.querySelector('.contexto-intro').hidden=revealed;
+ modal.querySelector('.contexto-hints').hidden=!revealed;
+ modal.querySelector('.contexto-count').hidden=!revealed;
+ modal.querySelector('.contexto-guesses').hidden=!revealed;
+ const form=modal.querySelector('.contexto-form');
+ form.querySelector('input').placeholder=revealed?'Dein Wort …':'Schlüsselwort eingeben …';
+ form.querySelector('button').textContent=revealed?'Raten':'Schlüsselwort prüfen';
  const list=modal.querySelector('.contexto-guesses');
  list.innerHTML=allGuesses().sort((a,b)=>a.rank-b.rank).map(e=>'<div class="contexto-guess"><strong>'+escapeHtml(e.word)+(e.fromHint?' 💡':'')+'</strong><span>'+e.rank.toLocaleString('de-DE')+'</span><div class="contexto-meter"><i style="width:'+Math.max(2,100-Math.min(99,Math.log10(e.rank)*28))+'%;background:'+(e.rank<=20?'#659c52':e.rank<=200?'#b99b50':'#9c8067')+'"></i></div></div>').join('');
  modal.querySelector('.contexto-count').textContent=entries.length+' eigene Versuche · '+hints.filter(h=>h.type==='word').length+' Worttipps';
@@ -51,7 +60,7 @@ function render(){
 }
 function open(){
  if(modal)return;
- modal=document.createElement('div');modal.className='contexto-overlay';modal.innerHTML='<div class="contexto-panel" role="dialog" aria-modal="true" aria-label="Contexto – Das Wort im Nebel"><button class="contexto-close" type="button" aria-label="Schließen">×</button><div class="quest-mark">✧ ✦ ✧</div><h2>Das Wort im Nebel</h2><p>Errate das geheime Wort. <strong>Platz 1</strong> ist die Lösung. Kleine Zahlen bedeuten große Nähe!</p><form class="contexto-form"><input aria-label="Wort eingeben" placeholder="Dein Wort …" autocomplete="off" required><button type="submit">Raten</button></form><p class="contexto-status" role="status"></p><div class="contexto-hints"><p class="contexto-hint-count"></p><div class="contexto-hint-buttons"><button type="button" data-hint="word">Worttipp</button><button type="button" data-hint="category">Kategorie</button><button type="button" data-hint="letter">Anfangsbuchstabe</button></div><div class="contexto-hint-results"></div></div><div class="contexto-count"></div><div class="contexto-guesses"></div><p class="contexto-finished" hidden>✦ Du hast das verborgene Wort gefunden! Die Sternenroute ist freigeschaltet.</p></div>';
+ modal=document.createElement('div');modal.className='contexto-overlay';modal.innerHTML='<div class="contexto-panel" role="dialog" aria-modal="true" aria-label="Contexto – Das Wort im Nebel"><button class="contexto-close" type="button" aria-label="Schließen">×</button><div class="quest-mark">✧ ✦ ✧</div><h2>Das Wort im Nebel</h2><p class="contexto-intro">Der Nebel verbirgt eine Antwort. Gib ein Schlüsselwort ein und sieh, was geschieht …</p><p class="contexto-explanation" hidden>Errate das geheime Wort. <strong>Platz 1</strong> ist die Lösung. Kleine Zahlen bedeuten große Nähe!</p><form class="contexto-form"><input aria-label="Wort eingeben" placeholder="Dein Wort …" autocomplete="off" required><button type="submit">Raten</button></form><p class="contexto-status" role="status"></p><div class="contexto-hints"><p class="contexto-hint-count"></p><div class="contexto-hint-buttons"><button type="button" data-hint="word">Worttipp</button><button type="button" data-hint="category">Kategorie</button><button type="button" data-hint="letter">Anfangsbuchstabe</button></div><div class="contexto-hint-results"></div></div><div class="contexto-count"></div><div class="contexto-guesses"></div><p class="contexto-finished" hidden>✦ Du hast das verborgene Wort gefunden! Die Sternenroute ist freigeschaltet.</p></div>';
  document.body.append(modal);modal.querySelector('.contexto-close').onclick=()=>{modal.remove();modal=null};
  modal.querySelector('.contexto-form').onsubmit=async e=>{
  e.preventDefault();
