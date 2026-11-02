@@ -24,7 +24,7 @@ const ROUNDS=[
  {base:'Burj Khalifa',bh:828,bk:'skyscraper',name:'Fernsehturm Berlin',h:368,kind:'tv',note:'Höhen beider Bauwerke'}
  ]
 ];
-const EXACT_ASSETS={cathedral:'https://commons.wikimedia.org/wiki/Special:Redirect/file/CologneCathedralSilhouette.svg'};
+const EXACT_ASSETS={cathedral:'https://commons.wikimedia.org/wiki/Special:Redirect/file/CologneCathedralSilhouette.svg',tower:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Eiffel_Tower_Silhouette.svg',gate:'https://commons.wikimedia.org/wiki/Special:Redirect/file/BrandenburgerTorSilhouette.svg',tv:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Kontur-BerlinerFernsehturm.svg'};
 const LIBRARY_ICONS={"person":"fa6-solid:person","giraffe":"game-icons:giraffe","cathedral":"game-icons:cathedral","statue":"game-icons:statue-of-liberty","flower":"game-icons:tulip","snowdrop":"game-icons:flower-twirl","ball":"mdi:soccer","bowling":"mdi:bowling","tower":"game-icons:eiffel-tower","clocktower":"game-icons:clock-tower","card":"mdi:cards-playing","lego":"mdi:lego","wheel":"game-icons:ferris-wheel","gate":"game-icons:gate","door":"mdi:door","penguin":"game-icons:penguin","pingpong":"mdi:table-tennis","tennis":"mdi:tennis-ball","leaningtower":"game-icons:leaning-tower","arch":"game-icons:arc-triomphe","rose":"game-icons:rose","flamingo":"game-icons:flamingo","gnome":"game-icons:dwarf-helmet","float":"game-icons:festival","paper":"mdi:file-document","bottle":"mdi:bottle-wine","goal":"mdi:soccer-field","hoop":"mdi:basketball-hoop","skyscraper":"game-icons:skyscraper","tv":"game-icons:radio-tower"};
 const paths={
  gnome:'<path d="M48 2 L22 40 L38 42 L32 56 L38 70 L32 94 L68 94 L62 70 L68 56 L62 42 L78 40Z"/>',
