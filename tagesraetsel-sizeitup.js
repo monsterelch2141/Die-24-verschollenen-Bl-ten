@@ -82,7 +82,7 @@ instruction.before(bar);
 let overlay=null;
 const PNG_ASSETS={"person":"01_quatsch_quatsch.png","giraffe":"02_giraffe.png","cathedral":"03_koelner_dom.png","statue":"04_freiheitsstatue.png","flower":"05_tulpe.png","snowdrop":"06_schneegloeckchen.png","ball":"07_fussball.png","bowling":"08_bowlingkugel.png","tower":"09_eiffelturm.png","clocktower":"10_elizabeth_tower.png","card":"11_spielkarte.png","lego":"12_lego_minifigur.png","wheel":"13_london_eye.png","gate":"14_brandenburger_tor.png","door":"15_haustuer.png","penguin":"16_koenigspinguin.png","pingpong":"17_tischtennisball.png","tennis":"18_tennisball.png","leaningtower":"19_turm_pisa.png","arch":"20_triumphbogen.png","rose":"21_rose.png","flamingo":"22_flamingo.png","gnome":"23_gartenzwerg.png","float":"24_karnevalswagen.png","paper":"25_din_a4.png","bottle":"26_sektflasche.png","goal":"27_fussballtor.png","hoop":"28_basketballkorb.png","skyscraper":"29_burj_khalifa.png","tv":"30_berliner_fernsehturm.png"};
 const imageCache=new Map();
-const svg=(kind)=>'<img class="day5-library-icon day5-png" data-kind="'+kind+'" alt="" loading="eager" src="'+PNG_ASSETS[kind]+'">';
+const svg=(kind)=>kind==='hoop'?'<img class="day5-library-icon day5-png" alt="" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%20600%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23263c52%22%20stroke-width%3D%2210%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2245%22%20y%3D%2238%22%20width%3D%22310%22%20height%3D%22330%22%20rx%3D%225%22%2F%3E%3Crect%20x%3D%22145%22%20y%3D%22150%22%20width%3D%22110%22%20height%3D%22110%22%20stroke-width%3D%227%22%2F%3E%3Cellipse%20cx%3D%22200%22%20cy%3D%22389%22%20rx%3D%2287%22%20ry%3D%2217%22%2F%3E%3Cpath%20d%3D%22M125%20396%20L153%20490%20L247%20490%20L275%20396%20M153%20407%20L168%20488%20M181%20408%20L188%20489%20M219%20408%20L212%20489%20M247%20407%20L232%20488%20M144%20441%20L256%20441%20M154%20466%20L246%20466%22%20stroke-width%3D%225%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">':'<img class="day5-library-icon day5-png" data-kind="'+kind+'" alt="" loading="eager" src="'+PNG_ASSETS[kind]+'">';
 function prepareImages(root){
  root.querySelectorAll('img.day5-png').forEach(img=>{
   const kind=img.dataset.kind,src=PNG_ASSETS[kind];
@@ -111,8 +111,8 @@ function prepareImages(root){
 }
 
 const format=h=>h<1?Math.round(h*100)+' cm':h.toLocaleString('de-DE',{maximumFractionDigits:2})+' m';
-const PENALTIES=[80,57,35];
-const score=(a,b)=>{const ratio=Math.abs(Math.log2(a/b));if(ratio<1e-9)return 100;return Math.max(0,Math.min(100,Math.round(100-PENALTIES[state.round%3]*ratio)));};
+const PENALTIES=[4,2.8,1.8];
+const score=(a,b)=>{if(a===b)return 100;const error=Math.abs(a-b)/b;return Math.max(0,Math.min(100,Math.round(100/(1+PENALTIES[state.round%3]*Math.pow(error/.5,1.7)))));};
 const current=()=>ROUNDS[state.round%3][state.scores.length];
 function sync(){
  bar.hidden=!selected();if(!selected())return;
