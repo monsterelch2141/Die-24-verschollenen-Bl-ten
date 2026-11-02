@@ -964,3 +964,12 @@ html:has(.day5-overlay){overflow:hidden!important}
 .day5-slider{margin:6px auto}
 .day5-stage{margin:9px auto 9px}
 @media(max-width:450px){.day5-stage{height:235px}.day5-panel h2{font-size:23px;margin:5px 0}.day5-panel h3{font-size:21px;margin:6px auto}.day5-panel .day5-count{margin:5px auto}.day5-content>p{margin:7px auto}}
+
+
+/* Size It Up: scale the ENTIRE silhouette uniformly, never stretch width. */
+.day5-stage .day5-object{height:calc(100% - 49px);align-self:start;justify-content:flex-end;overflow:visible}
+.day5-stage .day5-object>span{position:absolute;top:100%;left:0;right:0;height:45px;margin-top:4px}
+.day5-stage .day5-layer-stack{height:100%}
+.day5-stage .day5-silhouette{width:max-content!important;max-width:none!important;min-height:0!important;flex:0 0 auto}
+.day5-stage .day5-silhouette .day5-png{height:100%!important;width:auto!important;max-width:none!important;object-fit:contain!important;object-position:center bottom}
+.day5-stage .day5-layer{left:50%;right:auto;transform:translateX(-50%);margin:0}
