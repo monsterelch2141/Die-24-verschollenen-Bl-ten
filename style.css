@@ -949,3 +949,5 @@ html:has(.day5-overlay){overflow:hidden!important}
 .day5-silhouette.day5-guess .day5-library-icon{filter:invert(39%) sepia(26%) saturate(1497%) hue-rotate(321deg)}
 .day5-silhouette.day5-actual .day5-library-icon{filter:invert(42%) sepia(22%) saturate(1071%) hue-rotate(98deg)}
 .day5-fallback{height:100%;width:100%}.day5-fallback svg{height:100%;width:100%}
+
+.day5-library-icon{object-fit:contain;object-position:center bottom}
