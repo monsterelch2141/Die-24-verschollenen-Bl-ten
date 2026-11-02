@@ -1002,3 +1002,14 @@ html:has(.day5-overlay){overflow:hidden!important}
 .day5-hoop-estimate{filter:invert(39%) sepia(26%) saturate(1497%) hue-rotate(321deg);z-index:2}
 .day5-hoop-actual{filter:invert(42%) sepia(22%) saturate(1071%) hue-rotate(98deg);opacity:.48;z-index:3}
 .day5-goal-caption{font-size:11px;padding:0 4px}
+
+
+/* Anchor the basketball artwork at the goal's visual centre.
+   Scaling changes dimensions, never the centre position. */
+.day5-goal-display .day5-hoop-estimate,
+.day5-goal-display .day5-hoop-actual{
+  top:50%;
+  bottom:auto;
+  transform:translate(-50%,-50%);
+  transform-origin:center center;
+}
