@@ -917,3 +917,26 @@ html:has(.day1-overlay),html:has(.day1-overlay) body{overflow:hidden!important;o
 .day5-error{color:#a23e31}
 html:has(.day5-overlay){overflow:hidden!important}
 @media(max-height:700px){.day5-stage{height:200px}.day5-panel{padding:12px}}
+
+
+/* Size It Up — clean comparison canvas, layered true-size overlay */
+.day5-panel{background:#f6efdf;border:1px solid #bca579;border-radius:18px;padding:22px;color:#3f3328}
+.day5-panel h2{letter-spacing:.01em}
+.day5-stage{height:310px;max-width:590px;gap:0;background:linear-gradient(180deg,#fffdf7,#f3ecde 88%,#9c8b77 88%,#9c8b77 89%,#f3ecde 89%);border:1px solid #d9cdbb;border-radius:12px;padding:12px 8px 8px;box-sizing:border-box}
+.day5-object{height:100%;min-height:0}
+.day5-silhouette{max-width:220px;color:#3f6c9b;transition:height .1s linear}
+.day5-guess{color:#bd5a4f}
+.day5-actual{color:#37876a;opacity:.46}
+.day5-silhouette svg{width:100%;max-width:220px;filter:drop-shadow(0 2px 1px #0002)}
+.day5-layer-stack{position:relative;width:100%;height:calc(100% - 49px)}
+.day5-layer{position:absolute;bottom:0;left:0;right:0;margin:auto}
+.day5-reveal-stage .day5-object>.day5-silhouette{margin-top:auto}
+.day5-legend{display:flex;justify-content:center;gap:10px 22px;flex-wrap:wrap;font-size:14px;margin:12px auto}
+.day5-legend span:first-child{color:#bd5a4f}.day5-legend span:last-child{color:#37876a}
+.day5-fine{display:flex;align-items:end;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px auto}
+.day5-fine label{font-size:12px;text-align:left}
+.day5-fine input{display:block;box-sizing:border-box;width:130px;padding:9px 8px;font:16px Georgia,serif;color:#473a2d;border:1px solid #c4ad8d;border-radius:7px;background:#fffdf8}
+.day5-fine button{font-size:23px;line-height:1;width:38px;height:40px;border:1px solid #b8a68d;border-radius:8px;background:#fff9ef;color:#65472f;cursor:pointer}
+.day5-fine>span{padding-bottom:10px}
+.day5-slider{height:28px;cursor:pointer}
+@media(max-width:450px){.day5-stage{height:265px}.day5-panel{padding:17px 10px}.day5-object>span{font-size:12px}}
