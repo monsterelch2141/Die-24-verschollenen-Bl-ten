@@ -6,7 +6,7 @@ const ROUNDS=[
  {base:'Quatsch Quatsch',bh:1.81,bk:'person',name:'Giraffe',h:5.2,kind:'giraffe',note:'Beispielhöhe einer ausgewachsenen Giraffe'},
  {base:'Kölner Dom',bh:157,bk:'cathedral',name:'Freiheitsstatue (mit Sockel)',h:93,kind:'statue',note:'Gesamthöhe der Freiheitsstatue inklusive Sockel'},
  {base:'Tulpe',bh:.45,bk:'flower',name:'Schneeglöckchen',h:.18,kind:'snowdrop',note:'Typische Pflanzenhöhen; Exemplare können abweichen'},
- {base:'Fußball',bh:.22,bk:'ball',name:'Bowlingkugel',h:.218,kind:'bowling',note:'Verglichen wird jeweils der Durchmesser'},
+ {base:'Fußball',bh:.22,bk:'ball',name:'Bowlingkugel',h:.22,kind:'bowling',note:'Verglichen wird jeweils der Durchmesser'},
  {base:'Eiffelturm',bh:330,bk:'tower',name:'Elizabeth Tower (Big Ben)',h:96,kind:'clocktower',note:'Verglichen wird die Bauwerkshöhe'}
  ],
  [
@@ -81,9 +81,37 @@ bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Das Maß der verborg
 instruction.before(bar);
 let overlay=null;
 const PNG_ASSETS={"person":"01_quatsch_quatsch.png","giraffe":"02_giraffe.png","cathedral":"03_koelner_dom.png","statue":"04_freiheitsstatue.png","flower":"05_tulpe.png","snowdrop":"06_schneegloeckchen.png","ball":"07_fussball.png","bowling":"08_bowlingkugel.png","tower":"09_eiffelturm.png","clocktower":"10_elizabeth_tower.png","card":"11_spielkarte.png","lego":"12_lego_minifigur.png","wheel":"13_london_eye.png","gate":"14_brandenburger_tor.png","door":"15_haustuer.png","penguin":"16_koenigspinguin.png","pingpong":"17_tischtennisball.png","tennis":"18_tennisball.png","leaningtower":"19_turm_pisa.png","arch":"20_triumphbogen.png","rose":"21_rose.png","flamingo":"22_flamingo.png","gnome":"23_gartenzwerg.png","float":"24_karnevalswagen.png","paper":"25_din_a4.png","bottle":"26_sektflasche.png","goal":"27_fussballtor.png","hoop":"28_basketballkorb.png","skyscraper":"29_burj_khalifa.png","tv":"30_berliner_fernsehturm.png"};
-const svg=(kind)=>'<img class="day5-library-icon day5-png" alt="" loading="eager" src="'+PNG_ASSETS[kind]+'" onerror="this.alt=\'Bild fehlt: '+kind+'\';this.classList.add(\'day5-image-missing\')">';
+const imageCache=new Map();
+const svg=(kind)=>'<img class="day5-library-icon day5-png" data-kind="'+kind+'" alt="" loading="eager" src="'+PNG_ASSETS[kind]+'">';
+function prepareImages(root){
+ root.querySelectorAll('img.day5-png').forEach(img=>{
+  const kind=img.dataset.kind,src=PNG_ASSETS[kind];
+  if(imageCache.has(kind)){img.src=imageCache.get(kind);return}
+  img.addEventListener('load',()=>{
+   if(imageCache.has(kind))return;
+   try{
+    const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+    if(!c.width||!c.height)return;
+    const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
+    const data=ctx.getImageData(0,0,c.width,c.height).data;
+    let left=c.width,top=c.height,right=-1,bottom=-1;
+    for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){
+     const i=(y*c.width+x)*4;if(data[i+3]<45)continue;
+     if(x<left)left=x;if(x>right)right=x;if(y<top)top=y;if(y>bottom)bottom=y;
+    }
+    if(right<left)return;
+    const out=document.createElement('canvas');out.width=right-left+1;out.height=bottom-top+1;
+    out.getContext('2d').drawImage(c,left,top,out.width,out.height,0,0,out.width,out.height);
+    const url=out.toDataURL('image/png');imageCache.set(kind,url);
+    root.querySelectorAll('img.day5-png[data-kind="'+kind+'"]').forEach(el=>el.src=url);
+   }catch(e){console.warn('Silhouette cropping failed',kind,e)}
+  },{once:true});
+  img.addEventListener('error',()=>{img.alt='Bild fehlt: '+kind;img.classList.add('day5-image-missing')},{once:true});
+ });
+}
+
 const format=h=>h<1?Math.round(h*100)+' cm':h.toLocaleString('de-DE',{maximumFractionDigits:2})+' m';
-const PENALTIES=[115,78,48];
+const PENALTIES=[115,78,35];
 const score=(a,b)=>Math.max(0,Math.min(100,Math.round(100-PENALTIES[state.round%3]*Math.abs(Math.log2(a/b)))));
 const current=()=>ROUNDS[state.round%3][state.scores.length];
 function sync(){
@@ -115,6 +143,7 @@ function render(){
   const mx=Math.max(item.bh,state.estimate,item.h);
   const hBase=Math.max(.5,item.bh/mx*94),hGuess=Math.max(.5,state.estimate/mx*94),hTrue=Math.max(.5,item.h/mx*94);
   content.innerHTML='<p class="day5-count">Vergleich '+(state.scores.length+1)+' von 5</p><h3>'+item.name+'</h3><p class="day5-points">'+pts+' / 100 Punkte</p><div class="day5-stage day5-reveal-stage"><div class="day5-object"><div class="day5-silhouette day5-person" style="height:'+hBase+'%">'+svg(item.bk)+'</div><span>'+item.base+'<br>'+format(item.bh)+'</span></div><div class="day5-object"><div class="day5-layer-stack"><div class="day5-silhouette day5-guess day5-layer" style="height:'+hGuess+'%">'+svg(item.kind)+'</div><div class="day5-silhouette day5-actual day5-layer" style="height:'+hTrue+'%">'+svg(item.kind)+'</div></div><span>'+item.name+'</span></div></div><div class="day5-legend"><span>● Deine Schätzung: <strong>'+format(state.estimate)+'</strong></span><span>● Tatsächlich: <strong>'+format(item.h)+'</strong></span></div><p>'+item.note+'</p><p>Zwischenstand: '+total+' / 500 Punkte</p><button class="day5-action" type="button">✧ Weiter ✧</button>';
+  prepareImages(content);
   content.querySelector('.day5-action').onclick=()=>{
    state.scores.push(pts);state.reveal=false;state.estimate=NaN;
    if(state.scores.length===5){
@@ -140,6 +169,7 @@ function render(){
  const maxEstimate=Math.max(item.bh*5,item.h*2,minEstimate*100);
  const sliderValue=Math.max(0,Math.min(10000,Math.round((state.estimate-minEstimate)/(maxEstimate-minEstimate)*10000)));
  content.innerHTML='<p class="day5-count">Vergleich '+(state.scores.length+1)+' von 5 · Ziel: 400 von 500 Punkten</p><h3>Wie groß ist '+item.name+'?</h3><p>Verändere die rechte Silhouette, bis die beiden Größen im richtigen Verhältnis stehen.</p><div class="day5-stage"><div class="day5-object"><div class="day5-silhouette day5-person">'+svg(item.bk)+'</div><span>'+item.base+'<br>'+format(item.bh)+'</span></div><div class="day5-object"><div class="day5-silhouette day5-guess">'+svg(item.kind)+'</div><span>'+item.name+'</span></div></div><label class="day5-slider-label">Größe anpassen<input class="day5-slider" type="range" min="0" max="10000" value="'+sliderValue+'" step="1"></label><div class="day5-fine"><button type="button" class="day5-minus" aria-label="Kleiner">−</button><label>Geschätzte Größe <input class="day5-number" type="number" min="0.00001" step="any" inputmode="decimal" value="'+Number(state.estimate.toFixed(5))+'"></label><span>Meter</span><button type="button" class="day5-plus" aria-label="Größer">+</button></div><p class="day5-estimate">Deine Schätzung: <strong>'+format(state.estimate)+'</strong></p><button class="day5-action" type="button">✦ Schätzung festlegen ✦</button><p class="day5-progress">Bisher '+state.scores.reduce((a,b)=>a+b,0)+' Punkte gesammelt</p>';
+ prepareImages(content);
  const number=content.querySelector('.day5-number');
  const slider=content.querySelector('.day5-slider'),person=content.querySelector('.day5-person'),guess=content.querySelector('.day5-guess'),label=content.querySelector('.day5-estimate strong');
  function scale(){
