@@ -112,7 +112,7 @@ function prepareImages(root){
 
 const format=h=>h<1?Math.round(h*100)+' cm':h.toLocaleString('de-DE',{maximumFractionDigits:2})+' m';
 const PENALTIES=[4,2.8,1.8];
-const score=(a,b)=>{if(a===b||format(a)===format(b))return 100;const error=Math.abs(a-b)/b;const basePoints=Math.round(100/(1+PENALTIES[state.round%3]*Math.pow(error/.5,1.7)));return Math.max(0,Math.min(100,basePoints+(state.round%3===2?10:0)));};
+const score=(a,b)=>{if(a===b||format(a)===format(b))return 100;const error=Math.abs(a-b)/b;const tolerance=state.round%3===2?.6:.5;return Math.max(0,Math.min(100,Math.round(100/(1+PENALTIES[state.round%3]*Math.pow(error/tolerance,1.7)))));};
 const current=()=>ROUNDS[state.round%3][state.scores.length];
 function renderGoalComparison(root,item,estimate,actual){
  const stage=root.querySelector('.day5-stage');if(!stage)return;
