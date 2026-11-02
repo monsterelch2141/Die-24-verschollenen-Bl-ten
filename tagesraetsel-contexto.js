@@ -29,7 +29,7 @@ function render(){
  const used=hints.length, categoryUsed=hints.some(h=>h.type==='category'), letterUsed=hints.some(h=>h.type==='letter');
  const hintBox=modal.querySelector('.contexto-hints');
  hintBox.querySelector('.contexto-hint-count').textContent='Tipps: '+used+' von 3 verwendet';
- hintBox.querySelector('[data-hint="word"]').disabled=solved||used>=3||entries.some(e=>e.rank===2);
+ hintBox.querySelector('[data-hint="word"]').disabled=solved||used>=3;
  hintBox.querySelector('[data-hint="category"]').disabled=solved||used>=3||categoryUsed;
  hintBox.querySelector('[data-hint="letter"]').disabled=solved||used>=3||letterUsed;
  hintBox.querySelector('.contexto-hint-results').innerHTML=hints.map(h=>'<div>'+ (h.type==='word'?'Top-10-Wort: <strong>'+h.word+'</strong> (Platz '+h.rank+')':h.type==='category'?'Kategorie: <strong>Straßenverkehr und Straßenbeschaffenheit</strong>':'Anfangsbuchstabe: <strong>S</strong>')+'</div>').join('');
@@ -71,9 +71,9 @@ function open(){
     const ranks=await loadRanking();
     if(!modal||!modal.isConnected)return;
     const best=Math.min(11,...entries.map(e=>e.rank),...hints.filter(h=>h.type==='word').map(h=>h.rank));
-    if(best<=2){modal.querySelector('.contexto-status').textContent='Du bist bereits auf Platz 2 – der nächste Hinweis wäre die Lösung.';return}
-    const choices=Object.entries(ranks).filter(([w,rank])=>rank>=2&&rank<=10&&rank<best&&!entries.some(e=>normalize(e.word)===w)&&!modalHintWords.has(w)).sort((a,b)=>b[1]-a[1]);
-    if(!choices.length){modal.querySelector('.contexto-status').textContent='Kein weiteres Top-10-Wort verfügbar, ohne die Lösung zu verraten.';return}
+    
+    const choices=Object.entries(ranks).filter(([w,rank])=>rank>=2&&rank<=10&&(best<=2?rank>2:rank<best)&&!entries.some(e=>normalize(e.word)===w)&&!modalHintWords.has(w)).sort((a,b)=>b[1]-a[1]);
+    if(!choices.length){modal.querySelector('.contexto-status').textContent='Kein weiteres unverbrauchtes Top-10-Wort verfügbar.';return}
     const [word,rank]=choices[0];hints.push({type,word,rank});modalHintWords.add(word);
    }catch(e){modal.querySelector('.contexto-status').textContent='Die Rangliste konnte nicht geladen werden.';return}
    finally{btn.disabled=false}
