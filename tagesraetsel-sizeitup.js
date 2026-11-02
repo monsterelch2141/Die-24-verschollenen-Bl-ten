@@ -114,16 +114,12 @@ const format=h=>h<1?Math.round(h*100)+' cm':h.toLocaleString('de-DE',{maximumFra
 const PENALTIES=[4,2.8,1.8];
 const score=(a,b)=>{if(a===b||format(a)===format(b))return 100;const error=Math.abs(a-b)/b;return Math.max(0,Math.min(100,Math.round(100/(1+PENALTIES[state.round%3]*Math.pow(error/.5,1.7)))));};
 const current=()=>ROUNDS[state.round%3][state.scores.length];
-function renderGoalComparison(root,item,guess,trueHeight){
+function renderGoalComparison(root,item,estimate,actual){
  const stage=root.querySelector('.day5-stage');if(!stage)return;
  stage.classList.add('day5-goal-overlay-stage');
- // Physical dimensions in metres: official goal 7.32 x 2.44;
- // standard backboard 1.80 x 1.05. The estimate controls the
- // backboard height, with its width changing proportionally.
- const basePx=210/7.32,goalW=7.32*basePx,goalH=2.44*basePx;
- const board=(height,klass)=>{const w=height*(1.8/1.05)*basePx,h=height*basePx;return '<div class="day5-board '+klass+'" style="width:'+w+'px;height:'+h+'px"><div class="day5-board-inner"></div><div class="day5-ring"></div></div>'};
- const goal='<div class="day5-goal-frame" style="width:'+goalW+'px;height:'+goalH+'px"><div class="day5-goal-net"></div></div>';
- stage.innerHTML='<div class="day5-goal-comparison"><div class="day5-goal-display">'+goal+board(guess,'day5-board-guess')+(trueHeight!==undefined?board(trueHeight,'day5-board-true'):'')+'</div><div class="day5-goal-caption">Fußballtor: 7,32 × 2,44 m · Basketballbrett: Größe schätzen</div></div>';
+ const px=92/2.44;
+ const img=(kind,h,klass)=>'<img class="day5-goal-image '+klass+'" alt="" src="'+PNG_ASSETS[kind]+'" style="height:'+Math.max(1,h*px)+'px">';
+ stage.innerHTML='<div class="day5-goal-comparison"><div class="day5-goal-display">'+img('goal',2.44,'day5-goal-reference')+img('hoop',estimate,'day5-hoop-estimate')+(actual===undefined?'':img('hoop',actual,'day5-hoop-actual'))+'</div><div class="day5-goal-caption">Blau: Fußballtor (7,32 × 2,44 m) · Rot: dein Basketballbrett'+(actual===undefined?'':' · Grün: tatsächliche Größe')+'</div></div>';
 }
 function sync(){
  bar.hidden=!selected();if(!selected())return;
@@ -187,8 +183,8 @@ function render(){
  const slider=content.querySelector('.day5-slider'),person=content.querySelector('.day5-person'),guess=content.querySelector('.day5-guess'),label=content.querySelector('.day5-estimate strong');
  function scale(){
   const max=Math.max(item.bh,state.estimate);
-  person.style.height=Math.max(.5,item.bh/max*94)+'%';
-  guess.style.height=Math.max(.5,state.estimate/max*94)+'%';
+  if(person)person.style.height=Math.max(.5,item.bh/max*94)+'%';
+  if(guess)guess.style.height=Math.max(.5,state.estimate/max*94)+'%';
   label.textContent=format(state.estimate);
   if(item.bk==='goal')renderGoalComparison(content,item,state.estimate);
   number.value=Number(state.estimate.toFixed(5));
