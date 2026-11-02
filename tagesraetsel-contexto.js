@@ -7,7 +7,7 @@ const normalize=s=>String(s||'').toLocaleLowerCase('de').normalize('NFD').replac
 let ranking=null,loading=null;
 function loadRanking(){
  if(loading)return loading;
- loading=fetch('contexto-ranking.json?v=4',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Ranking noch nicht veröffentlicht');return r.json()}).then(data=>{
+ loading=fetch('contexto-ranking.json?v=5',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Ranking noch nicht veröffentlicht');return r.json()}).then(data=>{
   if(!data||Object.keys(data).length<20000||data.schlagloch!==1)throw Error('Ranking unvollständig');
   ranking=data;return data;
  }).catch(e=>{loading=null;throw e});
@@ -28,11 +28,11 @@ function render(){
  modal.querySelector('.contexto-count').textContent=entries.length+' Versuche';
  const used=hints.length, categoryUsed=hints.some(h=>h.type==='category'), letterUsed=hints.some(h=>h.type==='letter');
  const hintBox=modal.querySelector('.contexto-hints');
- hintBox.querySelector('.contexto-hint-count').textContent='Tipps: '+used+' von 3 verwendet';
- hintBox.querySelector('[data-hint="word"]').disabled=solved||used>=3;
- hintBox.querySelector('[data-hint="category"]').disabled=solved||used>=3||categoryUsed;
- hintBox.querySelector('[data-hint="letter"]').disabled=solved||used>=3||letterUsed;
- hintBox.querySelector('.contexto-hint-results').innerHTML=hints.map(h=>'<div>'+ (h.type==='word'?'Top-10-Wort: <strong>'+h.word+'</strong> (Platz '+h.rank+')':h.type==='category'?'Kategorie: <strong>Straßenverkehr und Straßenbeschaffenheit</strong>':'Anfangsbuchstabe: <strong>S</strong>')+'</div>').join('');
+ hintBox.querySelector('.contexto-hint-count').textContent='Tipps: '+used+' von 5 verwendet';
+ hintBox.querySelector('[data-hint="word"]').disabled=solved||used>=5;
+ hintBox.querySelector('[data-hint="category"]').disabled=solved||used>=5||categoryUsed;
+ hintBox.querySelector('[data-hint="letter"]').disabled=solved||used>=5||letterUsed;
+ hintBox.querySelector('.contexto-hint-results').innerHTML=hints.map(h=>'<div>'+ (h.type==='word'?'Top-10-Wort: <strong>'+h.word+'</strong> (Platz '+h.rank+')':h.type==='category'?'Kategorie: <strong>Straßenverkehr</strong>':'Anfangsbuchstabe: <strong>S</strong>')+'</div>').join('');
  modal.querySelector('.contexto-finished').hidden=!solved;
  modal.querySelector('.contexto-form').hidden=solved;
 }
@@ -61,7 +61,7 @@ function open(){
  finally{if(button.isConnected)button.disabled=false}
  };
  modal.querySelectorAll('[data-hint]').forEach(btn=>btn.addEventListener('click',async()=>{
-  if(hints.length>=3||solved)return;
+  if(hints.length>=5||solved)return;
   const type=btn.dataset.hint;
   if(type==='category'&&hints.some(h=>h.type==='category'))return;
   if(type==='letter'&&hints.some(h=>h.type==='letter'))return;
