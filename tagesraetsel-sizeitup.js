@@ -24,6 +24,7 @@ const ROUNDS=[
  {base:'Burj Khalifa',bh:828,bk:'skyscraper',name:'Fernsehturm Berlin',h:368,kind:'tv',note:'Höhen beider Bauwerke'}
  ]
 ];
+const EXACT_ASSETS={cathedral:'https://commons.wikimedia.org/wiki/Special:Redirect/file/CologneCathedralSilhouette.svg'};
 const LIBRARY_ICONS={"person":"fa6-solid:person","giraffe":"game-icons:giraffe","cathedral":"game-icons:cathedral","statue":"game-icons:statue-of-liberty","flower":"game-icons:tulip","snowdrop":"game-icons:flower-twirl","ball":"mdi:soccer","bowling":"mdi:bowling","tower":"game-icons:eiffel-tower","clocktower":"game-icons:clock-tower","card":"mdi:cards-playing","lego":"mdi:lego","wheel":"game-icons:ferris-wheel","gate":"game-icons:gate","door":"mdi:door","penguin":"game-icons:penguin","pingpong":"mdi:table-tennis","tennis":"mdi:tennis-ball","leaningtower":"game-icons:leaning-tower","arch":"game-icons:arc-triomphe","rose":"game-icons:rose","flamingo":"game-icons:flamingo","gnome":"game-icons:dwarf-helmet","float":"game-icons:festival","paper":"mdi:file-document","bottle":"mdi:bottle-wine","goal":"mdi:soccer-field","hoop":"mdi:basketball-hoop","skyscraper":"game-icons:skyscraper","tv":"game-icons:radio-tower"};
 const paths={
  gnome:'<path d="M48 2 L22 40 L38 42 L32 56 L38 70 L32 94 L68 94 L62 70 L68 56 L62 42 L78 40Z"/>',
@@ -79,7 +80,7 @@ const bar=document.createElement('section');bar.className='day5-quest';bar.hidde
 bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Das Maß der verborgenen Dinge</h3><p>Fünf Größenvergleiche erwarten dich. Erreiche mindestens 400 von 500 Punkten, um die Sternenroute freizuschalten.</p><button type="button" class="day5-open">✧ Größenprüfung beginnen ✧</button><div class="day5-route" hidden></div>';
 instruction.before(bar);
 let overlay=null;
-const svg=(kind)=>{const id=LIBRARY_ICONS[kind];const fallback='<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><g fill="currentColor">'+paths[kind]+'</g></svg>';return id?'<img class="day5-library-icon" alt="" loading="eager" src="https://api.iconify.design/'+id.replace(':','/')+'.svg?color=%23000000" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">'+'<span class="day5-fallback" style="display:none">'+fallback+'</span>':fallback};
+const svg=(kind)=>{const id=LIBRARY_ICONS[kind];const exact=EXACT_ASSETS[kind];const fallback='<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><g fill="currentColor">'+paths[kind]+'</g></svg>';return (exact||id)?'<img class="day5-library-icon" alt="" loading="eager" src="'+(exact||('https://api.iconify.design/'+id.replace(':','/')+'.svg?color=%23000000'))+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">'+'<span class="day5-fallback" style="display:none">'+fallback+'</span>':fallback};
 const format=h=>h<1?Math.round(h*100)+' cm':h.toLocaleString('de-DE',{maximumFractionDigits:2})+' m';
 const PENALTIES=[115,78,48];
 const score=(a,b)=>Math.max(0,Math.min(100,Math.round(100-PENALTIES[state.round%3]*Math.abs(Math.log2(a/b)))));
