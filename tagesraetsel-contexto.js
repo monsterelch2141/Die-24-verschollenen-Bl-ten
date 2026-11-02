@@ -17,6 +17,19 @@ let saved={};try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{}
 let entries=Array.isArray(saved.entries)?saved.entries:[],solved=!!saved.solved,modal=null;
 let hints=Array.isArray(saved.hints)?saved.hints:[],modalHintWords=new Set(hints.filter(h=>h.type==='word').map(h=>h.word));
 function save(){localStorage.setItem(KEY,JSON.stringify({entries,solved,hints}))}
+// Display proper German capitalization while retaining normalized ranking keys.
+const hintSpelling={strasse:'Straße',strassenbelag:'Straßenbelag',fahrrad:'Fahrrad',boden:'Boden',baustelle:'Baustelle',fahrzeug:'Fahrzeug',reparatur:'Reparatur',schotter:'Schotter',delle:'Delle',grube:'Grube',mulde:'Mulde',frost:'Frost',panne:'Panne',platten:'Platten',buckel:'Buckel',huckel:'Huckel',fahrbahn:'Fahrbahn',auto:'Auto',schaden:'Schaden',reifen:'Reifen',loch:'Loch',verkehr:'Verkehr'};
+function hintDisplay(word){return hintSpelling[normalize(word)]||word}
+function escapeHtml(value){return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function allGuesses(){
+ const guesses=[...entries];
+ for(const h of hints){
+  if(h.type==='word'&&!guesses.some(e=>normalize(e.word)===normalize(h.word)))
+   guesses.push({word:hintDisplay(h.word),rank:h.rank,fromHint:true});
+ }
+ return guesses;
+}
+
 const bar=document.createElement('section');bar.className='day4-contexto-quest';bar.hidden=true;bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Das Wort im Nebel</h3><p>Finde das verborgene Wort. Je kleiner die Platznummer, desto näher bist du dem Ziel.</p><button type="button" class="day4-contexto-open">✧ Das Wortgeheimnis betreten ✧</button><div class="day4-contexto-route" hidden></div>';
 instruction.before(bar);
 function selected(){return Number(day.value)===DAY}
@@ -25,14 +38,14 @@ function render(){
  if(!modal)return;
  const list=modal.querySelector('.contexto-guesses');
  list.innerHTML=[...entries].sort((a,b)=>a.rank-b.rank).map(e=>'<div class="contexto-guess"><strong>'+e.word.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</strong><span>'+e.rank.toLocaleString('de-DE')+'</span><div class="contexto-meter"><i style="width:'+Math.max(2,100-Math.min(99,Math.log10(e.rank)*28))+'%;background:'+(e.rank<=20?'#659c52':e.rank<=200?'#b99b50':'#9c8067')+'"></i></div></div>').join('');
- modal.querySelector('.contexto-count').textContent=entries.length+' Versuche';
+ modal.querySelector('.contexto-count').textContent=entries.length+' eigene Versuche · '+hints.filter(h=>h.type==='word').length+' Worttipps';
  const used=hints.length, categoryUsed=hints.some(h=>h.type==='category'), letterUsed=hints.some(h=>h.type==='letter');
  const hintBox=modal.querySelector('.contexto-hints');
  hintBox.querySelector('.contexto-hint-count').textContent='Tipps: '+used+' von 5 verwendet';
  hintBox.querySelector('[data-hint="word"]').disabled=solved||used>=5;
  hintBox.querySelector('[data-hint="category"]').disabled=solved||used>=5||categoryUsed;
  hintBox.querySelector('[data-hint="letter"]').disabled=solved||used>=5||letterUsed;
- hintBox.querySelector('.contexto-hint-results').innerHTML=hints.map(h=>'<div>'+ (h.type==='word'?'Worttipp: <strong>'+h.word+'</strong> (Platz '+h.rank+')':h.type==='category'?'Kategorie: <strong>Straßenverkehr</strong>':'Anfangsbuchstabe: <strong>S</strong>')+'</div>').join('');
+ hintBox.querySelector('.contexto-hint-results').innerHTML=hints.map(h=>'<div>'+ (h.type==='word'?'Worttipp: <strong>'+escapeHtml(hintDisplay(h.word))+'</strong> (Platz '+h.rank+')':h.type==='category'?'Kategorie: <strong>Straßenverkehr</strong>':'Anfangsbuchstabe: <strong>S</strong>')+'</div>').join('');
  modal.querySelector('.contexto-finished').hidden=!solved;
  modal.querySelector('.contexto-form').hidden=solved;
 }
@@ -46,7 +59,7 @@ function open(){
  const input=form.querySelector('input'),word=input.value.trim(),w=normalize(word);
  const status=modal.querySelector('.contexto-status');
  if(w.length<2){status.textContent='Bitte gib ein vollständiges Wort ein.';return}
- if(entries.some(e=>normalize(e.word)===w)){status.textContent='Dieses Wort hast du schon versucht.';return}
+ if(entries.some(e=>normalize(e.word)===w)||hints.some(h=>h.type==='word'&&normalize(h.word)===w)){status.textContent='Dieses Wort ist bereits in deiner Liste.';return}
  button.disabled=true;
  try{
   status.textContent='Rangliste wird geladen …';
