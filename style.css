@@ -951,3 +951,16 @@ html:has(.day5-overlay){overflow:hidden!important}
 .day5-fallback{height:100%;width:100%}.day5-fallback svg{height:100%;width:100%}
 
 .day5-library-icon{object-fit:contain;object-position:center bottom}
+
+
+/* Day 5: equal physical heights must have equal visible pixel heights. */
+.day5-silhouette{min-height:0!important;box-sizing:border-box;flex-shrink:0;align-self:center}
+.day5-silhouette .day5-png{height:100%!important;width:100%!important;object-fit:fill!important;object-position:center bottom;display:block;max-width:100%}
+.day5-stage .day5-object{justify-content:flex-end}
+.day5-confirm{display:block;margin:8px auto 5px;width:min(100%,340px)}
+.day5-estimate{margin:5px auto 7px}
+.day5-fine{margin:7px auto 4px}
+.day5-slider-label{margin:8px auto 3px}
+.day5-slider{margin:6px auto}
+.day5-stage{margin:9px auto 9px}
+@media(max-width:450px){.day5-stage{height:235px}.day5-panel h2{font-size:23px;margin:5px 0}.day5-panel h3{font-size:21px;margin:6px auto}.day5-panel .day5-count{margin:5px auto}.day5-content>p{margin:7px auto}}
