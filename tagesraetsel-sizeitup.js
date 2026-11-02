@@ -3,7 +3,7 @@
 const DAY=5,KEY='advent-tag5-sizeitup-v1',TARGET=400,SECRET='SCHOKOLADE';
 const ROUNDS=[
  [
- {base:'Mensch',bh:1.81,bk:'person',name:'Giraffe',h:5.2,kind:'giraffe',note:'Beispielhöhe einer ausgewachsenen Giraffe'},
+ {base:'Quatsch Quatsch',bh:1.81,bk:'person',name:'Giraffe',h:5.2,kind:'giraffe',note:'Beispielhöhe einer ausgewachsenen Giraffe'},
  {base:'Kölner Dom',bh:157,bk:'cathedral',name:'Freiheitsstatue (mit Sockel)',h:93,kind:'statue',note:'Gesamthöhe der Freiheitsstatue inklusive Sockel'},
  {base:'Tulpe',bh:.45,bk:'flower',name:'Schneeglöckchen',h:.18,kind:'snowdrop',note:'Typische Pflanzenhöhen; Exemplare können abweichen'},
  {base:'Fußball',bh:.22,bk:'ball',name:'Bowlingkugel',h:.22,kind:'bowling',note:'Verglichen wird jeweils der Durchmesser'},
@@ -112,7 +112,7 @@ function prepareImages(root){
 
 const format=h=>h<1?Math.round(h*100)+' cm':h.toLocaleString('de-DE',{maximumFractionDigits:2})+' m';
 const PENALTIES=[4,2.8,1.8];
-const score=(a,b)=>{if(a===b||format(a)===format(b))return 100;const error=Math.abs(a-b)/b;return Math.max(0,Math.min(100,Math.round(100/(1+PENALTIES[state.round%3]*Math.pow(error/.5,1.7)))));};
+const score=(a,b)=>{if(a===b||format(a)===format(b))return 100;const error=Math.abs(a-b)/b;const basePoints=Math.round(100/(1+PENALTIES[state.round%3]*Math.pow(error/.5,1.7)));return Math.max(0,Math.min(100,basePoints+(state.round%3===2?10:0)));};
 const current=()=>ROUNDS[state.round%3][state.scores.length];
 function renderGoalComparison(root,item,estimate,actual){
  const stage=root.querySelector('.day5-stage');if(!stage)return;
