@@ -1051,3 +1051,21 @@ html:has(.day5-overlay){overflow:hidden!important}
 .day13-hint-count{font-size:12px;color:#876f51;margin:12px 0 4px}
 .day13-status{font-size:14px;min-height:1.3em;margin:6px 0 0}
 @media(max-width:380px){.day13-panel{padding:14px 10px}.day13-pad{gap:3px}.day13-actions button{font-size:12px;flex-basis:75px}}
+
+
+/* Day 10 rebuilt investigation timeline */
+.day10-timeline{display:grid;gap:8px;margin:16px auto;max-width:550px}
+.day10-timeline-item{display:flex;align-items:center;gap:11px;padding:10px 12px;background:#f1dfbd;color:#4c3521;border:1px solid #b89b69;border-radius:9px;font:15px Georgia,serif}
+.day10-timeline-index{font-weight:bold;color:#9a7144}
+.day10-timeline-name{flex:1;text-align:left;min-width:0}
+.day10-timeline-buttons{display:flex;gap:6px}
+.day10-timeline-buttons button{width:36px;height:36px;background:#61462d;color:#fff1d3;border:0;border-radius:7px;font-size:21px;cursor:pointer}
+.day10-timeline-buttons button:disabled{opacity:.3;cursor:default}
+.day10-seal-number{display:inline-block;padding:6px 10px;border:1px solid #ad8d5b;border-radius:8px;background:#ead5ad;font-weight:bold}
+.day10-check-order{display:block;margin:12px auto;text-align:center;cursor:pointer}
+.day10-hint{display:block;margin:12px auto;cursor:pointer;text-align:center}
+.day10-hint-count{font:12px Georgia,serif;color:#bda57c}
+.day10-hint-text{font:italic 14px/1.5 Georgia,serif;color:#f0d5a3}
+.day10-verified{margin-top:14px;border-top:1px solid #8e7752;padding-top:12px;color:#f5dfb5;font:15px/1.5 Georgia,serif}
+.day10-solved{color:#e8d19b;text-align:center}
+.day10-verified[hidden],.day10-solved[hidden]{display:none!important}
