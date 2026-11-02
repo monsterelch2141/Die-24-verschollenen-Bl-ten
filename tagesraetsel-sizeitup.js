@@ -112,7 +112,9 @@ function prepareImages(root){
 
 const format=h=>h<1?Math.round(h*100)+' cm':h.toLocaleString('de-DE',{maximumFractionDigits:2})+' m';
 const PENALTIES=[4,2.8,1.8];
-const score=(a,b)=>{if(a===b||format(a)===format(b))return 100;const error=Math.abs(a-b)/b;const tolerance=state.round%3===2?.6:.5;return Math.max(0,Math.min(100,Math.round(100/(1+PENALTIES[state.round%3]*Math.pow(error/tolerance,1.7)))));};
+const LEVEL3_CURVE=[[0,0],[1,5],[2,8],[5,15],[10,22],[20,32],[30,42],[40,51],[50,60],[60,69],[70,78],[80,86],[90,94],[95,97],[99,99],[100,100]];
+const level3Points=p=>{for(let i=1;i<LEVEL3_CURVE.length;i++){const [x,y]=LEVEL3_CURVE[i];if(p<=x){const [px,py]=LEVEL3_CURVE[i-1];return Math.min(p===100?100:99,Math.round(py+(p-px)*(y-py)/(x-px)));}}return 100;};
+const score=(a,b)=>{if(a===b||format(a)===format(b))return 100;const error=Math.abs(a-b)/b;const original=Math.max(0,Math.min(100,Math.round(100/(1+PENALTIES[state.round%3]*Math.pow(error/.5,1.7)))));return state.round%3===2?level3Points(original):original;};
 const current=()=>ROUNDS[state.round%3][state.scores.length];
 function renderGoalComparison(root,item,estimate,actual){
  const stage=root.querySelector('.day5-stage');if(!stage)return;
