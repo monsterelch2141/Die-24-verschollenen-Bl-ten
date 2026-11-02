@@ -112,8 +112,19 @@ function prepareImages(root){
 
 const format=h=>h<1?Math.round(h*100)+' cm':h.toLocaleString('de-DE',{maximumFractionDigits:2})+' m';
 const PENALTIES=[4,2.8,1.8];
-const score=(a,b)=>{if(a===b)return 100;const error=Math.abs(a-b)/b;return Math.max(0,Math.min(100,Math.round(100/(1+PENALTIES[state.round%3]*Math.pow(error/.5,1.7)))));};
+const score=(a,b)=>{if(a===b||format(a)===format(b))return 100;const error=Math.abs(a-b)/b;return Math.max(0,Math.min(100,Math.round(100/(1+PENALTIES[state.round%3]*Math.pow(error/.5,1.7)))));};
 const current=()=>ROUNDS[state.round%3][state.scores.length];
+function renderGoalComparison(root,item,guess,trueHeight){
+ const stage=root.querySelector('.day5-stage');if(!stage)return;
+ stage.classList.add('day5-goal-overlay-stage');
+ // Physical dimensions in metres: official goal 7.32 x 2.44;
+ // standard backboard 1.80 x 1.05. The estimate controls the
+ // backboard height, with its width changing proportionally.
+ const basePx=210/7.32,goalW=7.32*basePx,goalH=2.44*basePx;
+ const board=(height,klass)=>{const w=height*(1.8/1.05)*basePx,h=height*basePx;return '<div class="day5-board '+klass+'" style="width:'+w+'px;height:'+h+'px"><div class="day5-board-inner"></div><div class="day5-ring"></div></div>'};
+ const goal='<div class="day5-goal-frame" style="width:'+goalW+'px;height:'+goalH+'px"><div class="day5-goal-net"></div></div>';
+ stage.innerHTML='<div class="day5-goal-comparison"><div class="day5-goal-display">'+goal+board(guess,'day5-board-guess')+(trueHeight!==undefined?board(trueHeight,'day5-board-true'):'')+'</div><div class="day5-goal-caption">Fußballtor: 7,32 × 2,44 m · Basketballbrett: Größe schätzen</div></div>';
+}
 function sync(){
  bar.hidden=!selected();if(!selected())return;
  const solved=state.unlocked===true;
@@ -144,6 +155,7 @@ function render(){
   const hBase=Math.max(.5,item.bh/mx*94),hGuess=Math.max(.5,state.estimate/mx*94),hTrue=Math.max(.5,item.h/mx*94);
   content.innerHTML='<p class="day5-count">Vergleich '+(state.scores.length+1)+' von 5</p><h3>'+item.name+'</h3><p class="day5-points">'+pts+' / 100 Punkte</p><div class="day5-stage day5-reveal-stage"><div class="day5-object"><div class="day5-silhouette day5-person" style="height:'+hBase+'%">'+svg(item.bk)+'</div><span>'+item.base+'<br>'+format(item.bh)+'</span></div><div class="day5-object"><div class="day5-layer-stack"><div class="day5-silhouette day5-guess day5-layer" style="height:'+hGuess+'%">'+svg(item.kind)+'</div><div class="day5-silhouette day5-actual day5-layer" style="height:'+hTrue+'%">'+svg(item.kind)+'</div></div><span>'+item.name+'</span></div></div><div class="day5-legend"><span>● Deine Schätzung: <strong>'+format(state.estimate)+'</strong></span><span>● Tatsächlich: <strong>'+format(item.h)+'</strong></span></div><p>'+item.note+'</p><p>Zwischenstand: '+total+' / 500 Punkte</p><button class="day5-action" type="button">✧ Weiter ✧</button>';
   prepareImages(content);
+  if(item.bk==='goal')renderGoalComparison(content,item,state.estimate,item.h);
   content.querySelector('.day5-action').onclick=()=>{
    state.scores.push(pts);state.reveal=false;state.estimate=NaN;
    if(state.scores.length===5){
@@ -170,6 +182,7 @@ function render(){
  const sliderValue=Math.max(0,Math.min(10000,Math.round((state.estimate-minEstimate)/(maxEstimate-minEstimate)*10000)));
  content.innerHTML='<p class="day5-count">Vergleich '+(state.scores.length+1)+' von 5 · Ziel: 400 von 500 Punkten</p><h3>Wie groß ist '+item.name+'?</h3><p>Verändere die rechte Silhouette, bis die beiden Größen im richtigen Verhältnis stehen.</p><div class="day5-stage"><div class="day5-object"><div class="day5-silhouette day5-person">'+svg(item.bk)+'</div><span>'+item.base+'<br>'+format(item.bh)+'</span></div><div class="day5-object"><div class="day5-silhouette day5-guess">'+svg(item.kind)+'</div><span>'+item.name+'</span></div></div><label class="day5-slider-label">Größe anpassen<input class="day5-slider" type="range" min="0" max="10000" value="'+sliderValue+'" step="1"></label><div class="day5-fine"><button type="button" class="day5-minus" aria-label="Kleiner">−</button><label>Geschätzte Größe <input class="day5-number" type="number" min="0.00001" step="any" inputmode="decimal" value="'+Number(state.estimate.toFixed(5))+'"></label><span>Meter</span><button type="button" class="day5-plus" aria-label="Größer">+</button></div><p class="day5-estimate">Deine Schätzung: <strong>'+format(state.estimate)+'</strong></p><button class="day5-action" type="button">✦ Schätzung festlegen ✦</button><p class="day5-progress">Bisher '+state.scores.reduce((a,b)=>a+b,0)+' Punkte gesammelt</p>';
  prepareImages(content);
+ if(item.bk==='goal')renderGoalComparison(content,item,state.estimate);
  const number=content.querySelector('.day5-number');
  const slider=content.querySelector('.day5-slider'),person=content.querySelector('.day5-person'),guess=content.querySelector('.day5-guess'),label=content.querySelector('.day5-estimate strong');
  function scale(){
@@ -177,6 +190,7 @@ function render(){
   person.style.height=Math.max(.5,item.bh/max*94)+'%';
   guess.style.height=Math.max(.5,state.estimate/max*94)+'%';
   label.textContent=format(state.estimate);
+  if(item.bk==='goal')renderGoalComparison(content,item,state.estimate);
   number.value=Number(state.estimate.toFixed(5));
  }
  slider.oninput=()=>{const raw=minEstimate+(maxEstimate-minEstimate)*Number(slider.value)/10000;state.estimate=Math.max(unit,Math.round(raw/unit)*unit);scale()};
