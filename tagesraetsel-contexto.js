@@ -37,7 +37,7 @@ function sync(){bar.hidden=!selected();if(!selected())return;const route=bar.que
 function render(){
  if(!modal)return;
  const list=modal.querySelector('.contexto-guesses');
- list.innerHTML=[...entries].sort((a,b)=>a.rank-b.rank).map(e=>'<div class="contexto-guess"><strong>'+e.word.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</strong><span>'+e.rank.toLocaleString('de-DE')+'</span><div class="contexto-meter"><i style="width:'+Math.max(2,100-Math.min(99,Math.log10(e.rank)*28))+'%;background:'+(e.rank<=20?'#659c52':e.rank<=200?'#b99b50':'#9c8067')+'"></i></div></div>').join('');
+ list.innerHTML=allGuesses().sort((a,b)=>a.rank-b.rank).map(e=>'<div class="contexto-guess"><strong>'+escapeHtml(e.word)+(e.fromHint?' 💡':'')+'</strong><span>'+e.rank.toLocaleString('de-DE')+'</span><div class="contexto-meter"><i style="width:'+Math.max(2,100-Math.min(99,Math.log10(e.rank)*28))+'%;background:'+(e.rank<=20?'#659c52':e.rank<=200?'#b99b50':'#9c8067')+'"></i></div></div>').join('');
  modal.querySelector('.contexto-count').textContent=entries.length+' eigene Versuche · '+hints.filter(h=>h.type==='word').length+' Worttipps';
  const used=hints.length, categoryUsed=hints.some(h=>h.type==='category'), letterUsed=hints.some(h=>h.type==='letter');
  const hintBox=modal.querySelector('.contexto-hints');
