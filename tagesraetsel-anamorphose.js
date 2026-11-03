@@ -1,0 +1,13 @@
+(()=>{'use strict';
+const DAY=14,KEY='advent-tag14-anamorphose-v1',ANSWER='7266000458',ROUTE=[137,208,314,95,421,63,178,256];
+const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');if(!day||!board||!instruction)return;
+let solved=localStorage.getItem(KEY)==='yes';
+const bar=document.createElement('section');bar.className='day14-anamorphose-quest';bar.hidden=true;
+bar.innerHTML='<div class="quest-mark">✧ ◈ ✧</div><h3>Die verborgenen Zahlen</h3><div class="day14-artwork"><img src="vierfache_zahlen_anamorphose.png" alt="Mathematische Anamorphose mit vier verzerrten zehnstelligen Zahlen" loading="lazy"><p class="day14-image-error" hidden>Die Originalgrafik muss noch in das GitHub-Repository hochgeladen werden.</p></div><form class="day14-form"><label for="day14-answer">Schlüsselwort eingeben</label><div class="day14-form-row"><input id="day14-answer" type="text" inputmode="numeric" autocomplete="off" placeholder="Dein Schlüsselwort …" required><button type="submit">Prüfen</button></div></form><p class="day14-status" role="status"></p><div class="day14-route" hidden></div>';
+instruction.before(bar);const selected=()=>Number(day.value)===DAY;
+function sync(){bar.hidden=!selected();if(!selected())return;bar.querySelector('.day14-route').hidden=!solved;if(solved)bar.querySelector('.day14-route').innerHTML='<strong>Sternenroute (Testdaten)</strong><p>'+ROUTE.join(' → ')+'</p>';instruction.textContent=solved?'Verbinde deine Sternenroute und wähle den richtigen Stern.':'Löse zuerst das Tagesrätsel, bevor du ein Sternenfeld auswählst.';if(solved)bar.querySelector('.day14-status').textContent='✦ Schlüsselwort richtig! Die Sternenroute ist freigeschaltet.'}
+bar.querySelector('img').onerror=()=>{bar.querySelector('.day14-image-error').hidden=false};
+bar.querySelector('.day14-form').onsubmit=e=>{e.preventDefault();const value=bar.querySelector('input').value.replace(/\./g,'').replace(/\s/g,'');if(value===ANSWER){solved=true;localStorage.setItem(KEY,'yes');sync()}else bar.querySelector('.day14-status').textContent='Das Schlüsselwort ist noch nicht richtig.'};
+board.addEventListener('click',e=>{if(!selected()||solved||!e.target.closest('.cell'))return;e.stopImmediatePropagation();e.preventDefault();feedback.className='feedback error';feedback.textContent='✧ Löse zuerst das Tagesrätsel. ✧'},true);
+day.addEventListener('change',()=>setTimeout(sync,0));day.addEventListener('input',sync);document.getElementById('previous')?.addEventListener('click',()=>setTimeout(sync,0));document.getElementById('next')?.addEventListener('click',()=>setTimeout(sync,0));sync();
+})();
