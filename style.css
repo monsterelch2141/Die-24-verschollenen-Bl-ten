@@ -1102,3 +1102,5 @@ html:has(.day5-overlay){overflow:hidden!important}
 .day14-rotation input{width:100%;accent-color:#75512f;cursor:pointer}
 .day14-panel .day14-form{margin:20px auto 0}
 @media(max-width:500px){.day14-panel{padding:17px 10px 22px}.day14-panel .day14-artwork img{width:72%;height:72%}}
+
+.day14-panel .day14-artwork img{mix-blend-mode:normal!important}
