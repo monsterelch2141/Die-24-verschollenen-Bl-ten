@@ -1084,3 +1084,21 @@ html:has(.day5-overlay){overflow:hidden!important}
 .day14-form input{flex:1;min-width:0;border:1px solid #b99d70;border-radius:9px;background:#fffbf1;padding:12px;color:#4d3726;font:16px Georgia,serif}
 .day14-form button{border:1px solid #886742;border-radius:9px;background:#62482e;color:#fff0d4;padding:12px 17px;font:16px Georgia,serif;cursor:pointer}
 .day14-status{min-height:20px;font-size:14px;margin:12px 0 0}
+
+
+.day14-open{background:#62482e;color:#fff0d4;border:1px solid #a48455;border-radius:9px;padding:12px 20px;font:16px Georgia,serif;cursor:pointer}
+.day14-overlay{position:fixed!important;inset:0!important;width:100dvw!important;height:100dvh!important;z-index:2147483000!important;background:#171e2d;color:#f5e6c8;display:flex;flex-direction:column;box-sizing:border-box;overflow:hidden}
+.day14-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-shrink:0;padding:10px 16px;min-height:50px;background:#101728;border-bottom:1px solid #967d52;font:clamp(17px,4vw,22px) Georgia,serif}
+.day14-close{width:40px;height:40px;flex-shrink:0;background:#29334a;color:#f6e8cd;border:1px solid #a28a60;border-radius:50%;font-size:26px;cursor:pointer}
+.day14-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:22px 12px max(30px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at top,#33405b,#131b2b 75%)}
+.day14-panel{max-width:720px;margin:0 auto;padding:20px 14px 26px;background:linear-gradient(150deg,#fbefd7,#e5cca2);border:2px solid #a98954;border-radius:15px;text-align:center;color:#4b3322;box-shadow:0 10px 35px #0005;font-family:Georgia,serif}
+.day14-kicker{font-size:12px;letter-spacing:2px;color:#886943}
+.day14-panel h2{font:clamp(24px,5vw,34px) Georgia,serif;margin:12px 0}
+.day14-panel>p{font:15px/1.5 Georgia,serif}
+.day14-panel .day14-artwork{max-width:570px;margin:18px auto;background:#eee0c5;overflow:hidden;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1}
+.day14-panel .day14-artwork img{width:70%;height:70%;object-fit:contain;mix-blend-mode:multiply;transform-origin:center;transition:transform .08s linear}
+.day14-rotation{max-width:500px;margin:15px auto 24px}
+.day14-rotation label{display:flex;justify-content:space-between;font-size:15px;margin-bottom:10px}
+.day14-rotation input{width:100%;accent-color:#75512f;cursor:pointer}
+.day14-panel .day14-form{margin:20px auto 0}
+@media(max-width:500px){.day14-panel{padding:17px 10px 22px}.day14-panel .day14-artwork img{width:72%;height:72%}}
