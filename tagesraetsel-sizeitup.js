@@ -20,7 +20,7 @@ const ROUNDS=[
  {base:'Rose',bh:.65,bk:'rose',name:'Flamingo',h:1.25,kind:'flamingo',note:'Beispielhöhe einer Rose und eines Flamingos'},
  {base:'Gartenzwerg',bh:.4,bk:'gnome',name:'Karnevalswagen',h:4,kind:'float',note:'Beispielmaße: 40 cm Gartenzwerg und 4 m hoher Karnevalswagen'},
  {base:'DIN-A4-Blatt',bh:.297,bk:'paper',name:'Sektflasche (0,75 l)',h:.32,kind:'bottle',note:'Längsseite des A4-Blatts und Höhe einer typischen 0,75-l-Flasche'},
- {base:'Fußballtor',bh:2.44,bk:'goal',name:'Basketballbrett',h:1.05,kind:'hoop',note:'Verglichen wird die Höhe des Basketballbretts (105 cm) mit der Torhöhe (244 cm), nicht die Aufhängehöhe des Korbrings'},
+ {base:'Fußballtor',bh:2.44,bk:'goal',name:'Basketballkorb',h:1.05,kind:'hoop',note:'Verglichen wird die Höhe des Basketballbretts (105 cm) mit der Torhöhe (244 cm), nicht die Aufhängehöhe des Korbrings'},
  {base:'Burj Khalifa',bh:828,bk:'skyscraper',name:'Fernsehturm Berlin',h:368,kind:'tv',note:'Höhen beider Bauwerke'}
  ]
 ];
@@ -116,12 +116,14 @@ const LEVEL3_CURVE=[[0,0],[1,5],[2,8],[5,15],[10,22],[20,32],[30,42],[40,51],[50
 const level3Points=p=>{for(let i=1;i<LEVEL3_CURVE.length;i++){const [x,y]=LEVEL3_CURVE[i];if(p<=x){const [px,py]=LEVEL3_CURVE[i-1];return Math.min(p===100?100:99,Math.round(py+(p-px)*(y-py)/(x-px)));}}return 100;};
 const score=(a,b)=>{if(a===b||format(a)===format(b))return 100;const error=Math.abs(a-b)/b;const original=Math.max(0,Math.min(100,Math.round(100/(1+PENALTIES[state.round%3]*Math.pow(error/.5,1.7)))));return state.round%3===2?level3Points(original):original;};
 const current=()=>ROUNDS[state.round%3][state.scores.length];
+const QUESTIONS=["Wie hoch ist die Giraffe?","Wie hoch ist die Freiheitsstatue einschließlich Sockel?","Wie hoch ist das Schneeglöckchen?","Welchen Durchmesser hat die Bowlingkugel?","Wie hoch ist der Elizabeth Tower (Big Ben)?","Wie hoch ist die LEGO-Minifigur?","Wie hoch ist das Brandenburger Tor?","Wie groß ist der Königspinguin?","Welchen Durchmesser hat der Tennisball?","Wie hoch ist der Pariser Triumphbogen?","Wie hoch ist der Flamingo?","Wie hoch ist der Karnevalswagen?","Wie hoch ist die Sektflasche?","Wie hoch ist das Brett des Basketballkorbs?","Wie hoch ist der Berliner Fernsehturm?"];
+const questionFor=item=>QUESTIONS[ROUNDS.flat().indexOf(item)]||'Wie groß ist der Gegenstand?';
 function renderGoalComparison(root,item,estimate,actual){
  const stage=root.querySelector('.day5-stage');if(!stage)return;
  stage.classList.add('day5-goal-overlay-stage');
  const px=92/2.44;
  const img=(kind,h,klass)=>'<img class="day5-goal-image '+klass+'" alt="" src="'+PNG_ASSETS[kind]+'" style="height:'+Math.max(1,h*px)+'px">';
- stage.innerHTML='<div class="day5-goal-comparison"><div class="day5-goal-display">'+img('goal',2.44,'day5-goal-reference')+img('hoop',estimate,'day5-hoop-estimate')+(actual===undefined?'':img('hoop',actual,'day5-hoop-actual'))+'</div><div class="day5-goal-caption">Blau: Fußballtor (7,32 × 2,44 m) · Rot: dein Basketballbrett'+(actual===undefined?'':' · Grün: tatsächliche Größe')+'</div></div>';
+ stage.innerHTML='<div class="day5-goal-comparison"><div class="day5-goal-display">'+img('goal',2.44,'day5-goal-reference')+img('hoop',estimate,'day5-hoop-estimate')+(actual===undefined?'':img('hoop',actual,'day5-hoop-actual'))+'</div><div class="day5-goal-caption">Blau: Fußballtor (7,32 × 2,44 m) · Rot: dein Basketballkorb (Brett)'+(actual===undefined?'':' · Grün: tatsächliche Größe')+'</div></div>';
 }
 function sync(){
  bar.hidden=!selected();if(!selected())return;
@@ -167,7 +169,7 @@ function render(){
  }
  if(state.failed){
   state.failed=false;save();
-  content.innerHTML='<p class="day5-count">Die fünf Vergleiche sind abgeschlossen.</p><p class="day5-points">'+state.lastTotal+' / 500 Punkte</p><p>Für das Sternengeheimnis fehlen noch ein paar Punkte. Na gut, eine weitere Chance bekommst du!</p><button class="day5-action" type="button">✧ Neue Größenprüfung ✧</button>';
+  content.innerHTML='<p class="day5-count">Die fünf Vergleiche sind abgeschlossen.</p><p class="day5-points">'+state.lastTotal+' / 500 Punkte</p><p>Du hast die erforderliche Punktzahl noch nicht erreicht. Na gut, eine weitere Chance bekommst du!</p><button class="day5-action" type="button">✧ Neue Größenprüfung ✧</button>';
   content.querySelector('button').onclick=()=>render();
   return;
  }
@@ -178,7 +180,7 @@ function render(){
  state.estimate=Math.max(unit,Math.round(state.estimate/unit)*unit);
  const maxEstimate=Math.max(item.bh*5,item.h*2,minEstimate*100);
  const sliderValue=Math.max(0,Math.min(10000,Math.round((state.estimate-minEstimate)/(maxEstimate-minEstimate)*10000)));
- content.innerHTML='<p class="day5-count">Vergleich '+(state.scores.length+1)+' von 5 · Ziel: 400 von 500 Punkten</p><h3>Wie groß ist '+item.name+'?</h3><p>Verändere die rechte Silhouette, bis die beiden Größen im richtigen Verhältnis stehen.</p><div class="day5-stage"><div class="day5-object"><div class="day5-silhouette day5-person">'+svg(item.bk)+'</div><span>'+item.base+'<br>'+format(item.bh)+'</span></div><div class="day5-object"><div class="day5-silhouette day5-guess">'+svg(item.kind)+'</div><span>'+item.name+'</span></div></div><label class="day5-slider-label">Größe anpassen<input class="day5-slider" type="range" min="0" max="10000" value="'+sliderValue+'" step="1"></label><div class="day5-fine"><button type="button" class="day5-minus" aria-label="Kleiner">−</button><label>Geschätzte Größe <input class="day5-number" type="number" min="0.00001" step="any" inputmode="decimal" value="'+Number(state.estimate.toFixed(5))+'"></label><span>Meter</span><button type="button" class="day5-plus" aria-label="Größer">+</button></div><p class="day5-estimate">Deine Schätzung: <strong>'+format(state.estimate)+'</strong></p><button class="day5-action" type="button">✦ Schätzung festlegen ✦</button><p class="day5-progress">Bisher '+state.scores.reduce((a,b)=>a+b,0)+' Punkte gesammelt</p>';
+ content.innerHTML='<p class="day5-count">Vergleich '+(state.scores.length+1)+' von 5 · Ziel: 400 von 500 Punkten</p><h3>Wie groß ist '+item.name+'?</h3><p>Passe die Größe der rechten Silhouette an, bis beide Gegenstände im richtigen Verhältnis zueinander stehen.</p><div class="day5-stage"><div class="day5-object"><div class="day5-silhouette day5-person">'+svg(item.bk)+'</div><span>'+item.base+'<br>'+format(item.bh)+'</span></div><div class="day5-object"><div class="day5-silhouette day5-guess">'+svg(item.kind)+'</div><span>'+item.name+'</span></div></div><label class="day5-slider-label">Größe anpassen<input class="day5-slider" type="range" min="0" max="10000" value="'+sliderValue+'" step="1"></label><div class="day5-fine"><button type="button" class="day5-minus" aria-label="Kleiner">−</button><label>Geschätzte Größe <input class="day5-number" type="number" min="0.00001" step="any" inputmode="decimal" value="'+Number(state.estimate.toFixed(5))+'"></label><span>Meter</span><button type="button" class="day5-plus" aria-label="Größer">+</button></div><p class="day5-estimate">Deine Schätzung: <strong>'+format(state.estimate)+'</strong></p><button class="day5-action" type="button">✦ Schätzung festlegen ✦</button><p class="day5-progress">Bisher '+state.scores.reduce((a,b)=>a+b,0)+' Punkte gesammelt</p>';
  prepareImages(content);
  if(item.bk==='goal')renderGoalComparison(content,item,state.estimate);
  const number=content.querySelector('.day5-number');
