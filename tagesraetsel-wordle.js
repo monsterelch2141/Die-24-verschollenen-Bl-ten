@@ -158,7 +158,7 @@ function renderGame(){
  }
  if(lv===1&&h.length>=Math.max(6,Number(state.unlockedRows)||6)){
   const extras=h.length-6;status.textContent='Das gesuchte Wort wurde noch nicht gefunden.';
-  next.hidden=false;next.innerHTML='<p>'+(extras===0?'Na gut – einen Versuch hast du noch!':'Die Sternenwächter gewähren dir noch eine weitere Chance.')+'</p><button type="button">✦ Noch eine Chance ✦</button>';
+  next.hidden=false;next.innerHTML='<p>'+(extras===0?'Na gut, einen Versuch hast du noch!':'Die Sternenwächter gewähren dir noch eine weitere Chance.')+'</p><button type="button">✦ Noch eine Chance ✦</button>';
   next.querySelector('button').onclick=()=>{state.unlockedRows=h.length+1;save();renderGame()};return;
  }
  if(lv===2&&done){
@@ -174,7 +174,7 @@ function renderGame(){
  if(lv===3&&h.length>=Math.max(13,Number(state.octoRows)||13)){
   const extra=h.length-13;
   status.textContent='Die '+h.length+' Versuche sind aufgebraucht.';
-  next.hidden=false;next.innerHTML='<p>'+(extra===0?'Na gut – einen Versuch hast du noch!':extra<3?'Die Sternenwächter gewähren dir noch eine Chance.':'Die Sternenwächter haben das Zählen längst aufgegeben. Noch ein Versuch!')+'</p><button type="button">✦ Noch eine Chance ✦</button>';
+  next.hidden=false;next.innerHTML='<p>'+(extra===0?'Na gut, einen Versuch hast du noch!':extra<3?'Die Sternenwächter gewähren dir noch eine Chance.':'Die Sternenwächter haben das Zählen längst aufgegeben. Noch ein Versuch!')+'</p><button type="button">✦ Noch eine Chance ✦</button>';
   next.querySelector('button').onclick=()=>{state.octoRows=h.length+1;save();renderGame()};return;
  }
  status.textContent=busy?'Das Wort wird geprüft …':lv===3?(Math.max(13,Number(state.octoRows)||13)-h.length)+' Versuche übrig · '+OCT.filter(w=>h.includes(w)).length+'/8 gefunden':lv===2?(6-h.length)+' Antiwordle-Versuche übrig':(Math.max(6,Number(state.unlockedRows)||6)-h.length)+' Versuche übrig';
