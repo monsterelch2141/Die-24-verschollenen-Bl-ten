@@ -1069,3 +1069,18 @@ html:has(.day5-overlay){overflow:hidden!important}
 .day10-verified{margin-top:14px;border-top:1px solid #8e7752;padding-top:12px;color:#f5dfb5;font:15px/1.5 Georgia,serif}
 .day10-solved{color:#e8d19b;text-align:center}
 .day10-verified[hidden],.day10-solved[hidden]{display:none!important}
+
+
+/* Day 14: original mathematical anamorphosis */
+.day14-anamorphose-quest{max-width:670px;margin:16px auto 24px;padding:20px 13px 24px;border:1px solid #b89b6b;border-radius:16px;background:linear-gradient(145deg,#f8efd9,#ead9ba);text-align:center;color:#563e29;font-family:Georgia,serif}
+.day14-anamorphose-quest[hidden],.day14-route[hidden],.day14-image-error[hidden]{display:none!important}
+.day14-anamorphose-quest h3{font:normal clamp(23px,5vw,30px) Georgia,serif;margin:7px 0 15px}
+.day14-artwork{margin:0 auto 20px;max-width:590px;background:#eee0c5;border:1px solid #c3a77c;border-radius:10px;overflow:hidden}
+.day14-artwork img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
+.day14-image-error{padding:20px;color:#8e4d3c}
+.day14-form{max-width:500px;margin:0 auto}
+.day14-form label{display:block;font-size:17px;margin-bottom:10px}
+.day14-form-row{display:flex;gap:8px}
+.day14-form input{flex:1;min-width:0;border:1px solid #b99d70;border-radius:9px;background:#fffbf1;padding:12px;color:#4d3726;font:16px Georgia,serif}
+.day14-form button{border:1px solid #886742;border-radius:9px;background:#62482e;color:#fff0d4;padding:12px 17px;font:16px Georgia,serif;cursor:pointer}
+.day14-status{min-height:20px;font-size:14px;margin:12px 0 0}
