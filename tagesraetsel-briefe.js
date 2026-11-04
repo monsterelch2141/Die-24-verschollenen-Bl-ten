@@ -14,13 +14,13 @@ const CASES=[
  'Die Sternenkarte war nicht in der Archivkammer.',
  'Tung Tung Tung Sahur hatte nicht die Sternenkarte.'
  ],hints:['Zeichne fünf Etagen auf und trage für jede Person und jeden Gegenstand mögliche Positionen ein.','Die Laterne war neben dem Federwedel auf Etage 5. Welche Etage bleibt dafür?','Nutze nun die Nachbarschaften zwischen Laura, Elarion, Nymera und Tung Tung Tung Sahur.']},
- {title:'Die vertauschten Blütenschleifen',suspects:['Laura','Silas','Tung Tung Tung Sahur'],place:'Blütenfest von Luminara',story:'Beim großen Blütenfest wurden die Auszeichnungen für den ersten und letzten Platz heimlich vertauscht. Die Schleifen am Seerosenteich wurden mit einem Bindfaden neu befestigt. Laura, Silas und Tung Tung Tung Sahur hielten sich jeweils an einem anderen Ort auf und trugen unterschiedliche Dinge.',places:['Musikpavillon','Teepavillon','Seerosenteich'],objects:['Heroldshorn','Strohhut','Bindfaden'],culprit:'Laura',clues:[
- 'Laura hatte nicht das Heroldshorn.',
- 'Laura war nicht am Musikpavillon.',
- 'Silas war nicht im Teepavillon.',
- 'Der Strohhut war am Musikpavillon.',
- 'Das Heroldshorn war im Teepavillon.'
- ],hints:['Die Gegenstände gehören jeweils genau einem Ort.','Wo muss das Heroldshorn gewesen sein?','Laura war weder am Musikpavillon noch mit dem Heroldshorn unterwegs.']}
+ {title:'Die zehn Zeugenaussagen',suspects:['Laura','Silas','Tung Tung Tung Sahur','Nymera','Elarion'],place:'Die Schatzkammer von Luminara',story:'In der Nacht verschwand der königliche Blütenkristall aus der Schatzkammer. Fünf Verdächtige machten jeweils zwei Aussagen. Die Ermittler haben unabhängig nachgewiesen: Von diesen zehn Aussagen sind genau fünf wahr. Alle übrigen fünf sind falsch. Genau eine Person hat den Kristall gestohlen. Wer war es?',type:'testimony',culprit:'Elarion',statements:[
+ ['Laura',['Es war nicht Silas.','Es war Tung Tung Tung Sahur.']],
+ ['Silas',['Es war nicht Laura.','Es war Nymera.']],
+ ['Tung Tung Tung Sahur',['Es war nicht Nymera.','Es war nicht Silas.']],
+ ['Nymera',['Es war nicht Elarion.','Es war Laura.']],
+ ['Elarion',['Es war nicht Tung Tung Tung Sahur.','Es war Nymera.']]
+ ],hints:['Die beiden Aussagen einer Person können beide wahr, beide falsch oder gemischt sein. Nur die Gesamtzahl ist bekannt.','Teste gedanklich einen Verdächtigen und zähle, wie viele der zehn Aussagen dann wahr wären.','Genau eine Person führt zu exakt fünf wahren Aussagen.']}
 ];
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
 if(!day||!board||!instruction)return;
@@ -39,13 +39,20 @@ function render(){
  if(!overlay)return;
  const c=CASES[level-1],root=overlay.querySelector('.day10-scroll');
  if(solved){root.innerHTML='<div class="day10-intro"><span>✧ AKTE 10 · GELÖST ✧</span><h2>Die Wahrheit ist ans Licht gekommen!</h2><p>Du hast die Ermittlungen erfolgreich abgeschlossen. Die Sternenroute ist freigeschaltet.</p><div class="day10-route"><strong>Sternenroute (Testdaten)</strong><p>'+ROUTE.join(' → ')+'</p></div></div>';return}
+ if(c.type==='testimony'){
+  root.innerHTML='<div class="day10-intro"><span>✧ AKTE 10 · ZWEITE PRÜFUNG ✧</span><h2>'+c.title+'</h2><p class="day10-location">✧ '+c.place+'</p><div class="day10-story">'+c.story+'</div></div><section class="day10-testimony"><div class="day10-truth-banner"><span>⚖</span><strong>GENAU 5 VON 10 AUSSAGEN SIND WAHR</strong><small>Es ist nicht bekannt, wer wie oft lügt.</small></div><div class="day10-witness-grid">'+c.statements.map((w,i)=>'<article class="day10-witness"><header><span class="day10-avatar">'+['✧','♜','☽','✦','♛'][i]+'</span><strong>'+w[0]+'</strong></header><div class="day10-witness-line"><small>Aussage I</small><p>'+w[1][0]+'</p></div><div class="day10-witness-line"><small>Aussage II</small><p>'+w[1][1]+'</p></div></article>').join('')+'</div><div class="day10-accusation"><h3>✦ Wer stahl den Blütenkristall?</h3><p>Vergleiche die Aussagen und finde die einzige Person, bei der genau fünf Aussagen wahr sind.</p><form class="day10-form"><input type="text" autocomplete="off" spellcheck="false" aria-label="Name des Täters" placeholder="Name des Täters" required><button type="submit">✧ Verdacht prüfen</button></form><p class="day10-status" role="status"></p><button type="button" class="day10-question day10-hint">✧ Hinweis ansehen</button><p class="day10-hint-text" role="status"></p></div></section>';
+  const form=root.querySelector('form'),status=root.querySelector('.day10-status');
+  form.onsubmit=e=>{e.preventDefault();const input=norm(form.querySelector('input').value),match=c.suspects.find(n=>norm(n)===input);if(!match){status.textContent='Bitte gib einen vollständigen Namen ein. Tippfehler zählen nicht.';return}if(match===c.culprit){finish();return}status.textContent='Noch nicht richtig. Du kannst es erneut versuchen.'};
+  root.querySelector('.day10-hint').onclick=()=>{const n=Math.min(hints[1],2);root.querySelector('.day10-hint-text').textContent=c.hints[n];hints[1]++};
+  return;
+ }
  root.innerHTML='<div class="day10-intro"><span>✧ AKTE 10 · '+(level===1?'ERSTE PRÜFUNG':'ZWEITE PRÜFUNG')+' ✧</span><h2>'+c.title+'</h2><p class="day10-location">✧ '+c.place+'</p><div class="day10-story">'+c.story+'</div></div><section class="day10-investigation"><div class="day10-people"><h3>✦ Die Verdächtigen</h3><div class="day10-suspects">'+(c.suspects||SUSPECTS).map((n,i)=>'<div class="day10-suspect"><span class="day10-avatar">'+['✧','♜','☽','✦','♛'][i]+'</span><span>'+n+'</span></div>').join('')+'</div></div><div class="day10-floor-map"><h3>✦ Die Schauplätze</h3><div class="day10-floors">'+c.places.slice().reverse().map((n,i)=>'<div class="day10-floor"><span class="day10-floor-icon">'+['✦','☽','▤','♜','⚙'][i]+'</span><span>'+n+'</span></div>').join('')+'</div></div><div class="day10-evidence"><h3>✦ '+c.clues.length+' gesicherte Hinweise</h3><ol class="day10-clues">'+c.clues.map(t=>'<li>'+t+'</li>').join('')+'</ol></div><p><strong>Ermittlungsregel:</strong> Jede Person befand sich an genau einem anderen Ort und hatte genau einen anderen Gegenstand. Niemand teilt sich einen Ort oder Gegenstand mit einer anderen Person.</p><p><strong>Orte:</strong> '+c.places.join(' · ')+'</p><p><strong>Gegenstände:</strong> '+c.objects.join(' · ')+'</p><h3>✦ Wer war es?</h3><p>Trage den vollständigen Namen der verdächtigen Person ein. Unvollständige oder vertippte Namen zählen nicht als Fehlversuch.</p><form class="day10-form"><input type="text" autocomplete="off" spellcheck="false" aria-label="Name der verdächtigen Person" placeholder="Name des Täters" required><button type="submit">✧ Verdacht prüfen</button></form><p class="day10-status" role="status"></p><button type="button" class="day10-question day10-hint">✧ Hinweis ansehen</button><p class="day10-hint-text" role="status"></p></section>';
  const form=root.querySelector('form'),status=root.querySelector('.day10-status');
  form.onsubmit=e=>{e.preventDefault();const input=norm(form.querySelector('input').value),match=(c.suspects||SUSPECTS).find(n=>norm(n)===input);
  if(!match){status.textContent='Bitte gib einen vollständigen Namen aus der Verdächtigenliste ein. Tippfehler zählen nicht als Versuch.';return}
  if(match===c.culprit){if(level===1&&wrong===1){level=2;save();render();overlay.querySelector('.day10-status').textContent='✦ Richtig! Beweise dich jetzt in Level 2!'}else finish();return}
- if(level===1&&wrong===0){wrong=1;save();status.textContent='Dieser Verdacht war falsch. Du kannst es beliebig oft versuchen. Sobald du den Täter richtig benennst, wartet Level 2 auf dich.';return}
- if(level===1){status.textContent='Dieser Verdacht ist noch nicht richtig. Versuche es erneut – du hast beliebig viele Versuche.';return}
+ if(level===1&&wrong===0){wrong=1;save();status.textContent='Dieser Verdacht war falsch. Du kannst es beliebig oft versuchen. Sobald du den richtigen Täter nennst, wartet die zweite Prüfung auf dich.';return}
+ if(level===1){status.textContent='Dieser Verdacht ist noch nicht richtig. Du hast weiterhin beliebig viele Versuche. Sobald du den Täter findest, wartet Level 2 auf dich.';return}
  status.textContent='Das ist nicht die gesuchte Person. Prüfe die fünf Hinweise erneut.';
  };
  root.querySelector('.day10-hint').onclick=()=>{const i=level-1;const n=Math.min(hints[i],2);root.querySelector('.day10-hint-text').textContent=c.hints[n];hints[i]++};
