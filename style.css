@@ -1133,3 +1133,15 @@ html:has(.day5-overlay){overflow:hidden!important}
 .day10-detective .day10-hint{grid-column:1/-1;justify-self:center;text-align:center}
 .day10-detective .day10-hint-text{grid-column:1/-1}
 @media(max-width:590px){.day10-detective .day10-investigation{grid-template-columns:minmax(0,1fr)}.day10-evidence{grid-column:1}.day10-clues{grid-template-columns:minmax(0,1fr)}.day10-people,.day10-floor-map,.day10-evidence{padding:13px}.day10-story{padding:14px}}
+
+
+/* Tag 10, Level 2: Zeugenaussagen statt Etagen-Zuordnung */
+.day10-testimony{max-width:790px;margin:0 auto 28px}
+.day10-truth-banner{display:flex;align-items:center;flex-direction:column;gap:6px;text-align:center;background:linear-gradient(135deg,#8b6937,#4d3d2c);border:1px solid #e4c589;border-radius:14px;padding:16px 12px;margin-bottom:16px;box-shadow:0 7px 22px #0004}
+.day10-truth-banner>span{font-size:32px}.day10-truth-banner strong{font:700 clamp(15px,4vw,21px) Georgia,serif;letter-spacing:1px}.day10-truth-banner small{font:13px Georgia,serif;color:#f3dfbc}
+.day10-witness-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.day10-witness{border:1px solid #b29461;border-radius:13px;overflow:hidden;background:#f2e2c4;color:#382a1e;box-shadow:0 6px 18px #0004}
+.day10-witness header{display:flex;align-items:center;gap:10px;background:#243751;color:#f8dfb1;padding:11px 14px;font:18px Georgia,serif}
+.day10-witness-line{padding:10px 15px;border-top:1px solid #c8ac80}.day10-witness-line small{display:block;color:#936c3d;letter-spacing:1px;font:11px Georgia,serif}.day10-witness-line p{margin:5px 0;font:16px/1.45 Georgia,serif}
+.day10-accusation{margin-top:19px;border:1px solid #a78c5c;border-radius:14px;background:#19283f;padding:18px 15px;text-align:center}.day10-accusation h3{font:22px Georgia,serif;margin:0 0 10px}.day10-accusation p{font:14px/1.55 Georgia,serif}.day10-accusation .day10-hint{margin:8px auto;text-align:center}
+@media(max-width:560px){.day10-witness-grid{grid-template-columns:1fr}.day10-witness-line{padding:9px 13px}.day10-witness-line p{font-size:15px}}
