@@ -43,9 +43,9 @@ function render(){
  const form=root.querySelector('form'),status=root.querySelector('.day10-status');
  form.onsubmit=e=>{e.preventDefault();const input=norm(form.querySelector('input').value),match=(c.suspects||SUSPECTS).find(n=>norm(n)===input);
  if(!match){status.textContent='Bitte gib einen vollständigen Namen aus der Verdächtigenliste ein. Tippfehler zählen nicht als Versuch.';return}
- if(match===c.culprit){finish();return}
- if(level===1&&wrong===0){wrong=1;save();status.textContent='Dieser Verdacht war falsch. Du hast noch einen Versuch. Bei einem weiteren falschen Verdacht wartet die zweite Prüfung auf dich.';return}
- if(level===1){level=2;save();render();overlay.querySelector('.day10-status').textContent='✦ Zwei falsche Verdächtigungen. Beweise dich jetzt in Level 2!';return}
+ if(match===c.culprit){if(level===1&&wrong===1){level=2;save();render();overlay.querySelector('.day10-status').textContent='✦ Richtig! Beweise dich jetzt in Level 2!'}else finish();return}
+ if(level===1&&wrong===0){wrong=1;save();status.textContent='Dieser Verdacht war falsch. Du kannst es beliebig oft versuchen. Sobald du den Täter richtig benennst, wartet Level 2 auf dich.';return}
+ if(level===1){status.textContent='Dieser Verdacht ist noch nicht richtig. Versuche es erneut – du hast beliebig viele Versuche.';return}
  status.textContent='Das ist nicht die gesuchte Person. Prüfe die fünf Hinweise erneut.';
  };
  root.querySelector('.day10-hint').onclick=()=>{const i=level-1;const n=Math.min(hints[i],2);root.querySelector('.day10-hint-text').textContent=c.hints[n];hints[i]++};
