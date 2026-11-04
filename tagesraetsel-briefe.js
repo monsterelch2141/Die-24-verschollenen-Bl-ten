@@ -1,6 +1,18 @@
 (()=>{
 'use strict';
-const DAY=10, KEY='advent-tag10-detektiv-v4', ROUTE=[137,208,314,95,421,63,178,256];
+const DAY=10, KEY='advent-tag10-detektiv-v5', ROUTE=[137,208,314,95,421,63,178,256];
+const ESTIMATES=[
+ {q:'Ein Drache trägt 37 Kronen, jede mit 24 Zacken. Wie viele Zacken glänzen insgesamt?',a:888,unit:'Zacken'},
+ {q:'Ein königlicher Pinguin hüpft 17 Tage lang täglich 43-mal. Wie viele Hüpfer sind das?',a:731,unit:'Hüpfer'},
+ {q:'Ein Schlossgespenst besitzt 29 Paar Schuhe. Wie viele Schnürsenkelenden hat es, wenn jeder Schuh genau einen Schnürsenkel besitzt?',a:116,unit:'Enden'},
+ {q:'Ein Kobold zählt 13 Stunden lang jede Minute 7 vorbeifliegende Käsewürfel. Wie viele sind das?',a:5460,unit:'Käsewürfel'},
+ {q:'Ein Riese stapelt 48 Türme mit je 19 Pfannkuchen. Wie viele Pfannkuchen sind das?',a:912,unit:'Pfannkuchen'},
+ {q:'Eine Schnecke trägt 23 Rucksäcke mit je 16 goldenen Erbsen. Wie viele Erbsen schleppt sie?',a:368,unit:'Erbsen'},
+ {q:'Ein Zauberer lässt 14 Minuten lang alle 3 Sekunden einen Frosch erscheinen. Wie viele Frösche sind das?',a:280,unit:'Frösche'},
+ {q:'Ein Einhorn verteilt 65 Säcke mit je 18 Glitzersteinen. Wie viele Steine sind das?',a:1170,unit:'Steine'},
+ {q:'Ein Vampir schreibt 31 Tage lang täglich 27 Liebesbriefe an seinen Zahnarzt. Wie viele Briefe sind das?',a:837,unit:'Briefe'},
+ {q:'Ein Troll bestellt 42 Pizzen mit jeweils 13 Oliven. Wie viele Oliven muss die Küche auflegen?',a:546,unit:'Oliven'}
+];
 const SUSPECTS=['Laura','Silas','Tung Tung Tung Sahur','Nymera','Elarion'];
 const CASES=[
  {title:'Die verstummte Sternenuhr',place:'Sternenturm von Luminara',story:'Die große Sternenuhr steht still. Fünf Personen hielten sich in fünf verschiedenen Räumen auf; jede trug einen anderen Gegenstand. Wer im Uhrwerkraum den Aufziehschlüssel bei sich hatte, konnte die Uhr anhalten. Die Räume sind vom Erdgeschoss bis zum Dach nummeriert: 1 Uhrwerkraum, 2 Galerie, 3 Archivkammer, 4 Sternensaal, 5 Dachterrasse.',suspects:['Laura','Silas','Tung Tung Tung Sahur','Nymera','Elarion'],places:['1 · Uhrwerkraum','2 · Galerie','3 · Archivkammer','4 · Sternensaal','5 · Dachterrasse'],objects:['Laterne','Federwedel','Sternenkarte','Aufziehschlüssel','Messingglocke'],culprit:'Tung Tung Tung Sahur',clues:[
@@ -25,11 +37,11 @@ const CASES=[
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
 if(!day||!board||!instruction)return;
 let stored={};try{stored=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{}
-let solved=!!stored.solved,level=stored.level===2?2:1,wrong=stored.wrong===1?1:0,opened=false,overlay=null,hints=[0,0];
+let solved=!!stored.solved,level=[1,2,3].includes(stored.level)?stored.level:1,attempts=Number.isInteger(stored.attempts)?stored.attempts:0,estimateIndex=Number.isInteger(stored.estimateIndex)?stored.estimateIndex:0,overlay=null,hints=[0,0];
 const selected=()=>Number(day.value)===DAY;
-function save(){localStorage.setItem(KEY,JSON.stringify({solved,level,wrong}))}
+function save(){localStorage.setItem(KEY,JSON.stringify({solved,level,attempts,estimateIndex}))}
 const bar=document.createElement('section');bar.className='day10-quest';bar.hidden=true;
-bar.innerHTML='<div class="quest-mark">✧ ⚖ ✧</div><h3>Die Rätselakten von Luminara</h3><p>Eine Sternenuhr, fünf Verdächtige und ein geheimnisvoller Täter.</p><button type="button" class="day10-open">✧ Ermittlungen aufnehmen ✧</button><div class="day10-route" hidden></div>';
+bar.innerHTML='<div class="quest-mark">✧ ⚖ ✧</div><h3>Die Rätselakten von Luminara</h3><p>Zwei Ermittlungen. Drei Versuche. Eine letzte verrückte Chance.</p><button type="button" class="day10-open">✧ Ermittlungen aufnehmen ✧</button><div class="day10-route" hidden></div>';
 instruction.before(bar);
 function sync(){bar.hidden=!selected();if(!selected())return;bar.querySelector('.day10-route').hidden=!solved;if(solved)bar.querySelector('.day10-route').innerHTML='<strong>Sternenroute (Testdaten)</strong><p>'+ROUTE.join(' → ')+'</p>';instruction.textContent=solved?'Verbinde deine Sternenroute und wähle den richtigen Stern.':'Löse zuerst das Tagesrätsel, bevor du ein Sternenfeld auswählst.'}
 function close(){overlay?.remove();overlay=null;document.body.classList.remove('day10-active')}
@@ -37,12 +49,20 @@ function finish(){solved=true;save();sync();render()}
 function norm(s){return s.trim().toLocaleLowerCase('de').replace(/\s+/g,' ').normalize('NFKD').replace(/[\u0300-\u036f]/g,'')}
 function render(){
  if(!overlay)return;
- const c=CASES[level-1],root=overlay.querySelector('.day10-scroll');
+ const c=CASES[Math.min(level,2)-1],root=overlay.querySelector('.day10-scroll');
  if(solved){root.innerHTML='<div class="day10-intro"><span>✧ AKTE 10 · GELÖST ✧</span><h2>Die Wahrheit ist ans Licht gekommen!</h2><p>Du hast die Ermittlungen erfolgreich abgeschlossen. Die Sternenroute ist freigeschaltet.</p><div class="day10-route"><strong>Sternenroute (Testdaten)</strong><p>'+ROUTE.join(' → ')+'</p></div></div>';return}
+ if(level===3){
+ const i=estimateIndex%ESTIMATES.length,q=ESTIMATES[i];
+ root.innerHTML='<div class="day10-intro"><span>✧ AKTE 10 · ABSURDE SCHÄTZPRÜFUNG ✧</span><h2>Der königliche Schätzgerichtshof</h2><p>Beide Fälle sind gelöst, aber du hast mehr als drei gültige Täterantworten benötigt. Nun warten zehn absurde Schätzfragen auf dich – einzeln, eine nach der anderen. Sobald deine Schätzung höchstens 20 % vom richtigen Wert abweicht, ist die Sternenroute frei.</p></div><section class="day10-estimate"><div class="day10-estimate-progress">FRAGE '+(i+1)+' / 10</div><div class="day10-estimate-symbol">✦ ⚖ ✦</div><h3>'+q.q+'</h3><p>Deine Schätzung in '+q.unit+':</p><form class="day10-form"><input type="number" step="any" min="0" inputmode="decimal" aria-label="Schätzwert" placeholder="Deine Zahl" required><button type="submit">✧ Schätzung prüfen</button></form><p class="day10-status" role="status"></p><button type="button" class="day10-estimate-next" hidden>Nächste Schätzfrage →</button></section>';
+ const form=root.querySelector('form'),status=root.querySelector('.day10-status'),next=root.querySelector('.day10-estimate-next');
+ form.onsubmit=e=>{e.preventDefault();const value=Number(form.querySelector('input').value);if(!Number.isFinite(value)||value<0){status.textContent='Bitte gib eine gültige positive Zahl ein.';return}const diff=Math.abs(value-q.a)/q.a;if(diff<=0.2+1e-10){finish();return}status.textContent='Leider daneben! Die richtige Antwort lautet '+q.a.toLocaleString('de-DE')+' '+q.unit+'. Deine Abweichung: '+Math.round(diff*100)+' %. ';form.querySelector('button').disabled=true;form.querySelector('input').disabled=true;next.hidden=false;next.textContent=i===9?'Zehn Fragen geschafft – erneut versuchen ↻':'Nächste Schätzfrage →'};
+ next.onclick=()=>{estimateIndex=(i+1)%ESTIMATES.length;save();render()};
+ return;
+ }
  if(c.type==='testimony'){
   root.innerHTML='<div class="day10-intro"><span>✧ AKTE 10 · ZWEITE PRÜFUNG ✧</span><h2>'+c.title+'</h2><p class="day10-location">✧ '+c.place+'</p><div class="day10-story">'+c.story+'</div></div><section class="day10-testimony"><div class="day10-truth-banner"><span>⚖</span><strong>GENAU 5 VON 10 AUSSAGEN SIND WAHR</strong><small>Es ist nicht bekannt, wer wie oft lügt.</small></div><div class="day10-witness-grid">'+c.statements.map((w,i)=>'<article class="day10-witness"><header><span class="day10-avatar">'+['✧','♜','☽','✦','♛'][i]+'</span><strong>'+w[0]+'</strong></header><div class="day10-witness-line"><small>Aussage I</small><p>'+w[1][0]+'</p></div><div class="day10-witness-line"><small>Aussage II</small><p>'+w[1][1]+'</p></div></article>').join('')+'</div><div class="day10-accusation"><h3>✦ Wer stahl den Blütenkristall?</h3><p>Vergleiche die Aussagen und finde die einzige Person, bei der genau fünf Aussagen wahr sind.</p><form class="day10-form"><input type="text" autocomplete="off" spellcheck="false" aria-label="Name des Täters" placeholder="Name des Täters" required><button type="submit">✧ Verdacht prüfen</button></form><p class="day10-status" role="status"></p><button type="button" class="day10-question day10-hint">✧ Hinweis ansehen</button><p class="day10-hint-text" role="status"></p></div></section>';
   const form=root.querySelector('form'),status=root.querySelector('.day10-status');
-  form.onsubmit=e=>{e.preventDefault();const input=norm(form.querySelector('input').value),match=c.suspects.find(n=>norm(n)===input);if(!match){status.textContent='Bitte gib einen vollständigen Namen ein. Tippfehler zählen nicht.';return}if(match===c.culprit){finish();return}status.textContent='Noch nicht richtig. Du kannst es erneut versuchen.'};
+  form.onsubmit=e=>{e.preventDefault();const input=norm(form.querySelector('input').value),match=c.suspects.find(n=>norm(n)===input);if(!match){status.textContent='Bitte gib einen vollständigen Namen ein. Tippfehler zählen nicht.';return}attempts++;save();if(match===c.culprit){if(attempts<=3){finish()}else{level=3;estimateIndex=0;save();render()}return}status.textContent='Noch nicht richtig. Versuche es erneut. Bisherige gültige Täterantworten über beide Level: '+attempts+'.';};
   root.querySelector('.day10-hint').onclick=()=>{const n=Math.min(hints[1],2);root.querySelector('.day10-hint-text').textContent=c.hints[n];hints[1]++};
   return;
  }
@@ -50,9 +70,8 @@ function render(){
  const form=root.querySelector('form'),status=root.querySelector('.day10-status');
  form.onsubmit=e=>{e.preventDefault();const input=norm(form.querySelector('input').value),match=(c.suspects||SUSPECTS).find(n=>norm(n)===input);
  if(!match){status.textContent='Bitte gib einen vollständigen Namen aus der Verdächtigenliste ein. Tippfehler zählen nicht als Versuch.';return}
- if(match===c.culprit){if(level===1&&wrong===1){level=2;save();render();overlay.querySelector('.day10-status').textContent='✦ Richtig! Beweise dich jetzt in Level 2!'}else finish();return}
- if(level===1&&wrong===0){wrong=1;save();status.textContent='Dieser Verdacht war falsch. Du kannst es beliebig oft versuchen. Sobald du den richtigen Täter nennst, wartet die zweite Prüfung auf dich.';return}
- if(level===1){status.textContent='Dieser Verdacht ist noch nicht richtig. Du hast weiterhin beliebig viele Versuche. Sobald du den Täter findest, wartet Level 2 auf dich.';return}
+ attempts++;save();if(match===c.culprit){level=2;save();render();overlay.querySelector('.day10-status').textContent='✦ Erster Fall gelöst! Jetzt folgt Level 2. Insgesamt '+attempts+' gültige Täterantworten bisher.';return}
+ if(level===1){status.textContent='Dieser Verdacht ist falsch. Du kannst weiter versuchen. Sobald du den Täter richtig benennst, kommst du zu Level 2. Bisherige gültige Täterantworten: '+attempts+'.';return}
  status.textContent='Das ist nicht die gesuchte Person. Prüfe die fünf Hinweise erneut.';
  };
  root.querySelector('.day10-hint').onclick=()=>{const i=level-1;const n=Math.min(hints[i],2);root.querySelector('.day10-hint-text').textContent=c.hints[n];hints[i]++};
