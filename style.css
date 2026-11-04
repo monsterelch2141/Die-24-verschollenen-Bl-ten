@@ -1104,3 +1104,32 @@ html:has(.day5-overlay){overflow:hidden!important}
 @media(max-width:500px){.day14-panel{padding:17px 10px 22px}.day14-panel .day14-artwork img{width:72%;height:72%}}
 
 .day14-panel .day14-artwork img{mix-blend-mode:normal!important}
+
+
+/* Tag 10: visuelle Ermittlungsakte; Inhalte und Hinweise bleiben unverändert */
+.day10-detective .day10-scroll{background:radial-gradient(ellipse at 50% 0%,#314366 0%,#111b30 58%,#0d1526 100%);padding:18px 14px max(34px,env(safe-area-inset-bottom))}
+.day10-detective .day10-intro{max-width:790px;margin:4px auto 20px}
+.day10-detective .day10-intro h2{margin:8px 0 10px;text-shadow:0 2px 18px #e6c17d33}
+.day10-location{display:inline-block!important;border:1px solid #b89960;border-radius:30px;background:#1d2b45;padding:6px 16px;margin:3px 0 14px!important;color:#e9c88e!important}
+.day10-story{font:15px/1.7 Georgia,serif;color:#f0e2c8;text-align:left;background:linear-gradient(140deg,#233653,#17243b);border:1px solid #917b56;border-left:4px solid #d5b57d;border-radius:13px;padding:17px 19px;box-shadow:0 9px 28px #0003}
+.day10-detective .day10-investigation{max-width:790px;border:0;background:transparent;padding:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px}
+.day10-detective .day10-investigation>h3,.day10-detective .day10-investigation>p,.day10-detective .day10-investigation>form,.day10-detective .day10-investigation>.day10-question{grid-column:1/-1}
+.day10-people,.day10-floor-map,.day10-evidence{background:linear-gradient(150deg,#22324e,#172339);border:1px solid #987e53;border-radius:14px;padding:16px;box-shadow:0 8px 24px #0003}
+.day10-people h3,.day10-floor-map h3,.day10-evidence h3{font:20px Georgia,serif;margin:0 0 13px;color:#f5d9a4}
+.day10-suspects{display:grid;gap:8px}
+.day10-suspect{display:flex;align-items:center;gap:10px;border:1px solid #7b725f;background:#101e34;border-radius:10px;padding:7px 10px;font:15px Georgia,serif}
+.day10-avatar{display:grid;place-items:center;width:31px;height:31px;flex-shrink:0;border:1px solid #bd9e66;background:#293c55;color:#f3d29a;border-radius:50%;font-size:19px}
+.day10-floors{display:grid;gap:6px}
+.day10-floor{display:flex;align-items:center;gap:10px;background:#13223a;border:1px solid #64718a;border-radius:8px;padding:8px 10px;font:14px Georgia,serif}
+.day10-floor-icon{width:23px;text-align:center;color:#f2c984;font-size:19px}
+.day10-evidence{grid-column:1/-1}
+.day10-clues{list-style:none;counter-reset:clue;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0;padding:0}
+.day10-clues li{counter-increment:clue;position:relative;display:flex;gap:11px;align-items:flex-start;padding:12px;background:linear-gradient(145deg,#f4e6c8,#e3cda6);border:1px solid #b89963;border-radius:9px;color:#3b2b20;font:14px/1.5 Georgia,serif;box-shadow:0 3px 10px #0002}
+.day10-clues li:before{content:counter(clue,decimal-leading-zero);font:700 15px Georgia,serif;color:#8d653b;flex-shrink:0}
+.day10-detective .day10-investigation>h3{margin:12px 0 0;text-align:center}
+.day10-detective .day10-investigation>p{text-align:center;margin:0;color:#e5d4b6;font:14px/1.6 Georgia,serif}
+.day10-detective .day10-form{grid-column:1/-1;margin:0 auto;width:100%;max-width:500px}
+.day10-detective .day10-status{grid-column:1/-1!important;text-align:center!important;color:#f4d393!important}
+.day10-detective .day10-hint{grid-column:1/-1;justify-self:center;text-align:center}
+.day10-detective .day10-hint-text{grid-column:1/-1}
+@media(max-width:590px){.day10-detective .day10-investigation{grid-template-columns:minmax(0,1fr)}.day10-evidence{grid-column:1}.day10-clues{grid-template-columns:minmax(0,1fr)}.day10-people,.day10-floor-map,.day10-evidence{padding:13px}.day10-story{padding:14px}}
