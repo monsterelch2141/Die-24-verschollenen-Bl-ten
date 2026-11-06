@@ -21,7 +21,7 @@ state.bonusWords=Array.isArray(state.bonusWords)?state.bonusWords:[];
 const select=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
 if(!select||!board||!instruction)return;
 const bar=document.createElement('section');bar.className='day2-quest';bar.hidden=true;
-bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Die verschollenen Orte Luminaras</h3><p id="day2-hint">Sieben Orte verbergen den Weg zu einem achten Geheimnis.</p><button type="button" id="day2-open">✧ Zum Tagesrätsel ✧</button><div id="day2-route" hidden></div>';
+bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Die drei Pfade der Wörter</h3><p id="day2-hint">Drei Rätselwelten warten auf ihre Entdeckung.</p><button type="button" id="day2-open">✧ Zum Tagesrätsel ✧</button><div id="day2-route" hidden></div>';
 instruction.before(bar);
 const open=bar.querySelector('#day2-open'),hint=bar.querySelector('#day2-hint'),route=bar.querySelector('#day2-route');
 const selected=()=>Number(select.value)===DAY;
@@ -30,7 +30,7 @@ function save(){try{localStorage.setItem(store,JSON.stringify(state))}catch{}syn
 function sync(){
  bar.hidden=!selected();if(!selected())return;
  open.textContent=unlocked()?'✧ Sternenroute erneut ansehen ✧':state.found.length===8?'✧ Weiter zum nächsten Abschnitt ✧':'✧ Zum Tagesrätsel ✧';
- hint.textContent=unlocked()?'Die Sternenroute ist freigeschaltet. Wähle den Zielstern.':state.found.length===8?'Alle Wörter gefunden. Öffne das Rätsel für den nächsten Schritt.':'Finde die verborgenen Orte und den verbindenden Sternenpfad.';
+ hint.textContent=unlocked()?'Die Sternenroute ist freigeschaltet. Wähle den Zielstern.':state.found.length===8?'Alle Wörter gefunden. Öffne das Rätsel für den nächsten Schritt.':'Finde die Themenwörter und den verbindenden Spangram.';
  route.hidden=!unlocked();
  if(unlocked())route.innerHTML='<strong>Deine Sternenroute (Testdaten)</strong><p>137 → 208 → 314 → 95 → 421 → 63 → 178 → 256</p><small>Dies ist eine vorläufige Route zum Testen.</small>';
  instruction.textContent=unlocked()?'Verbinde deine Sternenroute und wähle den richtigen Stern.':'Löse zuerst das Tagesrätsel, bevor du ein Sternenfeld auswählst.';
