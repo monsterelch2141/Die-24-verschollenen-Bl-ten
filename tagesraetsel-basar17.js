@@ -2,16 +2,16 @@
 const DAY=17,KEY='advent-basar17-v1',ROUTE=[137,208,314,95,421,63,178,256];
 const products=[['Ferrero Rocher Grand','240 g',8.99],['Somat Classic XXL','77 Tabs · 1,28 kg',8.99],['NIVEA Pflegedusche Creme Soft & Mandelöl','250 ml',2.45],['Dr. Oetker Suprema Cinque Formaggi','492 g',5.49],['merci Große Vielfalt','400 g',9.29]];
 const pairs=[
-[['🇧🇪','Belgien','Belgische Waffel mit Schokolade und Erdbeeren','EUR',7,'Waffle Atelier Bruxelles (fiktiv)'],['🇯🇵','Japan','IKEA MARIUS Klapphocker, 45 cm','JPY',899,'IKEA Japan']],
-[['🇱🇺','Luxemburg','Pralinenschachtel, 250 g','EUR',12.5,'Pralinenhaus Luxemburg (fiktiv)'],['🇿🇦','Südafrika','Fußball, Größe 5','ZAR',230,'Kapstadt Sportmarkt (fiktiv)']],
-[['🇺🇸','USA','Frühstücksflocken, Großpackung','USD',8.99,'Morning Mart USA (fiktiv)'],['🇨🇱','Chile','Hammer, 450 g','CLP',8500,'Ferretería del Sol (fiktiv)']],
-[['🇲🇦','Marokko','Safran, kleine Dose','MAD',75,'Safran-Souk Marrakesch (fiktiv)'],['🇸🇪','Schweden','Bilderrahmen','SEK',99,'Nordlicht Wohnmarkt (fiktiv)']],
-[['🇪🇪','Estland','Handgefertigte Wollsocken','EUR',15,'Tallinna Villapood (fiktiv)'],['🇰🇷','Südkorea','Instant-Nudeln, Großpackung','KRW',17000,'Seoul Nudelmarkt (fiktiv)']],
-[['🇳🇴','Norwegen','TINE Gudbrandsdalsost G35, 500 g (Braunkäse)','NOK',56.4,'Oda Norwegen'],['🇲🇽','Mexiko','LED-Taschenlampe','MXN',185,'Luz del Norte (fiktiv)']],
-[['🇫🇷','Frankreich','Schokoladen-Macarons, 12 Stück','EUR',5.99,'Carrefour Frankreich'],['🇨🇦','Kanada','Schneeschaufel','CAD',25,'Maple Snow Shop (fiktiv)']],
-[['🇪🇨','Ecuador','Edelkakao-Schokolade','USD',7.5,'Cacao Andino Quito (fiktiv)'],['🇮🇳','Indien','Edelstahl-Kochtopf','INR',699,'Mumbai Küchenmarkt (fiktiv)']],
-[['🇪🇸','Spanien','Serrano-Schinken am Stück, ca. 7 kg','EUR',65,'Carrefour Spanien'],['🇹🇭','Thailand','Elektrischer Wasserkocher','THB',1290,'Bangkok Elektrohaus (fiktiv)']],
-[['🇹🇷','Türkei','Pistazien-Baklava','TRY',650,'Istanbul Süßwarenmarkt (fiktiv)'],['🇦🇺','Australien','Aufblasbarer Strandball','AUD',2.5,'Beachside Gifts Australia (fiktiv)']]
+[['🇧🇪','Belgien','Belgische Waffel mit Schokolade und Erdbeeren','EUR',7,'Maison Dandoy'],['🇯🇵','Japan','IKEA MARIUS Klapphocker, 45 cm','JPY',899,'IKEA Japan']],
+[['🇱🇺','Luxemburg','Pralinenschachtel, 250 g','EUR',12.5,'Oberweis'],['🇿🇦','Südafrika','Fußball, Größe 5','ZAR',230,'Sportsman's Warehouse']],
+[['🇺🇸','USA','Frühstücksflocken, Großpackung','USD',8.99,'Walmart'],['🇨🇱','Chile','Hammer, 450 g','CLP',8500,'Sodimac']],
+[['🇲🇦','Marokko','Safran, kleine Dose','MAD',75,'Carrefour Maroc'],['🇸🇪','Schweden','Bilderrahmen','SEK',99,'IKEA Schweden']],
+[['🇪🇪','Estland','Handgefertigte Wollsocken','EUR',15,'Eesti Käsitöö'],['🇰🇷','Südkorea','Instant-Nudeln, Großpackung','KRW',17000,'Emart']],
+[['🇳🇴','Norwegen','TINE Gudbrandsdalsost G35, 500 g (Braunkäse)','NOK',56.4,'Oda Norwegen'],['🇲🇽','Mexiko','LED-Taschenlampe','MXN',185,'Home Depot México']],
+[['🇫🇷','Frankreich','Schokoladen-Macarons, 12 Stück','EUR',5.99,'Carrefour Frankreich'],['🇨🇦','Kanada','Schneeschaufel','CAD',25,'Canadian Tire']],
+[['🇪🇨','Ecuador','Edelkakao-Schokolade','USD',7.5,'República del Cacao'],['🇮🇳','Indien','Edelstahl-Kochtopf','INR',699,'Home Centre India']],
+[['🇪🇸','Spanien','Serrano-Schinken am Stück, ca. 7 kg','EUR',65,'Carrefour Spanien'],['🇹🇭','Thailand','Elektrischer Wasserkocher','THB',1290,'Power Buy']],
+[['🇹🇷','Türkei','Pistazien-Baklava','TRY',650,'Hafız Mustafa'],['🇦🇺','Australien','Aufblasbarer Strandball','AUD',2.5,'Kmart Australia']]
 ];
 const rates={EUR:1,JPY:1/177.85,ZAR:1/18.4268,USD:1/1.1224,CLP:.00091,MAD:.093,SEK:1/10.9845,KRW:1/1509.28,NOK:1/10.4365,MXN:1/20.8655,CAD:1/1.5675,INR:1/106.0395,THB:1/37.533,TRY:1/56.1729,AUD:1/1.6033};
 const money=(n,c='EUR')=>new Intl.NumberFormat('de-DE',{style:'currency',currency:c,maximumFractionDigits:['JPY','KRW','CLP','INR'].includes(c)?0:2}).format(n);
