@@ -3,12 +3,13 @@
 const DAY=2, WIDTH=8, HEIGHT=7;
 const LEVELS=[
  {title:'Im Fußballstadion',span:'FUSSBALLFELD',words:['FUSSBALLFELD','TRIBUENE','TORWART','ANPFIFF','KABINE','SCHIRI','RASEN','BLOCK']},
- {title:'In Hilgenroth',span:'SONNENHOF',words:['SONNENHOF','QUATSCHI','WALDRAND','FELDWEG','KIRCHE','WIESE','AST','SPIELPLATZ']},
+ {title:'In Hilgenroth',span:'SONNENHOF',words:['SONNENHOF','QUATSCHI','WALDWEG','FELDWEG','KIRCHE','WIESE','BAUM','SPIELPLATZ']},
  {title:'Die Orte von Luminara',span:'STERNENPFAD',words:['STERNENPFAD','MONDHAIN','NEBELTOR','EISFELS','ROSENAU','DORNA','FROST','LUMEN']}
 ];
 const path=[55,54,48,47,53,45,37,44,50,49,42,35,36,43,51,52,46,38,32,40,41,34,33,39,31,25,19,27,20,26,18,12,13,6,5,4,10,11,17,23,24,30,29,28,21,15,16,22,14,7,0,1,8,2,3,9];
+const pathHilgenroth=Array.from({length:8},(_,x)=>Array.from({length:7},(_,y)=>x*7+(x%2===0?6-y:y))).flat();
 let level=0,SPAN='',WORDS=[],paths={},letters=[],owners=[],SUM=0;
-function setLevel(n){level=n;const config=LEVELS[n];SPAN=config.span;WORDS=config.words;paths={};letters=Array(WIDTH*HEIGHT).fill('');owners=Array(WIDTH*HEIGHT).fill('');let offset=0;WORDS.forEach(word=>{const cells=path.slice(offset,offset+word.length);paths[word]=cells;cells.forEach((id,k)=>{letters[id]=word[k];owners[id]=word});offset+=word.length});if(offset!==56)throw Error('Strands-Wortlängen müssen 56 ergeben');SUM=paths[SPAN].reduce((sum,id)=>sum+nums[id],0)}
+function setLevel(n){level=n;const config=LEVELS[n];SPAN=config.span;WORDS=config.words;paths={};letters=Array(WIDTH*HEIGHT).fill('');owners=Array(WIDTH*HEIGHT).fill('');let offset=0;WORDS.forEach(word=>{const cells=(n===1?pathHilgenroth:path).slice(offset,offset+word.length);paths[word]=cells;cells.forEach((id,k)=>{letters[id]=word[k];owners[id]=word});offset+=word.length});if(offset!==56||WORDS.some(w=>w.length<4))throw Error('Strands: 56 Felder und mindestens 4 Buchstaben pro Wort erforderlich');SUM=paths[SPAN].reduce((sum,id)=>sum+nums[id],0)}
 const numbers=Array.from({length:100},(_,i)=>i+1);let seed=20261202;
 for(let i=numbers.length-1;i>0;i--){seed=(seed*1664525+1013904223)>>>0;const j=seed%(i+1);[numbers[i],numbers[j]]=[numbers[j],numbers[i]]}
 const nums=numbers.slice(0,56);
