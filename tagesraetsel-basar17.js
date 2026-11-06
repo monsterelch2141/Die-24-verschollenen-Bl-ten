@@ -2,20 +2,21 @@
 const DAY=17,KEY='advent-basar17-v1',ROUTE=[137,208,314,95,421,63,178,256];
 const products=[['Ferrero Rocher Grand','240 g',8.99],['Somat Classic XXL','77 Tabs · 1,28 kg',8.99],['NIVEA Pflegedusche Creme Soft & Mandelöl','250 ml',2.45],['Dr. Oetker Suprema Cinque Formaggi','492 g',5.49],['merci Große Vielfalt','400 g',9.29]];
 const pairs=[
-[['🇧🇪','Belgien','Belgische Waffeln','EUR',7.99],['🇯🇵','Japan','Klapphocker','JPY',1200]],
-[['🇱🇺','Luxemburg','Pralinenschachtel','EUR',12.5],['🇿🇦','Südafrika','Fußball','ZAR',230]],
-[['🇺🇸','USA','Frühstücksflocken','USD',8.99],['🇨🇱','Chile','Hammer','CLP',8500]],
-[['🇲🇦','Marokko','Safran','MAD',75],['🇸🇪','Schweden','Bilderrahmen','SEK',99]],
-[['🇪🇪','Estland','Wollsocken','EUR',15],['🇰🇷','Südkorea','Instant-Nudeln','KRW',17000]],
-[['🇳🇴','Norwegen','Braunkäse','NOK',89],['🇲🇽','Mexiko','LED-Taschenlampe','MXN',185]],
-[['🇫🇷','Frankreich','Macarons','EUR',19.9],['🇨🇦','Kanada','Schneeschaufel','CAD',25]],
-[['🇪🇨','Ecuador','Edelkakao-Schokolade','USD',7.5],['🇮🇳','Indien','Edelstahl-Kochtopf','INR',699]],
-[['🇪🇸','Spanien','Serrano-Schinken','EUR',39.9],['🇹🇭','Thailand','Wasserkocher','THB',1290]],
-[['🇹🇷','Türkei','Pistazien-Baklava','TRY',650],['🇦🇺','Australien','Strandball','AUD',17.9]]];
+[['🇧🇪','Belgien','Belgische Waffel mit Schokolade und Erdbeeren','EUR',7,'Erfahrungswert: belgischer Waffelstand'],['🇯🇵','Japan','IKEA MARIUS Klapphocker, 45 cm','JPY',899,'IKEA Japan']],
+[['🇱🇺','Luxemburg','Pralinenschachtel, 250 g','EUR',12.5,'Händler noch nicht belegt'],['🇿🇦','Südafrika','Fußball, Größe 5','ZAR',230,'Händler noch nicht belegt']],
+[['🇺🇸','USA','Frühstücksflocken, Großpackung','USD',8.99,'Händler noch nicht belegt'],['🇨🇱','Chile','Hammer, 450 g','CLP',8500,'Händler noch nicht belegt']],
+[['🇲🇦','Marokko','Safran, kleine Dose','MAD',75,'Händler noch nicht belegt'],['🇸🇪','Schweden','Bilderrahmen','SEK',99,'Händler noch nicht belegt']],
+[['🇪🇪','Estland','Handgefertigte Wollsocken','EUR',15,'Händler noch nicht belegt'],['🇰🇷','Südkorea','Instant-Nudeln, Großpackung','KRW',17000,'Händler noch nicht belegt']],
+[['🇳🇴','Norwegen','TINE Gudbrandsdalsost G35, 500 g (Braunkäse)','NOK',56.4,'Oda Norwegen'],['🇲🇽','Mexiko','LED-Taschenlampe','MXN',185,'Händler noch nicht belegt']],
+[['🇫🇷','Frankreich','Schokoladen-Macarons, 12 Stück','EUR',5.99,'Carrefour Frankreich'],['🇨🇦','Kanada','Schneeschaufel','CAD',25,'Händler noch nicht belegt']],
+[['🇪🇨','Ecuador','Edelkakao-Schokolade','USD',7.5,'Händler noch nicht belegt'],['🇮🇳','Indien','Edelstahl-Kochtopf','INR',699,'Händler noch nicht belegt']],
+[['🇪🇸','Spanien','Serrano-Schinken am Stück, ca. 7 kg','EUR',65,'Carrefour Spanien'],['🇹🇭','Thailand','Elektrischer Wasserkocher','THB',1290,'Händler noch nicht belegt']],
+[['🇹🇷','Türkei','Pistazien-Baklava','TRY',650,'Händler noch nicht belegt'],['🇦🇺','Australien','Aufblasbarer Strandball','AUD',17.9,'Händler noch nicht belegt']]
+];
 const rates={EUR:1,JPY:1/177.85,ZAR:1/18.4268,USD:1/1.1224,CLP:.00091,MAD:.093,SEK:1/10.9845,KRW:1/1509.28,NOK:1/10.4365,MXN:1/20.8655,CAD:1/1.5675,INR:1/106.0395,THB:1/37.533,TRY:1/56.1729,AUD:1/1.6033};
 const money=(n,c='EUR')=>new Intl.NumberFormat('de-DE',{style:'currency',currency:c,maximumFractionDigits:['JPY','KRW','CLP','INR'].includes(c)?0:2}).format(n);
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');if(!day||!board||!instruction)return;
-let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{};state.stage??=1;state.round??=0;state.guesses??=[];state.answers??=[];
+let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{};state.stage??=1;state.round??=0;state.guesses??=[];state.answers??=[];state.priceVersion??=2;
 const save=()=>localStorage.setItem(KEY,JSON.stringify(state)),selected=()=>Number(day.value)===DAY;
 const bar=document.createElement('section');bar.className='day17-quest';bar.hidden=true;bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Der Basar der verlorenen Sterne</h3><p>Manche Schätze kosten mehr, als man glaubt.</p><button id="day17-open">✧ Rätsel aufrufen ✧</button><div id="day17-route" hidden></div>';instruction.before(bar);
 const css=document.createElement('style');css.textContent='.day17-quest{padding:22px;text-align:center;margin:18px auto;background:#f6efdf;border:2px solid #b79b70;border-radius:14px;color:#543c23}.day17-overlay{position:fixed;inset:0;background:#17110fe8;z-index:10020;display:flex;align-items:center;justify-content:center;padding:12px}.day17-panel{position:relative;width:min(750px,100%);max-height:94dvh;overflow:auto;background:#f6efdf;color:#493526;border:3px double #b39a71;border-radius:17px;padding:23px 15px;text-align:center;font-family:Georgia,serif}.day17-panel h2{font-size:clamp(22px,5vw,31px)}.day17-btn,#day17-open{background:#67482e;color:#fff5dd;border:1px solid #a78a5d;border-radius:9px;padding:11px 15px;margin:6px;cursor:pointer;font:600 15px Georgia,serif}.day17-close{position:absolute;right:9px;top:6px;background:transparent;border:0;font-size:30px;cursor:pointer}.day17-note{font-size:12px;background:#ebddc6;padding:9px;border-radius:7px;margin:10px 0}.day17-photo{height:125px;width:min(200px,100%);margin:9px auto;background:#fffaf0;border:2px dashed #bca27b;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#9a8162;font-size:12px;overflow:hidden}.day17-photo img{width:100%;height:100%;object-fit:contain}.day17-duel{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}.day17-option{font:inherit;background:#fffaf0;border:2px solid #bba27e;border-radius:12px;padding:9px;min-width:0;cursor:pointer;color:#493526}.day17-option[disabled]{opacity:1;cursor:default}.day17-option.good{background:#d9ecdc;border-color:#438a5a}.day17-option.bad{background:#f4d9d5;border-color:#ba4e46}.day17-option strong{display:block;overflow-wrap:anywhere}.day17-option .day17-photo{height:105px}.day17-guess{display:flex;justify-content:space-between;max-width:280px;margin:5px auto;background:#eadbc3;border-radius:7px;padding:8px}.day17-input{padding:10px;width:120px;font-size:17px;text-align:center;border-radius:7px;border:1px solid #bba27e}.day17-flag{font-size:27px}';document.head.append(css);
