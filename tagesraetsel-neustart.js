@@ -1,0 +1,9 @@
+(()=>{'use strict';
+const KEYS={1:'advent-tag1-worldle-marokko-v1',2:'advent-tag2-strands-v1',3:'advent-tag3-wordle-v2',4:'advent-tag4-contexto-v2',5:'advent-tag5-sizeitup-v1',6:'advent-tag6-altersraetsel-v1',7:'advent-tag7-labyrinth-v1',8:'advent-tag8-bootsfahrt-v1',9:'advent-tag9-morse-v1',10:'advent-tag10-detektiv-v5',11:'advent-tag11-moire-v6',12:'advent-tag12-prophezeiung-v1',13:'advent-tag13-sudoku-v1',14:'advent-tag14-anamorphose-v1',15:'advent-tag15-qr-v1',16:'advent-tag16-dunkelspur-v1',17:'advent-basar17-v2',18:'advent-tag18-zahlenbild-v1'};
+const day=document.getElementById('day'),instruction=document.querySelector('.instruction');if(!day||!instruction)return;
+const box=document.createElement('div');box.className='advent-individual-reset';box.hidden=true;box.innerHTML='<button type="button" class="advent-individual-reset-button">↺ Dieses Tagesrätsel neu beginnen</button>';instruction.before(box);
+const style=document.createElement('style');style.textContent='.advent-individual-reset[hidden]{display:none!important}.advent-individual-reset{text-align:center;margin:12px auto 18px}.advent-individual-reset-button{font:14px Georgia,serif;padding:10px 13px;border:1px solid #b79b70;border-radius:9px;background:#f6efdf;color:#6b4c30;cursor:pointer}';document.head.append(style);
+function sync(){box.hidden=!KEYS[Number(day.value)]}
+box.querySelector('button').onclick=()=>{const d=Number(day.value),key=KEYS[d];if(!key)return;if(!confirm('Nur den Fortschritt des Rätsels von Tag '+d+' zurücksetzen? Bereits aufgedeckte Sternenfelder bleiben erhalten.'))return;localStorage.removeItem(key);if(d===17)localStorage.removeItem('advent-basar17-v1');location.reload()};
+day.addEventListener('change',sync);document.getElementById('previous')?.addEventListener('click',()=>setTimeout(sync,0));document.getElementById('next')?.addEventListener('click',()=>setTimeout(sync,0));sync();
+})();
