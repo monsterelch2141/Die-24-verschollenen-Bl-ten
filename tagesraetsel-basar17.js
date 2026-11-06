@@ -3,7 +3,7 @@ const DAY=17,KEY='advent-basar17-v1',ROUTE=[137,208,314,95,421,63,178,256];
 const products=[['Ferrero Rocher Grand','240 g',8.99],['Somat Classic XXL','77 Tabs · 1,28 kg',8.99],['NIVEA Pflegedusche Creme Soft & Mandelöl','250 ml',2.45],['Dr. Oetker Suprema Cinque Formaggi','492 g',5.49],['merci Große Vielfalt','400 g',9.29]];
 const pairs=[
 [['🇧🇪','Belgien','Belgische Waffel mit Schokolade und Erdbeeren','EUR',7,'Maison Dandoy'],['🇯🇵','Japan','IKEA MARIUS Klapphocker, 45 cm','JPY',899,'IKEA Japan']],
-[['🇱🇺','Luxemburg','Pralinenschachtel, 250 g','EUR',12.5,'Oberweis'],['🇿🇦','Südafrika','Fußball, Größe 5','ZAR',230,'Sportsman's Warehouse']],
+[['🇱🇺','Luxemburg','Pralinenschachtel, 250 g','EUR',12.5,'Oberweis'],['🇿🇦','Südafrika','Fußball, Größe 5','ZAR',230,'Sportsmans Warehouse']],
 [['🇺🇸','USA','Frühstücksflocken, Großpackung','USD',8.99,'Walmart'],['🇨🇱','Chile','Hammer, 450 g','CLP',8500,'Sodimac']],
 [['🇲🇦','Marokko','Safran, kleine Dose','MAD',75,'Carrefour Maroc'],['🇸🇪','Schweden','Bilderrahmen','SEK',99,'IKEA Schweden']],
 [['🇪🇪','Estland','Handgefertigte Wollsocken','EUR',15,'Eesti Käsitöö'],['🇰🇷','Südkorea','Instant-Nudeln, Großpackung','KRW',17000,'Emart']],
