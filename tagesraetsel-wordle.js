@@ -112,7 +112,7 @@ function renderGame(){
  modal.querySelector('.wordle-panel').dataset.level=String(lv);
  const desc=modal.querySelector('.wordle-level-description');
  desc.textContent=lv===1?'':lv===2?'Antiwordle: Versuche, das gesuchte Wort möglichst lange NICHT zu erraten. Rote Buchstaben müssen an ihrer Stelle bleiben, gelbe müssen an einer anderen Stelle wieder vorkommen und graue dürfen nicht mehr benutzt werden.':lv===3?'Verticle: Finde das gesuchte Wort mit fünf Buchstaben. Jede neue Spalte prüft eine andere Buchstabenposition: Grün bedeutet, dass der Buchstabe an dieser Position richtig ist; Gelb bedeutet, dass er im Wort vorkommt, aber dort nicht hingehört. Ab der sechsten Spalte gelten die normalen Wordle-Farben.':'Octordle: Löse acht Wordle-Wörter gleichzeitig mit insgesamt 13 Versuchen. Jedes eingegebene Wort wird auf allen acht Spielfeldern geprüft.';
- tiles.replaceChildren();tiles.className=lv===4?'wordle-octordle':lv===3?'wordle-verticle':'wordle-grid';
+ tiles.replaceChildren();tiles.removeAttribute('style');tiles.className=lv===4?'wordle-octordle':lv===3?'wordle-verticle':'wordle-grid';
  if(lv===4){
   OCT.forEach((word,i)=>{
    const pane=document.createElement('div');pane.className='wordle-octo-board';
@@ -122,7 +122,7 @@ function renderGame(){
    tiles.append(pane);
   });
  }else if(lv===3){
-  const max=Math.max(6,Number(state.vertRows)||6),total=Math.max(max,h.length+1);tiles.style.display='grid';tiles.style.gridTemplateColumns='repeat('+total+',minmax(44px,1fr))';tiles.style.gridTemplateRows='repeat(5,52px)';tiles.style.gap='5px';tiles.style.overflowX='auto';tiles.style.maxWidth='min(100%,760px)';tiles.style.paddingBottom='9px';for(let col=0;col<total;col++){const g=h[col]||(!done&&col===h.length?current:'');const colors=h[col]?verticalScore(g,col):[];for(let i=0;i<5;i++){const t=document.createElement('span');t.className='wordle-tile '+(colors[i]||'');t.textContent=g[i]||'';t.style.gridColumn=String(col+1);t.style.gridRow=String(i+1);tiles.append(t)}}
+  const max=Math.max(6,Number(state.vertRows)||6),total=Math.max(max,h.length+1);tiles.style.display='grid';tiles.style.gridTemplateColumns='repeat(5,minmax(44px,1fr)) 18px repeat('+Math.max(1,total-5)+',minmax(44px,1fr))';tiles.style.gridTemplateRows='repeat(5,52px)';tiles.style.gap='5px';tiles.style.overflowX='auto';tiles.style.maxWidth='min(100%,760px)';tiles.style.paddingBottom='9px';for(let col=0;col<total;col++){const g=h[col]||(!done&&col===h.length?current:'');const colors=h[col]?verticalScore(g,col):[];for(let i=0;i<5;i++){const t=document.createElement('span');t.className='wordle-tile '+(colors[i]||'');t.textContent=g[i]||'';t.style.gridColumn=String(col+1+(col>=5?1:0));t.style.gridRow=String(i+1);tiles.append(t)}}
  }else{
   tiles.removeAttribute('style');const word=lv===1?WORD:ANTI,rows=lv===1?Math.max(6,Number(state.unlockedRows)||6):6;
   for(let row=0;row<rows;row++){
