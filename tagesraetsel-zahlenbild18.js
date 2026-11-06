@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const DAY=18,KEY='advent-tag18-zahlenbild-v1',ANSWER=null; // Die endgültige Reihenfolge der fünf Bildziffern muss noch bestätigt werden.
+const DAY=18,KEY='advent-tag18-zahlenbild-v1',ANSWER='76379';
 const ROUTE=[137,208,314,95,421,63,178,256];
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');if(!day||!board||!instruction)return;
 let solved=false;try{solved=JSON.parse(localStorage.getItem(KEY)||'{}').solved===true}catch{}
