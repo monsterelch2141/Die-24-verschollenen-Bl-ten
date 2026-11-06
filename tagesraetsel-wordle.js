@@ -111,7 +111,7 @@ function renderGame(){
  nextState();const lv=state.level,h=guesses(),done=levelDone(),next=modal.querySelector('.wordle-next');
  modal.querySelector('.wordle-panel').dataset.level=String(lv);
  const desc=modal.querySelector('.wordle-level-description');
- desc.textContent=lv===1?'Fünf Buchstaben. Sechs Versuche. Welche Spur führt zu den verschollenen Blüten?':lv===2?'Antiwordle: Vermeide das Lösungswort sechs Versuche lang! Grau ist verboten, Gelb muss umziehen, Rot bleibt stehen.':lv===3?'Verticle: Gib Wörter mit fünf Buchstaben ein. Jeder Tipp erscheint senkrecht in einer neuen Spalte. Grün: Buchstabe an der richtigen Position der jeweiligen Spalte; Gelb: im Lösungswort, aber nicht an dieser Position. Der sechste Tipp wird wie bei Wordle bewertet.':'Octordle: Acht Wörter gleichzeitig, insgesamt 13 Versuche. Ein Tipp zählt für alle acht Felder.';
+ desc.textContent=lv===1?'':lv===2?'Antiwordle: Versuche, das gesuchte Wort möglichst lange NICHT zu erraten. Grüne Buchstaben müssen an ihrer Stelle bleiben, gelbe müssen an einer anderen Stelle wieder vorkommen und graue dürfen nicht mehr benutzt werden.':lv===3?'Verticle: Finde das gesuchte Wort mit fünf Buchstaben. Jede neue Spalte prüft eine andere Buchstabenposition: Grün bedeutet, dass der Buchstabe an dieser Position richtig ist; Gelb bedeutet, dass er im Wort vorkommt, aber dort nicht hingehört. Ab der sechsten Spalte gelten die normalen Wordle-Farben.':'Octordle: Löse acht Wordle-Wörter gleichzeitig mit insgesamt 13 Versuchen. Jedes eingegebene Wort wird auf allen acht Spielfeldern geprüft.';
  tiles.replaceChildren();tiles.className=lv===4?'wordle-octordle':lv===3?'wordle-verticle':'wordle-grid';
  if(lv===4){
   OCT.forEach((word,i)=>{
