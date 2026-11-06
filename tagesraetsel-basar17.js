@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const DAY=17,KEY='advent-basar17-v1',ROUTE=[137,208,314,95,421,63,178,256];
+const DAY=17,KEY='advent-basar17-v2',ROUTE=[137,208,314,95,421,63,178,256];
 const products=[['Ferrero Rocher Grand','240 g',8.99],['Somat Classic XXL','77 Tabs · 1,28 kg',8.99],['NIVEA Pflegedusche Creme Soft & Mandelöl','250 ml',2.45],['Dr. Oetker Suprema Cinque Formaggi','492 g',5.49],['merci Große Vielfalt','400 g',9.29]];
 const pairs=[
 [['🇧🇪','Belgien','Belgische Waffel mit Schokolade und Erdbeeren','EUR',7,'Maison Dandoy'],['🇯🇵','Japan','IKEA MARIUS Klapphocker, 45 cm','JPY',899,'IKEA Japan']],
@@ -16,7 +16,7 @@ const pairs=[
 const rates={EUR:1,JPY:1/177.85,ZAR:1/18.4268,USD:1/1.1224,CLP:.00091,MAD:.093,SEK:1/10.9845,KRW:1/1509.28,NOK:1/10.4365,MXN:1/20.8655,CAD:1/1.5675,INR:1/106.0395,THB:1/37.533,TRY:1/56.1729,AUD:1/1.6033};
 const money=(n,c='EUR')=>new Intl.NumberFormat('de-DE',{style:'currency',currency:c,maximumFractionDigits:['JPY','KRW','CLP','INR'].includes(c)?0:2}).format(n);
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');if(!day||!board||!instruction)return;
-let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{};state.stage??=1;state.round??=0;state.guesses??=[];state.answers??=[];state.priceVersion??=2;
+let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{};state.stage=Number(state.stage)||1;state.round=Number(state.round)||0;state.guesses=Array.isArray(state.guesses)?state.guesses:[];state.answers=Array.isArray(state.answers)?state.answers:[];state.priceVersion??=2;
 const save=()=>localStorage.setItem(KEY,JSON.stringify(state)),selected=()=>Number(day.value)===DAY;
 // One-time migration: restore the start of this puzzle after the broken deployment.
 if(!state.day17RecoveryV1 && !state.solved){state.stage=1;state.round=0;state.guesses=[];state.answers=[];state.limit=6;state.day17RecoveryV1=true;save();}
