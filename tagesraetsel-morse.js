@@ -14,7 +14,7 @@ function sync(){bar.hidden=!selected();if(!selected())return;bar.querySelector('
 let overlay=null,timers=[],playing=false,starNodes=[],paper=null,drag=null,lensFrame=0;
 const later=(fn,ms)=>{const id=setTimeout(fn,ms);timers.push(id);return id};
 function stop(){timers.forEach(clearTimeout);timers=[];playing=false;starNodes.forEach(n=>n.classList.remove('morse-lit'))}
-function sequence(){if(!overlay)return;stop();playing=true;const replay=overlay.querySelector('.morse-replay');replay.disabled=true;let delay=700;
+function sequence(){if(!overlay)return;stop();playing=true;const replay=overlay.querySelector('.morse-replay');replay.disabled=false;let delay=700;
 MESSAGE.split('').forEach((letter,index)=>{const node=starNodes[index],code=CODES[letter];for(const signal of code){const length=(signal==='.'?1:3)*UNIT;later(()=>node.classList.add('morse-lit'),delay);later(()=>node.classList.remove('morse-lit'),delay+length);delay+=length+UNIT}delay+=UNIT*3});
 later(()=>{playing=false;replay.disabled=false},delay+400)}
 function close(){cancelAnimationFrame(lensFrame);lensFrame=0;stop();overlay?.remove();overlay=null;paper=null;document.body.classList.remove('day9-active')}
