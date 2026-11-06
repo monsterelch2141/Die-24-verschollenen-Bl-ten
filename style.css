@@ -881,13 +881,13 @@ html:has(.day1-overlay),html:has(.day1-overlay) body{overflow:hidden!important;o
 
 
 /* Octordle: keyboard shows one status per board in the same 2-column/4-row order. */
-.wordle-panel[data-level="3"] .wordle-keyboard button:not(.wordle-wide){position:relative;overflow:hidden;isolation:isolate;background:#e8d9bd}
-.wordle-panel[data-level="3"] .wordle-keyboard button:not(.wordle-wide) .wordle-octo-key-colors{position:absolute;inset:0;z-index:0;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(4,1fr);pointer-events:none}
+.wordle-panel[data-level="4"] .wordle-keyboard button:not(.wordle-wide){position:relative;overflow:hidden;isolation:isolate;background:#e8d9bd}
+.wordle-panel[data-level="4"] .wordle-keyboard button:not(.wordle-wide) .wordle-octo-key-colors{position:absolute;inset:0;z-index:0;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(4,1fr);pointer-events:none}
 .wordle-octo-key-segment{background:#e8d9bd;border:1px solid #d6c5a7}
 .wordle-octo-key-segment.correct{background:#628569;border-color:#4c7253}
 .wordle-octo-key-segment.present{background:#c4a252;border-color:#a8893f}
 .wordle-octo-key-segment.absent{background:#918b82;border-color:#77736b}
-.wordle-panel[data-level="3"] .wordle-keyboard button:not(.wordle-wide){text-shadow:0 1px 2px #fff,0 -1px 2px #fff;font-weight:800}
+.wordle-panel[data-level="4"] .wordle-keyboard button:not(.wordle-wide){text-shadow:0 1px 2px #fff,0 -1px 2px #fff;font-weight:800}
 
 .wordle-key-letter{position:relative;z-index:1;pointer-events:none}
 
