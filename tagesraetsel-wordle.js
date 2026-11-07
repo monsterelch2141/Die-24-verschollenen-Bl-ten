@@ -6,6 +6,10 @@ const get=()=>{try{const saved=JSON.parse(localStorage.getItem(key)||'{}');if(sa
 let state=get(), current='', modal=null, status=null, tiles=null, keys={}, busy=false, revealing=false;
 const ANTI='FROST', VERT='TRICK', UNWORD='TRANK', OCT=['KERZE','NEBEL','KLANG','BRIEF','REISE','HONIG','MONAT','STERN'];
 const originalKey='advent-tag3-wordle-v1';
+const UNWORD_CLUES=['KREIS','TANZT','TRICK','KRONE','TRINK'];
+const UNWORD_PATTERNS=UNWORD_CLUES.map(w=>scoreUnwordPattern(w));
+function scoreUnwordPattern(w){const colors=Array(5).fill('absent'),remaining={};for(let i=0;i<5;i++)if(w[i]===UNWORD[i])colors[i]='correct';else remaining[UNWORD[i]]=(remaining[UNWORD[i]]||0)+1;for(let i=0;i<5;i++)if(colors[i]!=='correct'&&remaining[w[i]]>0){colors[i]='present';remaining[w[i]]--}return colors.join(',')}
+if(!state.reverseUnwordleMigrated){state.levelGuesses[4]=[];state.unwordRows=undefined;state.reverseUnwordleMigrated=true;localStorage.setItem(key,JSON.stringify(state))}
 const nextState=()=>{if(!state.level)state.level=1;if(!state.levelGuesses)state.levelGuesses={1:state.guesses||[],2:[],3:[],4:[],5:[]};return state;};
 nextState();
 if(!state.verticleMigrated){if(state.level===3&&state.levelGuesses?.[3]?.length){state.levelGuesses[4]=state.levelGuesses[3];state.levelGuesses[3]=[];state.level=3}state.verticleMigrated=true;localStorage.setItem(key,JSON.stringify(state))}
@@ -60,7 +64,7 @@ function score(guess,word){
  return result;
 }
 const guesses=()=>nextState().levelGuesses[state.level];
-const levelDone=()=>state.level===1?guesses().includes(WORD):state.level===2?guesses().length>=6||guesses().includes(ANTI):state.level===3?guesses().includes(VERT):state.level===4?guesses().includes(UNWORD):OCT.every(w=>guesses().includes(w));
+const levelDone=()=>state.level===1?guesses().includes(WORD):state.level===2?guesses().length>=6||guesses().includes(ANTI):state.level===3?guesses().includes(VERT):state.level===4?guesses().length>=UNWORD_PATTERNS.length:OCT.every(w=>guesses().includes(w));
 function verticalScore(guess,column){if(column>=5)return score(guess,VERT);const counts={};for(const ch of VERT)counts[ch]=(counts[ch]||0)+1;const result=Array(5).fill('absent');for(let i=0;i<5;i++)if(guess[i]===VERT[column]){result[i]='correct';counts[guess[i]]--}for(let i=0;i<5;i++)if(result[i]!=='correct'&&counts[guess[i]]>0){result[i]='present';counts[guess[i]]--}return result}
 function antiConstraint(guess){
  const prev=guesses(),forbidden=new Set(),fixed={},required={},wrong={};
@@ -112,7 +116,7 @@ function renderGame(){
  nextState();const lv=state.level,h=guesses(),done=levelDone(),next=modal.querySelector('.wordle-next');
  modal.querySelector('.wordle-panel').dataset.level=String(lv);
  const desc=modal.querySelector('.wordle-level-description');
- desc.textContent=lv===1?'':lv===2?'Antiwordle: Versuche, das gesuchte Wort möglichst lange NICHT zu erraten. Rote Buchstaben müssen an ihrer Stelle bleiben, gelbe müssen an einer anderen Stelle wieder vorkommen und graue dürfen nicht mehr benutzt werden.':lv===3?'Verticle: Finde das gesuchte Wort mit fünf Buchstaben. Jede neue Spalte prüft eine andere Buchstabenposition: Grün bedeutet, dass der Buchstabe an dieser Position richtig ist; Gelb bedeutet, dass er im Wort vorkommt, aber dort nicht hingehört. Ab der sechsten Spalte gelten die normalen Wordle-Farben.':lv===4?'Unwordle: Rekonstruiere das geheime Wort aus den vorgegebenen Farbhinweisen. Die Farben zeigen die Treffer früherer Versuche; nutze sie, um die fünf Buchstaben zu finden.':'Octordle: Löse acht Wordle-Wörter gleichzeitig mit insgesamt 13 Versuchen. Jedes eingegebene Wort wird auf allen acht Spielfeldern geprüft.';
+ desc.textContent=lv===1?'':lv===2?'Antiwordle: Versuche, das gesuchte Wort möglichst lange NICHT zu erraten. Rote Buchstaben müssen an ihrer Stelle bleiben, gelbe müssen an einer anderen Stelle wieder vorkommen und graue dürfen nicht mehr benutzt werden.':lv===3?'Verticle: Finde das gesuchte Wort mit fünf Buchstaben. Jede neue Spalte prüft eine andere Buchstabenposition: Grün bedeutet, dass der Buchstabe an dieser Position richtig ist; Gelb bedeutet, dass er im Wort vorkommt, aber dort nicht hingehört. Ab der sechsten Spalte gelten die normalen Wordle-Farben.':lv===4?'Unwordle: Das Zielwort TRANK ist bereits bekannt. Rekonstruiere die fünf früheren Versuche: Jede Zeile zeigt nur ihr Farbmuster. Gib ein gültiges deutsches Wort ein, dessen Wordle-Farben exakt zum nächsten Muster passen. Grün = richtige Position, Gelb = falsche Position, Grau = nicht im Zielwort.':'Octordle: Löse acht Wordle-Wörter gleichzeitig mit insgesamt 13 Versuchen. Jedes eingegebene Wort wird auf allen acht Spielfeldern geprüft.';
  tiles.replaceChildren();tiles.removeAttribute('style');tiles.className=lv===5?'wordle-octordle':lv===3?'wordle-verticle':'wordle-grid';
  if(lv===5){
   OCT.forEach((word,i)=>{
@@ -123,13 +127,18 @@ function renderGame(){
    tiles.append(pane);
   });
  }else if(lv===4){
-  const clues=['KREIS','TANZT','TRICK'];
-  tiles.style.display='block';tiles.style.width='100%';const panel=document.createElement('div');panel.className='wordle-unwordle-clues';
-  const caption=document.createElement('p');caption.textContent='Vergangene Versuche – finde das dazu passende Zielwort:';panel.append(caption);
-  clues.forEach(g=>{const line=document.createElement('div');line.className='wordle-grid';line.style.margin='4px auto';line.style.maxWidth='310px';score(g,UNWORD).forEach((color,i)=>{const tile=document.createElement('span');tile.className='wordle-tile '+color;tile.textContent=g[i];line.append(tile)});panel.append(line)});
-  tiles.append(panel);
-  const answers=document.createElement('div');answers.className='wordle-grid';answers.style.maxWidth='310px';answers.style.margin='14px auto';
-  for(let row=0;row<Math.max(6,Number(state.unwordRows)||6);row++){const g=h[row]||(!done&&row===h.length?current:'');const colors=h[row]?score(g,UNWORD):[];for(let i=0;i<5;i++){const tile=document.createElement('span');tile.className='wordle-tile '+(colors[i]||'');tile.textContent=g[i]||'';answers.append(tile)}}tiles.append(answers);
+  tiles.style.display='block';tiles.style.width='100%';
+  const caption=document.createElement('p');caption.textContent='Zielwort (bereits gelöst):';caption.style.textAlign='center';tiles.append(caption);
+  const goal=document.createElement('div');goal.className='wordle-grid';goal.style.maxWidth='310px';goal.style.margin='5px auto 18px';
+  for(const ch of UNWORD){const tile=document.createElement('span');tile.className='wordle-tile correct';tile.textContent=ch;goal.append(tile)}tiles.append(goal);
+  const intro=document.createElement('p');intro.textContent='Welche fünf Wörter könnten zu diesen vorgegebenen Farben geführt haben?';intro.style.textAlign='center';tiles.append(intro);
+  UNWORD_PATTERNS.forEach((pattern,row)=>{
+   const line=document.createElement('div');line.className='wordle-grid';line.style.maxWidth='310px';line.style.margin='6px auto';
+   const colors=pattern.split(','),entry=h[row]||(!done&&row===h.length?current:'');
+   for(let i=0;i<5;i++){const tile=document.createElement('span');tile.className='wordle-tile '+colors[i];tile.textContent=entry[i]||'';line.append(tile)}tiles.append(line);
+  });
+  const errors=Number(state.unwordErrors)||0;
+  if(errors>=3){const tip=document.createElement('p');tip.style.textAlign='center';tip.textContent=errors>=9?'Die Sternenwächter beantragen inzwischen eine Umschulung zum Buchstabenzähler.':errors>=6?'Der Rat der Sterne tagt bereits über deine Wortwahl.':'Die Farben stehen fest. Nicht das Zielwort suchen – frühere Versuche rekonstruieren!';tiles.append(tip)}
  }else if(lv===3){
   const max=Math.max(6,Number(state.vertRows)||6),total=Math.max(max,h.length+1);tiles.style.display='grid';tiles.style.gridTemplateColumns='repeat(5,minmax(44px,1fr)) 18px repeat('+Math.max(1,total-5)+',minmax(44px,1fr))';tiles.style.gridTemplateRows='repeat(5,52px)';tiles.style.gap='5px';tiles.style.overflowX='auto';tiles.style.maxWidth='min(100%,760px)';tiles.style.paddingBottom='9px';for(let col=0;col<total;col++){const g=h[col]||(!done&&col===h.length?current:'');const colors=h[col]?verticalScore(g,col):[];for(let i=0;i<5;i++){const t=document.createElement('span');t.className='wordle-tile '+(colors[i]||'');t.textContent=g[i]||'';t.style.gridColumn=String(col+1+(col>=5?1:0));t.style.gridRow=String(i+1);tiles.append(t)}}
  }else{
@@ -141,7 +150,7 @@ function renderGame(){
   }
  }
  const best={},rank={absent:1,present:2,correct:3};
- if(lv!==5)h.forEach(g=>(lv===3?verticalScore(g,h.indexOf(g)):score(g,lv===1?WORD:lv===4?UNWORD:ANTI)).forEach((c,i)=>{if(!best[g[i]]||rank[c]>rank[best[g[i]]])best[g[i]]=c}));
+ if(lv!==5&&lv!==4)h.forEach(g=>(lv===3?verticalScore(g,h.indexOf(g)):score(g,lv===1?WORD:lv===4?UNWORD:ANTI)).forEach((c,i)=>{if(!best[g[i]]||rank[c]>rank[best[g[i]]])best[g[i]]=c}));
  for(const [c,b] of Object.entries(keys)){
   b.className=best[c]||'';
   b.querySelector('.wordle-octo-key-colors')?.remove();
@@ -181,8 +190,7 @@ function renderGame(){
  }
  if(lv===3&&h.includes(VERT)){status.textContent='✦ Verticle gelöst!';next.hidden=false;next.innerHTML='<p>Die dritte Wortprüfung ist bestanden. Noch eine Herausforderung wartet.</p><button type="button">✧ Weiter zum nächsten Level ✧</button>';next.querySelector('button').onclick=()=>advance(4);return}
  if(lv===3&&h.length>=Math.max(6,Number(state.vertRows)||6)){status.textContent='Die sechs Verticle-Versuche sind aufgebraucht.';next.hidden=false;next.innerHTML='<p>Die Sternenwächter öffnen eine weitere Spalte.</p><button type="button">✦ Noch eine Spalte ✦</button>';next.querySelector('button').onclick=()=>{state.vertRows=h.length+1;save();renderGame()};return}
- if(lv===4&&h.includes(UNWORD)){status.textContent='✦ Unwordle gelöst: TRANK!';next.hidden=false;next.innerHTML='<p>Das geheime Wort wurde rekonstruiert. Eine letzte Prüfung wartet.</p><button type="button">✧ Weiter zu Level 5 ✧</button>';next.querySelector('button').onclick=()=>advance(5);return}
- if(lv===4&&h.length>=Math.max(6,Number(state.unwordRows)||6)){const extra=h.length-6;status.textContent='Die Hinweise sind noch nicht entschlüsselt.';next.hidden=false;next.innerHTML='<p>'+(extra===0?'Die Sternenwächter sind beeindruckt – von deiner Ausdauer, nicht von deinem Tempo.':extra<3?'Noch eine Chance. Das Wörterbuch hat bereits gekündigt.':'Selbst die Sterne fragen sich inzwischen, was du hier machst.')+'</p><button type="button">✦ Weitere Reihe ✦</button>';next.querySelector('button').onclick=()=>{state.unwordRows=h.length+1;save();renderGame()};return}
+ if(lv===4&&done){status.textContent='✦ Unwordle gelöst: Alle fünf Farbspuren rekonstruiert!';next.hidden=false;next.innerHTML='<p>Die rückwärts gelesenen Versuche stimmen. Eine letzte Prüfung wartet.</p><button type="button">✧ Weiter zu Level 5 ✧</button>';next.querySelector('button').onclick=()=>advance(5);return}
  if(lv===5&&OCT.every(w=>h.includes(w))){
   status.textContent='✦ Alle acht Wörter gefunden!';
   next.hidden=false;next.innerHTML='<p>Entschlüssle nun das vierte Octordle-Wort. Addiere die Alphabetpositionen seiner fünf Buchstaben, um den Zahlenschlüssel zu erhalten.</p><button type="button">✧ Lösung eingeben ✧</button><div id="day3-password-area"></div>';
@@ -194,7 +202,7 @@ function renderGame(){
   next.hidden=false;next.innerHTML='<p>'+(extra===0?'Na gut, einen Versuch hast du noch!':extra<3?'Die Sternenwächter gewähren dir noch eine Chance.':'Die Sternenwächter haben das Zählen längst aufgegeben. Noch ein Versuch!')+'</p><button type="button">✦ Noch eine Chance ✦</button>';
   next.querySelector('button').onclick=()=>{state.octoRows=h.length+1;save();renderGame()};return;
  }
- status.textContent=busy?'Das Wort wird geprüft …':lv===5?(Math.max(13,Number(state.octoRows)||13)-h.length)+' Versuche übrig · '+OCT.filter(w=>h.includes(w)).length+'/8 gefunden':lv===4?(Math.max(6,Number(state.unwordRows)||6)-h.length)+' Unwordle-Versuche übrig':lv===3?(Math.max(6,Number(state.vertRows)||6)-h.length)+' Verticle-Spalten übrig':lv===2?(6-h.length)+' Antiwordle-Versuche übrig':(Math.max(6,Number(state.unlockedRows)||6)-h.length)+' Versuche übrig';
+ status.textContent=busy?'Das Wort wird geprüft …':lv===5?(Math.max(13,Number(state.octoRows)||13)-h.length)+' Versuche übrig · '+OCT.filter(w=>h.includes(w)).length+'/8 gefunden':lv===4?'Unwordle: '+h.length+'/'+UNWORD_PATTERNS.length+' Farbspuren rekonstruiert · '+(Number(state.unwordErrors)||0)+' Fehlversuche':lv===3?(Math.max(6,Number(state.vertRows)||6)-h.length)+' Verticle-Spalten übrig':lv===2?(6-h.length)+' Antiwordle-Versuche übrig':(Math.max(6,Number(state.unlockedRows)||6)-h.length)+' Versuche übrig';
 }
 function advance(level){state.level=level;state.levelGuesses[level]||=[];current='';save();renderGame()}
 function showPassword(){
@@ -205,7 +213,7 @@ function showPassword(){
 }
 async function submit(){
  if(busy||revealing||ready()||levelDone())return;
- const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:lv===3?Math.max(6,Number(state.vertRows)||6):lv===4?Math.max(6,Number(state.unwordRows)||6):Math.max(13,Number(state.octoRows)||13);
+ const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:lv===3?Math.max(6,Number(state.vertRows)||6):lv===4?UNWORD_PATTERNS.length:Math.max(13,Number(state.octoRows)||13);
  if(h.length>=max)return;
  if(current.length!==5){status.textContent='Bitte gib fünf Buchstaben ein.';return}
  if(lv===2){const err=antiConstraint(current);if(err){status.textContent=err;return}}
@@ -213,11 +221,16 @@ async function submit(){
  const valid=await isGermanWord(guess);
  if(!modal){busy=false;return}
  if(valid!==true){busy=false;status.textContent=valid===false?'Dieses Wort existiert nicht im deutschen Wörterbuch.':'Wörterbuch gerade nicht erreichbar. Bitte versuche es erneut.';return}
+ if(lv===4){
+  const expected=UNWORD_PATTERNS[h.length],actual=score(guess,UNWORD).join(',');
+  if(actual!==expected){state.unwordErrors=(Number(state.unwordErrors)||0)+1;busy=false;save();renderGame();status.textContent=state.unwordErrors>=9?'Die Buchstaben haben inzwischen einen Anwalt eingeschaltet. Das Farbmuster stimmt noch nicht.':state.unwordErrors>=6?'Die Sterne schauen langsam besorgt. Versuch es erneut!':state.unwordErrors>=3?'Noch nicht richtig. Die Farbfelder sind fest vorgegeben – finde ein Wort, das exakt dazu passt.':'Dieses Wort erzeugt nicht das vorgegebene Farbmuster. Versuch es erneut.';return}
+  if(h.includes(guess)){busy=false;status.textContent='Dieses Wort wurde bereits verwendet. Wähle einen anderen früheren Versuch.';return}
+ }
  h.push(guess);current='';busy=false;save();renderGame();
 }
 function type(k){
  if(busy||revealing||ready()||levelDone())return;
- const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:lv===3?Math.max(6,Number(state.vertRows)||6):lv===4?Math.max(6,Number(state.unwordRows)||6):Math.max(13,Number(state.octoRows)||13);
+ const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:lv===3?Math.max(6,Number(state.vertRows)||6):lv===4?UNWORD_PATTERNS.length:Math.max(13,Number(state.octoRows)||13);
  if(h.length>=max)return;
  if(k==='BACKSPACE')current=current.slice(0,-1);else if(/^[A-Z]$/.test(k)&&current.length<5)current+=k;renderGame();
 }
