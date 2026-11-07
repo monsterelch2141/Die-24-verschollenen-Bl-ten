@@ -4,11 +4,12 @@ const DAY=3, WORD='ZWEIG', PASS='40', ROUTE=[137,208,314,95,421,63,178,256,340,1
 const key='advent-tag3-wordle-v2';
 const get=()=>{try{const saved=JSON.parse(localStorage.getItem(key)||'{}');if(saved.extra&&!saved.unlockedRows)saved.unlockedRows=7;return saved}catch{return {}}};
 let state=get(), current='', modal=null, status=null, tiles=null, keys={}, busy=false, revealing=false;
-const ANTI='FROST', VERT='TRICK', OCT=['KERZE','NEBEL','KLANG','BRIEF','REISE','HONIG','MONAT','STERN'];
+const ANTI='FROST', VERT='TRICK', UNWORD='TRANK', OCT=['KERZE','NEBEL','KLANG','BRIEF','REISE','HONIG','MONAT','STERN'];
 const originalKey='advent-tag3-wordle-v1';
-const nextState=()=>{if(!state.level)state.level=1;if(!state.levelGuesses)state.levelGuesses={1:state.guesses||[],2:[],3:[],4:[]};return state;};
+const nextState=()=>{if(!state.level)state.level=1;if(!state.levelGuesses)state.levelGuesses={1:state.guesses||[],2:[],3:[],4:[],5:[]};return state;};
 nextState();
 if(!state.verticleMigrated){if(state.level===3&&state.levelGuesses?.[3]?.length){state.levelGuesses[4]=state.levelGuesses[3];state.levelGuesses[3]=[];state.level=3}state.verticleMigrated=true;localStorage.setItem(key,JSON.stringify(state))}
+if(!state.unwordleMigrated){if(state.level===4){state.level=5;state.levelGuesses[5]=state.levelGuesses[4]||[];state.levelGuesses[4]=[]}state.unwordleMigrated=true;localStorage.setItem(key,JSON.stringify(state))}
 const knownWords=new Set(['ZWEIG','KRANZ','FROST','GLANZ','KOMET','NACHT','STERN','WALDE','WALDS','LICHT','TRAUM','MONAT','WINDE','WINDS','WOLKE','WOLLE','BLUME','BLUTE','LIEBE','ROSEN','ROSES','REISE','WEISE','LEISE','PREIS','STEIN','SANDU','SAGEN','SAGTE','SINGT','KLING','KLANG','KLEIN','GROSS','GRUEN','BRAUN','WEISS','SCHON','SCHUH','STUHL','TISCH','HAUSE','HAUS','HUNDE','KATZE','MAUER','RAUCH','FEUER','WASSER','BLATT','BAUMS','BLICK','BRIEF','BRISE','BREIT','BROTE','BRUCH','DANKE','DENKT','DICHT','DINGE','DREHT','DURCH','EINER','EINEN','EISEN','ENGEL','ERNTE','ERSTE','ESSEN','FADEN','FAHRT','FALLE','FARBE','FEDER','FEIER','FERNE','FESTE','FINDE','FISCH','FLUSS','FRAGE','FREMD','FRIED','FROHE','FRUET','GABEL','GASSE','GEHEN','GEIST','GELBE','GENAU','GERNE','GLATT','GLAUB','GOLD','GRAUE','GRUND','GRUSS','HALLO','HALTE','HANDY','HART','HEUTE','HERDE','HERZE','HILFE','HIMMEL','HOBEL','HOFFE','HOLEN','HONIG','HOSEN','HOTEL','HUEGE','HUTEN','JUNGE','KABEL','KAMIN','KANAL','KANNE','KARTE','KERZE','KETTE','KIND','KISTE','KLOPF','KNAPP','KNOCH','KOCHT','KOPFE','KRAFT','KREIS','KRONE','KUGEL','KUNST','LACHE','LADEN','LAMPE','LANGE','LASSO','LAUFE','LAUNE','LEBEN','LEDER','LEGEN','LEHRE','LEINE','LEUTE','LINIE','LINKE','LOCKE','LUFT','MALEN','MARKE','MASKE','MEERE','MEILE','MEINE','MENGE','MERKE','MILCH','MINZE','MITTE','MORGEN','MOTIV','MUEDE','MUTIG','NADEL','NAMEN','NEBEL','NEBEN','NEHME','NEUES','NICHT','NORD','NOTEN','OBERE','OCHSE','OFFEN','OFTEN','OPFER','ORDEN','ORGAN','PAPPE','PARTY','PAUSE','PERLE','PFERD','PILZE','PLATZ','PUNKT','QUARK','RADIO','RASEN','RASTE','RAUHE','RECHT','REGEN','REIHE','REIME','REINE','REITE','RENNT','RESTE','RICHT','RIESE','RINDE','RINGE','RITTE','RODEL','ROHRE','ROLLE','RUNDE','SACHE','SALAT','SAMEN','SANFT','SAUER','SCHAF','SCHEU','SCHON','SEGEN','SEHEN','SEIDE','SEINE','SEITE','SELIG','SENDE','SIEHT','SILBE','SINNE','SITZE','SOHLE','SOLAR','SONNE','SORGE','SPASS','SPECK','SPIEL','SPITZ','SPRAY','SPULE','STAAT','STADT','STAND','STARK','STAUB','STEHT','STIEL','STIFT','STILL','STOFF','STOLZ','STROM','STUFE','STURM','SUCHT','SUMME','SUPER','TANZT','TAUBE','TAUFE','TEICH','TEILE','TEMPO','TEXTE','THEMA','TIGER','TOLLE','TORTE','TOTAL','TRAGE','TRANK','TREUE','TRICK','TRINK','TROST','TULPE','TURBO','TURME','UEBER','UNTER','VATER','VIELE','VOGEL','VOLLE','VORNE','WACHE','WAGEN','WAHRE','WALZE','WARME','WARTE','WEGEN','WEICH','WEIDE','WEINE','WELLE','WENDE','WERTE','WESEN','WETTE','WICHT','WIESE','WILLE','WINKE','WIRKT','WISSE','WOHNE','WORTE','WUNDE','WURDE','WURST','ZAHLT','ZANGE','ZEIGE','ZEILE','ZEIT','ZELTE','ZIEGE','ZIEHT','ZIMTE','ZIRKA','ZONEN','ZUGES','ZUNGE']);
 // Häufige deutsche Lehnwörter, Früchte, Städte, Eigennamen und Fachbegriffe.
 const additionalGermanWords=new Set(['MANGO','PARIS','LEGAT','APFEL','BANAN','BANANEN','KIWIS','KIWIS','KIWIS','PAPAYA','GUAVE','OLIVE','MELON','FEIGE','DATTE','KAKAO','ZITRO','BEERE','BIRNE','TRAUB','PFLAU','ANANA','LIMES','LIMON','HONIG','LACHS','BERNE','ROMAN','ROMER','ROMEO','TOKIO','OSAKA','SEOUL','BONNE','BONNS','KOELN','KOLIN','ESSEN','MAINZ','TRIER','ULM','BERLIN','WIEN','GRAZ','BASEL','GENUA','MAILA','DOVER','DELHI','KAIRO','DUBAI','MIAMI','TAMPA','TEXAS','NEPAL','INDIA','CHILE','CHINA','JAPAN','KENIA','KONGO','GHANA','GABUN','HAITI','MALTA','SAMOA','TONGA','KATAR','SYRIEN','NIGER','BENIN','TOGO','SUDAN','IRANS','ISRAE','KRETA','IBIZA','SYLT','RUEGE','ELBAS','MOSEL','RHEIN','DONAU','ALPEN','HARZ','EIFEL','TAUNU','SPREE','ELBE','ODER','ISAR','SAAR','RUHR','INSEL','DELTA','ATLAS','OZEAN','NORDS','OSTEN','WESTE','SUEDE','LEGAT','ERBEN','ERBTE','ERBES','ERBIN','NOTAR','AKTEN','RECHT','KONTO','AKTIE','KREDIT','ZINSEN','RENTE','SALDO','DEPOT','KASSE','EUROS','EURO','MOTTO','MOTIV','TANGO','SALSA','OPERA','PIZZA','PASTA','SUSHI','CURRY','TACOS','KEBAB','DÖNER'.replace('Ö','OE')]);
@@ -59,7 +60,7 @@ function score(guess,word){
  return result;
 }
 const guesses=()=>nextState().levelGuesses[state.level];
-const levelDone=()=>state.level===1?guesses().includes(WORD):state.level===2?guesses().length>=6||guesses().includes(ANTI):state.level===3?guesses().includes(VERT):OCT.every(w=>guesses().includes(w));
+const levelDone=()=>state.level===1?guesses().includes(WORD):state.level===2?guesses().length>=6||guesses().includes(ANTI):state.level===3?guesses().includes(VERT):state.level===4?guesses().includes(UNWORD):OCT.every(w=>guesses().includes(w));
 function verticalScore(guess,column){if(column>=5)return score(guess,VERT);const counts={};for(const ch of VERT)counts[ch]=(counts[ch]||0)+1;const result=Array(5).fill('absent');for(let i=0;i<5;i++)if(guess[i]===VERT[column]){result[i]='correct';counts[guess[i]]--}for(let i=0;i<5;i++)if(result[i]!=='correct'&&counts[guess[i]]>0){result[i]='present';counts[guess[i]]--}return result}
 function antiConstraint(guess){
  const prev=guesses(),forbidden=new Set(),fixed={},required={},wrong={};
@@ -111,9 +112,9 @@ function renderGame(){
  nextState();const lv=state.level,h=guesses(),done=levelDone(),next=modal.querySelector('.wordle-next');
  modal.querySelector('.wordle-panel').dataset.level=String(lv);
  const desc=modal.querySelector('.wordle-level-description');
- desc.textContent=lv===1?'':lv===2?'Antiwordle: Versuche, das gesuchte Wort möglichst lange NICHT zu erraten. Rote Buchstaben müssen an ihrer Stelle bleiben, gelbe müssen an einer anderen Stelle wieder vorkommen und graue dürfen nicht mehr benutzt werden.':lv===3?'Verticle: Finde das gesuchte Wort mit fünf Buchstaben. Jede neue Spalte prüft eine andere Buchstabenposition: Grün bedeutet, dass der Buchstabe an dieser Position richtig ist; Gelb bedeutet, dass er im Wort vorkommt, aber dort nicht hingehört. Ab der sechsten Spalte gelten die normalen Wordle-Farben.':'Octordle: Löse acht Wordle-Wörter gleichzeitig mit insgesamt 13 Versuchen. Jedes eingegebene Wort wird auf allen acht Spielfeldern geprüft.';
- tiles.replaceChildren();tiles.removeAttribute('style');tiles.className=lv===4?'wordle-octordle':lv===3?'wordle-verticle':'wordle-grid';
- if(lv===4){
+ desc.textContent=lv===1?'':lv===2?'Antiwordle: Versuche, das gesuchte Wort möglichst lange NICHT zu erraten. Rote Buchstaben müssen an ihrer Stelle bleiben, gelbe müssen an einer anderen Stelle wieder vorkommen und graue dürfen nicht mehr benutzt werden.':lv===3?'Verticle: Finde das gesuchte Wort mit fünf Buchstaben. Jede neue Spalte prüft eine andere Buchstabenposition: Grün bedeutet, dass der Buchstabe an dieser Position richtig ist; Gelb bedeutet, dass er im Wort vorkommt, aber dort nicht hingehört. Ab der sechsten Spalte gelten die normalen Wordle-Farben.':lv===4?'Unwordle: Rekonstruiere das geheime Wort aus den vorgegebenen Farbhinweisen. Die Farben zeigen die Treffer früherer Versuche; nutze sie, um die fünf Buchstaben zu finden.':'Octordle: Löse acht Wordle-Wörter gleichzeitig mit insgesamt 13 Versuchen. Jedes eingegebene Wort wird auf allen acht Spielfeldern geprüft.';
+ tiles.replaceChildren();tiles.removeAttribute('style');tiles.className=lv===5?'wordle-octordle':lv===3?'wordle-verticle':'wordle-grid';
+ if(lv===5){
   OCT.forEach((word,i)=>{
    const pane=document.createElement('div');pane.className='wordle-octo-board';
    const heading=document.createElement('div');heading.className='wordle-octo-heading';heading.textContent='Wort '+(i+1)+(h.includes(word)?' ✓':'');
@@ -121,6 +122,14 @@ function renderGame(){
    drawBoard(pane,h,word,Math.max(13,Number(state.octoRows)||13),h.includes(word)?'':current);
    tiles.append(pane);
   });
+ }else if(lv===4){
+  const clues=['KREIS','TANZT','TRICK'];
+  const panel=document.createElement('div');panel.className='wordle-unwordle-clues';
+  const caption=document.createElement('p');caption.textContent='Vergangene Versuche – finde das dazu passende Zielwort:';panel.append(caption);
+  clues.forEach(g=>{const line=document.createElement('div');line.className='wordle-grid';line.style.margin='4px auto';line.style.maxWidth='310px';score(g,UNWORD).forEach((color,i)=>{const tile=document.createElement('span');tile.className='wordle-tile '+color;tile.textContent=g[i];line.append(tile)});panel.append(line)});
+  tiles.append(panel);
+  const answers=document.createElement('div');answers.className='wordle-grid';answers.style.maxWidth='310px';answers.style.margin='14px auto';
+  for(let row=0;row<Math.max(6,Number(state.unwordRows)||6);row++){const g=h[row]||(!done&&row===h.length?current:'');const colors=h[row]?score(g,UNWORD):[];for(let i=0;i<5;i++){const tile=document.createElement('span');tile.className='wordle-tile '+(colors[i]||'');tile.textContent=g[i]||'';answers.append(tile)}}tiles.append(answers);
  }else if(lv===3){
   const max=Math.max(6,Number(state.vertRows)||6),total=Math.max(max,h.length+1);tiles.style.display='grid';tiles.style.gridTemplateColumns='repeat(5,minmax(44px,1fr)) 18px repeat('+Math.max(1,total-5)+',minmax(44px,1fr))';tiles.style.gridTemplateRows='repeat(5,52px)';tiles.style.gap='5px';tiles.style.overflowX='auto';tiles.style.maxWidth='min(100%,760px)';tiles.style.paddingBottom='9px';for(let col=0;col<total;col++){const g=h[col]||(!done&&col===h.length?current:'');const colors=h[col]?verticalScore(g,col):[];for(let i=0;i<5;i++){const t=document.createElement('span');t.className='wordle-tile '+(colors[i]||'');t.textContent=g[i]||'';t.style.gridColumn=String(col+1+(col>=5?1:0));t.style.gridRow=String(i+1);tiles.append(t)}}
  }else{
@@ -132,11 +141,11 @@ function renderGame(){
   }
  }
  const best={},rank={absent:1,present:2,correct:3};
- if(lv!==4)h.forEach(g=>(lv===3?verticalScore(g,h.indexOf(g)):score(g,lv===1?WORD:ANTI)).forEach((c,i)=>{if(!best[g[i]]||rank[c]>rank[best[g[i]]])best[g[i]]=c}));
+ if(lv!==5)h.forEach(g=>(lv===3?verticalScore(g,h.indexOf(g)):score(g,lv===1?WORD:lv===4?UNWORD:ANTI)).forEach((c,i)=>{if(!best[g[i]]||rank[c]>rank[best[g[i]]])best[g[i]]=c}));
  for(const [c,b] of Object.entries(keys)){
   b.className=best[c]||'';
   b.querySelector('.wordle-octo-key-colors')?.remove();
-  if(lv===4){
+  if(lv===5){
    const segments=document.createElement('span');segments.className='wordle-octo-key-colors';segments.setAttribute('aria-hidden','true');
    OCT.forEach(word=>{
     const segment=document.createElement('span');segment.className='wordle-octo-key-segment';
@@ -150,7 +159,7 @@ function renderGame(){
  }
  next.hidden=true;next.replaceChildren();
  const keyboard=modal.querySelector('.wordle-keyboard');
- keyboard.hidden=busy||revealing||done||ready()||(lv===4&&h.length>=Math.max(13,Number(state.octoRows)||13))||(lv===1&&h.length>=Math.max(6,Number(state.unlockedRows)||6));
+ keyboard.hidden=busy||revealing||done||ready()||(lv===5&&h.length>=Math.max(13,Number(state.octoRows)||13))||(lv===1&&h.length>=Math.max(6,Number(state.unlockedRows)||6));
  if(ready()){
   status.textContent='✧ Die Sternenroute ist freigeschaltet.';
   next.hidden=false;next.innerHTML='<p>Verbinde nun die Punkte deiner Sternenroute und wähle das richtige Sternenfeld.</p>';return;
@@ -172,18 +181,20 @@ function renderGame(){
  }
  if(lv===3&&h.includes(VERT)){status.textContent='✦ Verticle gelöst!';next.hidden=false;next.innerHTML='<p>Die dritte Wortprüfung ist bestanden. Noch eine Herausforderung wartet.</p><button type="button">✧ Weiter zum nächsten Level ✧</button>';next.querySelector('button').onclick=()=>advance(4);return}
  if(lv===3&&h.length>=Math.max(6,Number(state.vertRows)||6)){status.textContent='Die sechs Verticle-Versuche sind aufgebraucht.';next.hidden=false;next.innerHTML='<p>Die Sternenwächter öffnen eine weitere Spalte.</p><button type="button">✦ Noch eine Spalte ✦</button>';next.querySelector('button').onclick=()=>{state.vertRows=h.length+1;save();renderGame()};return}
- if(lv===4&&OCT.every(w=>h.includes(w))){
+ if(lv===4&&h.includes(UNWORD)){status.textContent='✦ Unwordle gelöst: TRANK!';next.hidden=false;next.innerHTML='<p>Das geheime Wort wurde rekonstruiert. Eine letzte Prüfung wartet.</p><button type="button">✧ Weiter zu Level 5 ✧</button>';next.querySelector('button').onclick=()=>advance(5);return}
+ if(lv===4&&h.length>=Math.max(6,Number(state.unwordRows)||6)){const extra=h.length-6;status.textContent='Die Hinweise sind noch nicht entschlüsselt.';next.hidden=false;next.innerHTML='<p>'+(extra===0?'Die Sternenwächter sind beeindruckt – von deiner Ausdauer, nicht von deinem Tempo.':extra<3?'Noch eine Chance. Das Wörterbuch hat bereits gekündigt.':'Selbst die Sterne fragen sich inzwischen, was du hier machst.')+'</p><button type="button">✦ Weitere Reihe ✦</button>';next.querySelector('button').onclick=()=>{state.unwordRows=h.length+1;save();renderGame()};return}
+ if(lv===5&&OCT.every(w=>h.includes(w))){
   status.textContent='✦ Alle acht Wörter gefunden!';
-  next.hidden=false;next.innerHTML='<p>Entschlüssle nun das vierte Wort. Addiere die Alphabetpositionen seiner fünf Buchstaben, um den Zahlenschlüssel zu erhalten.</p><button type="button">✧ Lösung eingeben ✧</button><div id="day3-password-area"></div>';
+  next.hidden=false;next.innerHTML='<p>Entschlüssle nun das vierte Octordle-Wort. Addiere die Alphabetpositionen seiner fünf Buchstaben, um den Zahlenschlüssel zu erhalten.</p><button type="button">✧ Lösung eingeben ✧</button><div id="day3-password-area"></div>';
   next.querySelector('button').onclick=showPassword;return;
  }
- if(lv===4&&h.length>=Math.max(13,Number(state.octoRows)||13)){
+ if(lv===5&&h.length>=Math.max(13,Number(state.octoRows)||13)){
   const extra=h.length-13;
   status.textContent='Die '+h.length+' Versuche sind aufgebraucht.';
   next.hidden=false;next.innerHTML='<p>'+(extra===0?'Na gut, einen Versuch hast du noch!':extra<3?'Die Sternenwächter gewähren dir noch eine Chance.':'Die Sternenwächter haben das Zählen längst aufgegeben. Noch ein Versuch!')+'</p><button type="button">✦ Noch eine Chance ✦</button>';
   next.querySelector('button').onclick=()=>{state.octoRows=h.length+1;save();renderGame()};return;
  }
- status.textContent=busy?'Das Wort wird geprüft …':lv===4?(Math.max(13,Number(state.octoRows)||13)-h.length)+' Versuche übrig · '+OCT.filter(w=>h.includes(w)).length+'/8 gefunden':lv===3?(Math.max(6,Number(state.vertRows)||6)-h.length)+' Verticle-Spalten übrig':lv===2?(6-h.length)+' Antiwordle-Versuche übrig':(Math.max(6,Number(state.unlockedRows)||6)-h.length)+' Versuche übrig';
+ status.textContent=busy?'Das Wort wird geprüft …':lv===5?(Math.max(13,Number(state.octoRows)||13)-h.length)+' Versuche übrig · '+OCT.filter(w=>h.includes(w)).length+'/8 gefunden':lv===4?(Math.max(6,Number(state.unwordRows)||6)-h.length)+' Unwordle-Versuche übrig':lv===3?(Math.max(6,Number(state.vertRows)||6)-h.length)+' Verticle-Spalten übrig':lv===2?(6-h.length)+' Antiwordle-Versuche übrig':(Math.max(6,Number(state.unlockedRows)||6)-h.length)+' Versuche übrig';
 }
 function advance(level){state.level=level;state.levelGuesses[level]||=[];current='';save();renderGame()}
 function showPassword(){
@@ -194,7 +205,7 @@ function showPassword(){
 }
 async function submit(){
  if(busy||revealing||ready()||levelDone())return;
- const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:lv===3?Math.max(6,Number(state.vertRows)||6):Math.max(13,Number(state.octoRows)||13);
+ const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:lv===3?Math.max(6,Number(state.vertRows)||6):lv===4?Math.max(6,Number(state.unwordRows)||6):Math.max(13,Number(state.octoRows)||13);
  if(h.length>=max)return;
  if(current.length!==5){status.textContent='Bitte gib fünf Buchstaben ein.';return}
  if(lv===2){const err=antiConstraint(current);if(err){status.textContent=err;return}}
@@ -206,7 +217,7 @@ async function submit(){
 }
 function type(k){
  if(busy||revealing||ready()||levelDone())return;
- const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:Math.max(13,Number(state.octoRows)||13);
+ const lv=state.level,h=guesses(),max=lv===1?Math.max(6,Number(state.unlockedRows)||6):lv===2?6:lv===3?Math.max(6,Number(state.vertRows)||6):lv===4?Math.max(6,Number(state.unwordRows)||6):Math.max(13,Number(state.octoRows)||13);
  if(h.length>=max)return;
  if(k==='BACKSPACE')current=current.slice(0,-1);else if(/^[A-Z]$/.test(k)&&current.length<5)current+=k;renderGame();
 }
