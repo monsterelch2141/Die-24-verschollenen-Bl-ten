@@ -30,29 +30,34 @@ const style=document.createElement('style');style.textContent=`
 @media(prefers-reduced-motion:reduce){.kr-bubbles i{animation:none}}
 
 /* Animated descent between answers; independent of the scoring catalog. */
-.kr-dive-scene{position:absolute;inset:0;z-index:5;overflow:hidden;pointer-events:none;background:linear-gradient(180deg,#0d7295 0%,#064365 43%,#011523 100%);animation:kr-dive-fade 2.35s ease-in-out both}
-.kr-dive-scene::before{content:'';position:absolute;inset:-30% -20%;background:repeating-linear-gradient(170deg,transparent 0 46px,#b6f1ff16 47px 52px,transparent 53px 110px);animation:kr-dive-water 1.5s linear infinite}
-.kr-dive-scene::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent,#00101b9c);animation:kr-dive-dark 2.1s ease-in both}
-.kr-dive-silhouette{position:absolute;z-index:2;left:50%;top:43%;width:42px;height:90px;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 12px #0008);animation:kr-diver-sink 2.2s ease-in-out both}
+.kr-dive-scene{position:absolute;inset:0;z-index:5;overflow:hidden;pointer-events:none;background:linear-gradient(180deg,#0d7295 0%,#064365 43%,#011523 100%);animation:kr-dive-appear .4s ease-out both}
+.kr-dive-scene::before{content:'';position:absolute;inset:-30% -20%;background:repeating-linear-gradient(170deg,transparent 0 46px,#b6f1ff16 47px 52px,transparent 53px 110px);animation:kr-dive-water 3s linear infinite}
+.kr-dive-scene::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent,#00101b9c);animation:kr-dive-dark 4.2s ease-in both}
+.kr-dive-silhouette{position:absolute;z-index:2;left:50%;top:43%;width:42px;height:90px;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 12px #0008);animation:kr-diver-sink 4.4s ease-in-out both}
 .kr-dive-silhouette::before{content:'';position:absolute;top:0;left:13px;width:20px;height:20px;background:#082336;border-radius:50%;box-shadow:0 0 0 3px #8bd3e080}
 .kr-dive-silhouette::after{content:'';position:absolute;top:21px;left:10px;width:26px;height:43px;border-radius:13px 13px 9px 9px;background:#082336;box-shadow:-13px 11px 0 -8px #082336,13px 11px 0 -8px #082336,-9px 46px 0 -7px #082336,9px 46px 0 -7px #082336}
 .kr-dive-bubble{position:absolute;z-index:2;bottom:-30px;left:var(--x);width:var(--sz);height:var(--sz);border:2px solid #b8f4ff9c;border-radius:50%;box-shadow:inset -2px -2px 5px #ffffff32;animation:kr-dive-bubble-up var(--dur) linear both;animation-delay:var(--delay)}
 .kr-dive-readout{position:absolute;z-index:3;left:0;right:0;bottom:22%;display:flex;flex-direction:column;align-items:center;gap:8px;color:#f7e6bb;text-shadow:0 2px 15px #000a}
 .kr-dive-readout strong{font-size:clamp(38px,10vw,65px);font-variant-numeric:tabular-nums}
 .kr-dive-readout span{font-size:16px;letter-spacing:.12em}
-@keyframes kr-dive-fade{0%{opacity:0}12%,80%{opacity:1}100%{opacity:0}}
+@keyframes kr-dive-appear{from{opacity:0}to{opacity:1}}
 @keyframes kr-dive-water{to{transform:translateY(-130px)}}
 @keyframes kr-dive-dark{to{background:#00101bd9}}
-@keyframes kr-diver-sink{0%{transform:translate(-50%,-110px) scale(1.25)}100%{transform:translate(-50%,90px) scale(.65)}}
+@keyframes kr-diver-sink{0%{transform:translate(-50%,-110px)}100%{transform:translate(-50%,90px)}}
 @keyframes kr-dive-bubble-up{0%{transform:translateY(0) scale(.7);opacity:0}15%{opacity:.9}100%{transform:translateY(-850px) translateX(20px);opacity:0}}
 @media(prefers-reduced-motion:reduce){.kr-dive-scene,.kr-dive-scene::before,.kr-dive-scene::after,.kr-dive-silhouette,.kr-dive-bubble{animation:none!important}.kr-dive-scene{opacity:1}}
 
-.kr-dive-word{position:absolute;top:-47px;left:50%;transform:translateX(-50%);max-width:min(290px,70vw);padding:8px 13px;border-radius:12px;border:1px solid currentColor;background:#071b30e8;box-shadow:0 4px 20px #000a;color:#e4faff;font-size:clamp(13px,3.7vw,18px);font-weight:bold;white-space:normal;overflow-wrap:anywhere;text-align:center;line-height:1.15}
+.kr-dive-word{position:absolute;top:-19px;left:50%;transform:translateX(-50%);width:clamp(150px,48vw,235px);height:40px;display:flex;align-items:center;justify-content:center;padding:5px 10px;border-radius:8px;border:1px solid currentColor;background:#071b30f2;box-shadow:0 4px 20px #000a;font-size:clamp(12px,3vw,16px);font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;line-height:1.1;writing-mode:horizontal-tb}
 .kr-dive-tier{position:absolute;z-index:3;right:12px;top:33%;display:flex;flex-direction:column;align-items:center;gap:4px;width:105px;padding:11px 6px;border-radius:12px;background:#041a2edb;border:1px solid currentColor;text-align:center;color:#e4faff}
 .kr-dive-tier span{font-size:10px;letter-spacing:.04em}.kr-dive-tier strong{font-size:19px;white-space:nowrap}
 .kr-rarity-0,.kr-rarity-10{color:#e3f8ff}.kr-rarity-15{color:#7ce9ee}.kr-rarity-30{color:#83e5b5}.kr-rarity-60{color:#e6d782}.kr-rarity-85{color:#ffa87c}.kr-rarity-100{color:#d7a2ff}
 .kr-dive-readout{bottom:11%}.kr-dive-readout span{font-size:clamp(10px,2.7vw,13px);letter-spacing:.035em}
-@media(max-width:450px){.kr-dive-tier{right:6px;top:27%;width:87px}.kr-dive-tier strong{font-size:15px}.kr-dive-word{max-width:58vw}}
+@media(max-width:450px){.kr-dive-tier{right:6px;top:27%;width:87px}.kr-dive-tier strong{font-size:15px}.kr-dive-word{width:clamp(140px,47vw,190px)}}
+
+.kr-dive-scene.kr-dive-complete{pointer-events:auto}
+.kr-dive-next{position:absolute;z-index:9;bottom:4%;left:50%;transform:translateX(-50%);width:max-content;max-width:90%;box-shadow:0 8px 30px #0009;animation:kr-next-appear .35s ease-out both}
+@keyframes kr-next-appear{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(prefers-reduced-motion:reduce){.kr-dive-next{animation:none}}
 `;document.head.append(style);
 function close(){if(tick)clearInterval(tick);tick=null;active=false;modal?.remove();modal=null;sync()}
 function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e}
@@ -67,7 +72,7 @@ function diveToNext(){
  const last=results.at(-1)||{answer:'Keine Antwort',pts:0},pts=last.pts;
  const scene=el('div','kr-dive-scene');scene.setAttribute('role','status');
  const diver=el('div','kr-dive-silhouette');
- const tag=el('div','kr-dive-word kr-rarity-'+pts,last.answer);diver.append(tag);scene.append(diver);
+ const tag=el('div','kr-dive-word kr-rarity-'+pts,last.answer);tag.title=last.answer;diver.append(tag);scene.append(diver);
  for(let i=0;i<28;i++){const bubble=el('i','kr-dive-bubble');bubble.style.setProperty('--x',((i*47+13)%100)+'%');bubble.style.setProperty('--sz',(5+i%6*4)+'px');bubble.style.setProperty('--dur',(1.1+i%5*.21)+'s');bubble.style.setProperty('--delay',(i%8*.08)+'s');scene.append(bubble)}
  const tier=el('div','kr-dive-tier kr-rarity-'+pts);
  tier.append(el('span','','ANTWORTWERT'),el('strong','',pts?pts+' Punkte':'0 Punkte'),el('span','',pts===100?'Außergewöhnlich':pts===85?'Sehr selten':pts===60?'Selten':pts===30?'Ungewöhnlich':pts===15?'Bekannt':pts===10?'Sehr bekannt':'Keine Wertung'));scene.append(tier);
@@ -76,10 +81,10 @@ function diveToNext(){
  readout.append(number,el('span','','ZIEL '+GOAL_DEPTH.toLocaleString('de-DE')+' m · MAX. '+MAX_DEPTH.toLocaleString('de-DE')+' m'));scene.append(readout);panel.append(scene);
  const from=(total-pts)*10,to=total*10;
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- const begin=performance.now(),duration=2050;
+ const begin=performance.now(),duration=4100;
  function frame(now){if(!scene.isConnected)return;const t=Math.min(1,(now-begin)/duration);const ease=1-Math.pow(1-t,3);number.textContent=Math.round(from+(to-from)*ease).toLocaleString('de-DE')+' m';if(t<1)requestAnimationFrame(frame)}
  if(!reduced)requestAnimationFrame(frame);else number.textContent=to.toLocaleString('de-DE')+' m';
- window.setTimeout(()=>{scene.remove();if(!modal)return;round++;showRound()},reduced?1200:2350);
+ window.setTimeout(()=>{if(!scene.isConnected||!modal)return;scene.classList.add('kr-dive-complete');const next=button(round===6?'✧ Ergebnis ansehen ✧':'✧ Zur nächsten Frage ✧',()=>{scene.remove();round++;showRound()});next.classList.add('kr-dive-next');scene.append(next);next.focus()},reduced?650:4700);
 }
 function finish(){const root=renderShell();root.append(el('h2','kr-title',total*10>=GOAL_DEPTH?'✦ Die Sternentiefe erreicht! ✦':'Der Meeresgrund wartet noch'));depth(root);root.append(el('p','kr-sub',total*10>=GOAL_DEPTH?'Du hast die geforderte Tauchtiefe erreicht. Die Sternenroute ist freigeschaltet.':'Noch '+(GOAL_DEPTH-total*10).toLocaleString('de-DE')+' Meter bis zur Sternenroute. Versuch es mit selteneren Antworten!'));const list=el('div','kr-list');results.forEach((r,i)=>{const item=el('div','kr-item');item.append(el('span','',String(i+1)+'. '+r.answer),el('strong','',((r.pts)*10).toLocaleString('de-DE')+' m'));list.append(item)});root.append(list);if(total*10>=GOAL_DEPTH){solved=true;localStorage.setItem(KEY+'-solved','yes');sync();root.append(el('p','kr-note','Sternenroute freigeschaltet!'))}root.append(button(total*10>=GOAL_DEPTH?'✧ Noch einmal spielen ✧':'✧ Erneut abtauchen ✧',start))}
 function open(){if(modal)return;modal=el('div','kr-overlay');modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-label','Der Tauchgang der sieben Sterne');const panel=el('section','kr-panel');const water=el('div','kr-water'),bubbles=el('div','kr-bubbles');for(let i=0;i<24;i++){const bubble=el('i');bubble.style.setProperty('--x',((i*37)%97)+'%');bubble.style.setProperty('--sz',(5+i%5*4)+'px');bubble.style.setProperty('--dur',(5+i%7)+'s');bubble.style.setProperty('--delay',(-i*.43)+'s');bubbles.append(bubble)}panel.append(water,bubbles);panel.append(button('×',close));panel.lastChild.className='kr-close';panel.append(el('div','kr-content'));modal.append(panel);document.documentElement.append(modal);intro()}
