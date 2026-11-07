@@ -7,7 +7,7 @@ const LEVELS=[
  {title:'Die Orte von Luminara',span:'STERNENPFAD',words:['STERNENPFAD','MONDHAIN','NEBELTOR','EISFELS','ROSENAU','DORNA','FROST','LUMEN']}
 ];
 const path=[55,54,48,47,53,45,37,44,50,49,42,35,36,43,51,52,46,38,32,40,41,34,33,39,31,25,19,27,20,26,18,12,13,6,5,4,10,11,17,23,24,30,29,28,21,15,16,22,14,7,0,1,8,2,3,9];
-const pathHilgenroth=Array.from({length:8},(_,x)=>Array.from({length:7},(_,y)=>x*7+(x%2===0?6-y:y))).flat();
+const pathHilgenroth=[27,19,11,3,2,8,0,1,7,14,21,29,35,43,50,49,42,36,28,22,30,38,37,44,51,45,53,52,46,47,55,54,48,40,32,25,17,9,15,23,16,10,18,24,31,39,33,41,34,26,20,13,6,12,5,4];
 let level=0,SPAN='',WORDS=[],paths={},letters=[],owners=[],SUM=0;
 function setLevel(n){level=n;const config=LEVELS[n];SPAN=config.span;WORDS=config.words;paths={};letters=Array(WIDTH*HEIGHT).fill('');owners=Array(WIDTH*HEIGHT).fill('');let offset=0;WORDS.forEach(word=>{const cells=(n===1?pathHilgenroth:path).slice(offset,offset+word.length);paths[word]=cells;cells.forEach((id,k)=>{letters[id]=word[k];owners[id]=word});offset+=word.length});if(offset!==56||WORDS.some(w=>w.length<4))throw Error('Strands: 56 Felder und mindestens 4 Buchstaben pro Wort erforderlich');SUM=paths[SPAN].reduce((sum,id)=>sum+nums[id],0)}
 const numbers=Array.from({length:100},(_,i)=>i+1);let seed=20261202;
