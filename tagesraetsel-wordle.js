@@ -124,7 +124,7 @@ function renderGame(){
   });
  }else if(lv===4){
   const clues=['KREIS','TANZT','TRICK'];
-  const panel=document.createElement('div');panel.className='wordle-unwordle-clues';
+  tiles.style.display='block';tiles.style.width='100%';const panel=document.createElement('div');panel.className='wordle-unwordle-clues';
   const caption=document.createElement('p');caption.textContent='Vergangene Versuche – finde das dazu passende Zielwort:';panel.append(caption);
   clues.forEach(g=>{const line=document.createElement('div');line.className='wordle-grid';line.style.margin='4px auto';line.style.maxWidth='310px';score(g,UNWORD).forEach((color,i)=>{const tile=document.createElement('span');tile.className='wordle-tile '+color;tile.textContent=g[i];line.append(tile)});panel.append(line)});
   tiles.append(panel);
