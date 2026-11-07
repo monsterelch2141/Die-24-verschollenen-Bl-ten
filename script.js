@@ -408,7 +408,8 @@
 
     c.textAlign='center';c.textBaseline='middle';
     c.fillStyle='#754522';c.shadowColor='rgba(255,248,233,.9)';c.shadowBlur=12;
-    c.font='600 67px Georgia,serif';
+    await document.fonts.load('67px "Great Vibes"');
+    c.font='67px "Great Vibes",cursive';
     c.fillText('Das Geheimnis der',W/2,132);
     c.fillText('verschollenen Blüten',W/2,215);
     c.shadowBlur=0;
