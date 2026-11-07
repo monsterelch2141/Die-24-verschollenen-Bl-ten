@@ -1,5 +1,5 @@
 (()=>{
-const btn=document.getElementById('day8-open');if(!btn)return;
+const btn=document.getElementById('day16-open');if(!btn)return;
 let bypass=false,gate,canvas,ctx,strokes=[],active=null;
 function draw(){const box=canvas.getBoundingClientRect();ctx.clearRect(0,0,box.width,box.height);ctx.strokeStyle='#343434';ctx.lineWidth=3;ctx.lineJoin='round';ctx.lineCap='round';for(const path of [...strokes,...(active?[active]:[])]){if(!path.length)continue;ctx.beginPath();ctx.moveTo(path[0][0],path[0][1]);for(const p of path.slice(1))ctx.lineTo(...p);ctx.stroke()}}
 function point(e){const r=canvas.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}
