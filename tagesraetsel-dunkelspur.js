@@ -5,7 +5,7 @@ const day=document.getElementById('day'),board=document.getElementById('board'),
 if(!day||!board||!instruction)return;
 let solved=false;try{solved=JSON.parse(localStorage.getItem(KEY)||'{}').solved===true}catch{}
 const bar=document.createElement('section');bar.className='day8-quest';bar.hidden=true;
-bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Das Schweigen der Nacht</h3><p>Ein Geheimnis wartet im Dunkeln.</p><button type="button" id="day8-open">✧ Die Dunkelheit betreten ✧</button><div id="day8-route" hidden></div>';
+bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Das Schweigen der Nacht</h3><p>Ein Geheimnis wartet im Dunkeln.</p><button type="button" id="day16-open">✧ Die Dunkelheit betreten ✧</button><div id="day8-route" hidden></div>';
 instruction.before(bar);
 const selected=()=>Number(day.value)===DAY;
 function sync(){bar.hidden=!selected();if(!selected())return;bar.querySelector('#day8-route').hidden=!solved;if(solved)bar.querySelector('#day8-route').innerHTML='<strong>Sternenroute (Testdaten)</strong><p>'+ROUTE.join(' → ')+'</p><small>Vorläufige Route zum Testen.</small>';instruction.textContent=solved?'Verbinde deine Sternenroute und wähle den richtigen Stern.':'Löse zuerst das Tagesrätsel, bevor du ein Sternenfeld auswählst.'}
@@ -34,7 +34,7 @@ canvas.addEventListener('pointermove',e=>{if(!active)return;e.preventDefault();t
 for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,()=>{active=false});
 overlay.querySelector('.day8-form').onsubmit=e=>{e.preventDefault();const input=overlay.querySelector('#day8-answer').value.trim().toLocaleUpperCase('de-DE').replace(/[\s-]+/g,'');if(input===ANSWER||input==='UNIVERSUM'){solved=true;localStorage.setItem(KEY,JSON.stringify({solved:true}));overlay.querySelector('.day8-status').textContent='✦ Die Sternenroute ist freigeschaltet.';sync()}else overlay.querySelector('.day8-status').textContent='Der Schlüssel stimmt noch nicht.'};
 resizeObserver=new ResizeObserver(layout);resizeObserver.observe(canvas);requestAnimationFrame(layout)}
-bar.querySelector('#day8-open').onclick=open;
+bar.querySelector('#day16-open').onclick=open;
 board.addEventListener('click',e=>{if(!selected()||solved||!e.target.closest('.cell'))return;e.stopImmediatePropagation();e.preventDefault();feedback.className='feedback error';feedback.textContent='✧ Löse erst das Tagesrätsel, bevor du ein Sternenfeld auswählst. ✧';bar.scrollIntoView({behavior:'smooth',block:'nearest'})},true);
 day.addEventListener('change',()=>setTimeout(sync,0));document.getElementById('previous')?.addEventListener('click',()=>setTimeout(sync,0));document.getElementById('next')?.addEventListener('click',()=>setTimeout(sync,0));
 sync();
