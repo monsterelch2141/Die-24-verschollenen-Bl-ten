@@ -58,7 +58,7 @@
   try { if (sessionStorage.getItem('advent-zugang-frei') === '1') unlockPage(); } catch (_) {}
   passwordForm.addEventListener('submit', event => {
     event.preventDefault();
-    if (['quatsch', 'görög'].includes(passwordInput.value.trim().toLocaleLowerCase('de-DE'))) {
+    if (['quatsch', 'görög', 'ilgün'].includes(passwordInput.value.trim().toLocaleLowerCase('de-DE'))) {
       passwordError.textContent = '';
       unlockPage();
     } else {
