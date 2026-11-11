@@ -21,6 +21,7 @@ const NOILLIRK=[
 {q:'Nenne ein Verkehrsmittel.',groups:[[10,'Seilbahn|Fähre|Heißluftballon'],[15,'Straßenbahn|Roller|Helikopter'],[30,'Motorrad|Schiff|U-Bahn'],[60,'Bus|Fahrrad|Flugzeug'],[85,'Auto|Zug'],[100,'Auto|Bus|Fahrrad']]}
 ];
 const catalog=QUESTIONS.map(q=>{const map=new Map();for(const [pts,words] of q.groups)for(const word of words.split('|'))map.set(norm(word),{word,pts});return map});
+if(localStorage.getItem(KEY+'-solved')==='yes'&&localStorage.getItem(KEY+'-level1')!=='yes'){localStorage.setItem(KEY+'-level1','yes');localStorage.removeItem(KEY+'-solved')}
 let level=localStorage.getItem(KEY+'-level1')==='yes'?2:1;let solved=localStorage.getItem(KEY+'-solved')==='yes',modal=null,round=0,total=0,results=[],deadline=0,tick=null,active=false,selected='',attempt=0;
 const bar=document.createElement('section');bar.className='day19-quest';bar.hidden=true;bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Der Tauchgang der sieben Sterne</h3><p class="day19-hint">Sieben Fragen. Je seltener deine Antwort, desto tiefer tauchst du.</p><button type="button" class="day19-open">✧ Zum Tauchgang ✧</button><div class="day19-route" hidden></div>';instruction.before(bar);
 const noCatalog=NOILLIRK.map(q=>{const map=new Map();for(const [pts,words] of q.groups)for(const word of words.split('|'))map.set(norm(word),{word,pts:pts===100?100:pts===85?85:pts===60?60:pts===30?30:pts===15?15:10});return map});
