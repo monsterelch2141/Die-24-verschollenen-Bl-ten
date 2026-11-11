@@ -56,6 +56,10 @@ const style=document.createElement('style');style.textContent=`
 @keyframes kr-dive-dark{to{background:#00101bd9}}
 @keyframes kr-diver-sink{0%{transform:translate(-50%,-110px)}100%{transform:translate(-50%,90px)}}
 @keyframes kr-dive-bubble-up{0%{transform:translateY(0) scale(.7);opacity:0}15%{opacity:.9}100%{transform:translateY(-850px) translateX(20px);opacity:0}}
+.kr-dive-scene.kr-ascent{background:linear-gradient(180deg,#081b46 0%,#15578b 55%,#63b8d7 100%)}
+.kr-dive-scene.kr-ascent::after{animation:none;background:linear-gradient(180deg,#07182a44,transparent)}
+.kr-dive-scene.kr-ascent .kr-dive-silhouette{animation:kr-diver-rise 4.4s ease-in-out both}
+@keyframes kr-diver-rise{0%{transform:translate(-50%,90px)}100%{transform:translate(-50%,-110px)}}
 @media(prefers-reduced-motion:reduce){.kr-dive-scene,.kr-dive-scene::before,.kr-dive-scene::after,.kr-dive-silhouette,.kr-dive-bubble{animation:none!important}.kr-dive-scene{opacity:1}}
 
 .kr-dive-word{position:absolute;top:-19px;left:50%;transform:translateX(-50%);width:clamp(150px,48vw,235px);height:40px;display:flex;align-items:center;justify-content:center;padding:5px 10px;border-radius:8px;border:1px solid currentColor;background:#071b30f2;box-shadow:0 4px 20px #000a;font-size:clamp(12px,3vw,16px);font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;line-height:1.1;writing-mode:horizontal-tb}
@@ -81,7 +85,7 @@ function showRound(){active=false;if(tick)clearInterval(tick);if(round>=QUESTION
 function diveToNext(){
  const panel=modal?.querySelector('.kr-panel');if(!panel)return;
  const last=results.at(-1)||{answer:'Keine Antwort',pts:0},pts=last.pts;
- const scene=el('div','kr-dive-scene');scene.setAttribute('role','status');
+ const scene=el('div','kr-dive-scene');if(level===2)scene.classList.add('kr-ascent');scene.setAttribute('role','status');
  const diver=el('div','kr-dive-silhouette');
  const tag=el('div','kr-dive-word kr-rarity-'+pts,last.answer);tag.title=last.answer;diver.append(tag);scene.append(diver);
  for(let i=0;i<28;i++){const bubble=el('i','kr-dive-bubble');bubble.style.setProperty('--x',((i*47+13)%100)+'%');bubble.style.setProperty('--sz',(5+i%6*4)+'px');bubble.style.setProperty('--dur',(1.1+i%5*.21)+'s');bubble.style.setProperty('--delay',(i%8*.08)+'s');scene.append(bubble)}
