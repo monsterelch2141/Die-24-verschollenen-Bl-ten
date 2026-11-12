@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const DAY=9,KEY='advent-tag9-morse-v1',ANSWER='ANGRYBIRDS',ROUTE=[137,208,314,95,421,63,178,256];
+const DAY=2,KEY='advent-tag9-morse-v1',ANSWER='ANGRYBIRDS',ROUTE=[137,208,314,95,421,63,178,256];
 const CODES={A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..'};
 const MESSAGE='BOHSZCJSET',UNIT=330;
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
