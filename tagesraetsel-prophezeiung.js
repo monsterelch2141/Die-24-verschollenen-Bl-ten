@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const DAY=12,KEY='advent-tag12-prophezeiung-v1',ANSWER='63217',ROUTE=[137,208,314,95,421,63,178,256];
+const DAY=5,KEY='advent-tag12-prophezeiung-v1',ANSWER='63217',ROUTE=[137,208,314,95,421,63,178,256];
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
 if(!day||!board||!instruction)return;
 let solved=localStorage.getItem(KEY)==='yes',modal=null;
