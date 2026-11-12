@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const DAY=15,KEY='advent-tag15-qr-v1',TOKEN='LUMINARA-STERNENSIEGEL-2412';
+const DAY=10,KEY='advent-tag15-qr-v1',TOKEN='LUMINARA-STERNENSIEGEL-2412';
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');if(!day||!board||!instruction)return;
 let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{}
 const bar=document.createElement('section');bar.className='day10-quest';bar.hidden=true;
