@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const DAY=4,KEY='advent-tag4-contexto-v2',SOLUTION='schlagloch',ROUTE=[137,208,314,95,421,63,178,256,340,112,29,387,204,77,319,146,408,55];
+const DAY=3,KEY='advent-tag4-contexto-v2',SOLUTION='schlagloch',ROUTE=[137,208,314,95,421,63,178,256,340,112,29,387,204,77,319,146,408,55];
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
 if(!day||!board||!instruction)return;
 const normalize=s=>String(s||'').toLocaleLowerCase('de').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ß/g,'ss').replace(/[^a-z]/g,'');
