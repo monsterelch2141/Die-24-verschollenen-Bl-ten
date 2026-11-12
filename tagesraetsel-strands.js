@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const DAY=2, WIDTH=8, HEIGHT=7;
+const DAY=14, WIDTH=8, HEIGHT=7;
 const LEVELS=[
  {title:'Im Fußballstadion',span:'FUSSBALLFELD',words:['FUSSBALLFELD','TRIBUENE','TORWART','ANPFIFF','KABINE','SCHIRI','RASEN','BLOCK']},
  {title:'In Hilgenroth',span:'SONNENHOF',words:['SONNENHOF','QUATSCHI','WALDWEG','FELDWEG','KIRCHE','WIESE','BAUM','SPIELPLATZ']},
