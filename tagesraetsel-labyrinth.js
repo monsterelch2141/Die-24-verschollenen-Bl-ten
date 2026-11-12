@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const DAY=7,N=19,KEY='advent-tag7-labyrinth-v1',ANSWER=71;
+const DAY=4,N=19,KEY='advent-tag7-labyrinth-v1',ANSWER=71;
 const TOKENS=['22','×','3','+','8','−','6','÷','2'];
 const routeNumbers=[137,208,314,95,421,63,178,256];
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
