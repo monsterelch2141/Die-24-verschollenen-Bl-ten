@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-const DAY=3, WORD='ZWEIG', PASS='40', ROUTE=[137,208,314,95,421,63,178,256,340,112,29,387,204,77,319,146,408,55];
+const DAY=12, WORD='ZWEIG', PASS='40', ROUTE=[137,208,314,95,421,63,178,256,340,112,29,387,204,77,319,146,408,55];
 const key='advent-tag3-wordle-v2';
 const get=()=>{try{const saved=JSON.parse(localStorage.getItem(key)||'{}');if(saved.extra&&!saved.unlockedRows)saved.unlockedRows=7;return saved}catch{return {}}};
 let state=get(), current='', modal=null, status=null, tiles=null, keys={}, busy=false, revealing=false;
