@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const DAY=14,KEY='advent-tag14-anamorphose-v1',ANSWER='7266000458',ROUTE=[137,208,314,95,421,63,178,256];
+const DAY=9,KEY='advent-tag14-anamorphose-v1',ANSWER='7266000458',ROUTE=[137,208,314,95,421,63,178,256];
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');if(!day||!board||!instruction)return;
 let solved=localStorage.getItem(KEY)==='yes';
 const bar=document.createElement('section');bar.className='day14-anamorphose-quest';bar.hidden=true;
