@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const DAY=16,KEY='advent-tag16-dunkelspur-v1',ANSWER='WELTALL',ROUTE=[137,208,314,95,421,63,178,256];
+const DAY=13,KEY='advent-tag16-dunkelspur-v1',ANSWER='WELTALL',ROUTE=[137,208,314,95,421,63,178,256];
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
 if(!day||!board||!instruction)return;
 let solved=false;try{solved=JSON.parse(localStorage.getItem(KEY)||'{}').solved===true}catch{}
