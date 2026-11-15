@@ -1,0 +1,15 @@
+(()=>{'use strict';
+const DAY=21,KEY='advent-tag21-zitronenbotschaft-v1',ANSWER='<3';
+const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
+if(!day||!board||!instruction)return;
+let solved=localStorage.getItem(KEY)==='yes';
+const bar=document.createElement('section');bar.className='lemon21';bar.hidden=true;
+bar.innerHTML='<div class="quest-mark">✧ ✦ ✧</div><h3>Die Zitronenbotschaft</h3><p>Entziffere die unsichtbare Schrift und gib den Schlüssel exakt so ein, wie du ihn entdeckt hast.</p><form><input type="text" aria-label="Schlüsselwort der Zitronenbotschaft" autocomplete="off" autocapitalize="off" spellcheck="false" required><button type="submit">✧ Schlüssel bestätigen ✧</button></form><p class="lemon21-status" role="status"></p>';
+instruction.before(bar);
+const selected=()=>Number(day.value)===DAY;
+function sync(){bar.hidden=!selected();if(!selected())return;bar.querySelector('form').hidden=solved;bar.querySelector('.lemon21-status').textContent=solved?'✦ Schlüsselwort richtig! Die Sternenroute ist freigeschaltet.':'';instruction.textContent=solved?'Verbinde deine Sternenroute und wähle den richtigen Stern.':'Entziffere zuerst die Zitronenbotschaft und gib den Schlüssel ein.'}
+bar.querySelector('form').onsubmit=e=>{e.preventDefault();const value=bar.querySelector('input').value;if(value===ANSWER){solved=true;localStorage.setItem(KEY,'yes');sync()}else{bar.querySelector('.lemon21-status').textContent='Das Schlüsselwort stimmt nicht exakt überein.'}};
+board.addEventListener('click',e=>{if(!selected()||solved||!e.target.closest('.cell'))return;e.stopImmediatePropagation();e.preventDefault();feedback.className='feedback error';feedback.textContent='✧ Zuerst die Zitronenbotschaft lösen. ✧'},true);
+day.addEventListener('change',sync);day.addEventListener('input',sync);document.getElementById('previous')?.addEventListener('click',()=>setTimeout(sync,0));document.getElementById('next')?.addEventListener('click',()=>setTimeout(sync,0));
+const style=document.createElement('style');style.textContent='.lemon21{max-width:580px;margin:16px auto;padding:20px;text-align:center;border:1px solid #bca276;border-radius:12px;background:#f6efdf;color:#503b26}.lemon21[hidden],.lemon21 form[hidden]{display:none!important}.lemon21 form{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px}.lemon21 input{width:180px;max-width:100%;padding:11px;border:1px solid #9c805a;border-radius:7px;font:18px Georgia,serif}.lemon21 button{background:#a58350;color:#fff8e9;border:1px solid #785b35;border-radius:7px;padding:11px 15px;cursor:pointer}.lemon21-status{min-height:1.5em}';document.head.append(style);sync();
+})();
