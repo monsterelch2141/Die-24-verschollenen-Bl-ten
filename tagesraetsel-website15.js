@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const DAY=15,KEY='advent-tag15-website-secret-v1',ANSWER='journey';
+const DAY=15,KEY='advent-tag15-website-secret-v1',ANSWER='memories';
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
 if(!day||!board||!instruction)return;
 let solved=localStorage.getItem(KEY)==='yes';
