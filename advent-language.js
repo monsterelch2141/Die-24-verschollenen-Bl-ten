@@ -73,13 +73,50 @@ const dictionary={
 'Ein besonderer Zieleinlauf.':'A special finish line.',
 'Weihnachtslichter zum Abschluss unserer 24 Stationen.':'Christmas lights to close our 24 stops.'
 };
+Object.assign(dictionary,{
+'Die Welt der verborgenen Sterne':'The World of Hidden Stars',
+'Ein ferner Ort wartet darauf, von dir entdeckt zu werden.':'A distant place is waiting for you to discover it.',
+'Die Sternenwelt betreten':'Enter the World of Stars',
+'Testmodus: Alle 24 Tage sind zum Ausprobieren geöffnet.':'Test mode: All 24 days are open for testing.',
+'1. Dezember':'December 1','2. Dezember':'December 2','3. Dezember':'December 3',
+'Sternenroute (Testdaten)':'Star Route (Test Data)',
+'Vorläufige Route zum Testen.':'Temporary route for testing.',
+'Die verborgenen Sterne':'The Hidden Stars',
+'Welt der verborgenen Sterne':'World of Hidden Stars',
+'Die Sterne':'The Stars',
+'Rätsel lösen':'Solve puzzle',
+'Die Sternenwelt':'The World of Stars',
+'Schlüsselwort richtig!':'Correct keyword!',
+'Die Sternenroute freischalten':'Unlock the star route',
+'Die Sternenroute':'The star route',
+'Noch nicht gelöst':'Not solved yet',
+'Rätsel gelöst':'Puzzle solved',
+'Richtig geraten!':'Correct guess!',
+'Neuer Versuch':'New attempt',
+'Land eingeben':'Enter country',
+'Land raten':'Guess country',
+'Land auswählen':'Select country',
+'Entfernung':'Distance',
+'Deine Vermutung':'Your guess',
+'Noch ein Versuch':'One more attempt',
+'Weiter zum nächsten Level':'Continue to the next level',
+'Nächste Runde':'Next round',
+'Runde':'Round',
+'Level':'Level',
+'Punkte':'Points',
+'Ergebnis':'Result',
+'Wähle ein Land':'Choose a country',
+'Wähle das richtige Land':'Choose the correct country',
+'Du hast gewonnen!':'You won!',
+'Du hast es geschafft!':'You did it!'
+});
 const phrases=Object.entries(dictionary).sort((a,b)=>b[0].length-a[0].length);
 const originals=new WeakMap(),attributes=new WeakMap();let english=false,busy=false;
 const skip='script,style,code,pre,svg,canvas,[contenteditable],.wordle-grid,.wordle-keyboard,.strands-grid,.contexto-word,.contexto-guesses,.octordle-grid,.antiwordle-grid';
 function protect(node){const p=node.parentElement;return !p||!!p.closest(skip)||p.closest('input,textarea,select')!==null}
 function translateText(s){let out=s;for(const [de,en] of phrases){if(out.includes(de))out=out.split(de).join(en)}return out}
-function textNode(n){if(protect(n))return;const previous=originals.get(n);if(!english){if(previous!==undefined&&n.nodeValue!==previous)n.nodeValue=previous;return}if(previous===undefined||n.nodeValue!==translateText(previous))originals.set(n,n.nodeValue);let de=originals.get(n),en=translateText(de);if(de.includes('24 kleine Adventsrätsel in unserer gemeinsamen Reise')&&Number(document.getElementById('day')?.value)===15)en=en.replace('shared journey','shared adventure');if(n.nodeValue!==en)n.nodeValue=en}
-function element(el){if(el.matches(skip)||el.closest(skip))return;for(const a of ['placeholder','title','aria-label','alt']){if(!el.hasAttribute(a))continue;let old=attributes.get(el)||{},raw=el.getAttribute(a);if(english){if(!(a in old)||raw!==translateText(old[a]))old[a]=raw;let val=translateText(old[a]);if(raw!==val)el.setAttribute(a,val)}else if(a in old&&raw!==old[a])el.setAttribute(a,old[a]);attributes.set(el,old)}}
+function textNode(n){if(protect(n))return;const previous=originals.get(n);if(!english){if(previous!==undefined&&n.nodeValue!==previous)n.nodeValue=previous;return}if(previous===undefined||(!english&&n.nodeValue!==previous))originals.set(n,n.nodeValue);let de=originals.get(n),en=translateText(de);if(de.includes('24 kleine Adventsrätsel in unserer gemeinsamen Reise')&&Number(document.getElementById('day')?.value)===15)en=en.replace('shared journey','shared adventure');if(n.nodeValue!==en)n.nodeValue=en}
+function element(el){if(el.matches(skip)||el.closest(skip))return;for(const a of ['placeholder','title','aria-label','alt']){if(!el.hasAttribute(a))continue;let old=attributes.get(el)||{},raw=el.getAttribute(a);if(english){if(!(a in old))old[a]=raw;let val=translateText(old[a]);if(raw!==val)el.setAttribute(a,val)}else if(a in old&&raw!==old[a])el.setAttribute(a,old[a]);attributes.set(el,old)}}
 function walk(root){if(busy)return;busy=true;try{if(root.nodeType===3){textNode(root);return}if(root.nodeType!==1&&root.nodeType!==9)return;if(root.nodeType===1)element(root);const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);while(w.nextNode())textNode(w.currentNode);if(root.querySelectorAll)root.querySelectorAll('[placeholder],[title],[aria-label],[alt]').forEach(element)}finally{busy=false}}
 const button=document.createElement('button');button.type='button';button.className='advent-language-switch';button.setAttribute('aria-label','Switch language / Sprache wechseln');button.setAttribute('title','Deutsch / English');button.innerHTML='<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 5-5 13 0 18M12 3c5 5 5 13 0 18"/></svg>';
 button.style.cssText='position:fixed;right:14px;top:14px;z-index:100050;display:grid;place-items:center;width:39px;height:39px;border:1px solid #b49a73;border-radius:50%;background:#f6efdf;color:#795b39;box-shadow:0 2px 9px #35240d2b;cursor:pointer';
