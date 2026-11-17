@@ -34,6 +34,8 @@ const dictionary={
 'Das Geheimnis der Website':'The Website Secret',
 'Ein einziges Wort ist nicht wie an den anderen Tagen. Finde das übliche englische Wort und gib es als Schlüssel ein.':'One word differs from the other days. Find the usual English word and enter it as the key.',
 'Finde das versteckte Schlüsselwort auf der Website.':'Find the hidden keyword on the website.',
+'Gib das gesuchte Schlüsselwort ein, um die Sternenroute freizuschalten.':'Enter the requested keyword to unlock the star route.',
+'Gib das gesuchte Schlüsselwort ein.':'Enter the requested keyword.',
 'Die zusammengesetzte Botschaft':'The Assembled Message',
 'Setze das physische Puzzle zusammen und finde den vierstelligen Zahlenschlüssel.':'Assemble the physical puzzle and find the four-digit number key.',
 'Die Prophezeiung der zwei Ufer':'The Prophecy of the Two Shores',
