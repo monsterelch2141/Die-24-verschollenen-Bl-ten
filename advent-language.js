@@ -132,10 +132,13 @@ if(dictionary[middle]!==undefined)translated=core.slice(0,left)+dictionary[middl
 else{const dm=core.split('. Dezember');translated=dm.length===2&&dm[1]===''&&Number.isInteger(Number(dm[0]))?dm[0]+'. December':core}
 }
 return s.slice(0,a)+translated+s.slice(b)}
-function textNode(n){if(protect(n))return;let old=originals.get(n);if(!english){if(old!==undefined&&n.nodeValue!==old)n.nodeValue=old;return}
+function textNode(n){if(protect(n))return;
+let old=originals.get(n);
 if(old===undefined){old=n.nodeValue;originals.set(n,old)}
-let en=translateText(old);if(old.includes('24 kleine Adventsrätsel in unserer gemeinsamen Reise')&&Number(document.getElementById('day')?.value)===15)en=en.replace('shared journey','shared adventure');
-if(n.nodeValue!==en){if(n.nodeValue!==old&&n.nodeValue!==translateText(old)){old=n.nodeValue;originals.set(n,old);en=translateText(old)}if(n.nodeValue!==en)n.nodeValue=en}}
+if(!english){if(n.nodeValue!==old)n.nodeValue=old;return}
+let translated=translateText(old);
+if(old.trim()==='Ein Rätselbuch voller Erinnerungen'&&Number(document.getElementById('day')?.value)===15)translated=translated.replace('memories','moments');
+if(n.nodeValue!==translated)n.nodeValue=translated}
 function element(el){if(el.matches(skip)||el.closest(skip))return;for(const a of ['placeholder','title','aria-label','alt']){if(!el.hasAttribute(a))continue;let old=attributes.get(el)||{},raw=el.getAttribute(a);if(english){if(!(a in old))old[a]=raw;let val=translateText(old[a]);if(raw!==val)el.setAttribute(a,val)}else if(a in old&&raw!==old[a])el.setAttribute(a,old[a]);attributes.set(el,old)}}
 function walk(root){if(busy)return;busy=true;try{if(root.nodeType===3){textNode(root);return}if(root.nodeType!==1&&root.nodeType!==9)return;if(root.nodeType===1)element(root);const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);while(w.nextNode())textNode(w.currentNode);if(root.querySelectorAll)root.querySelectorAll('[placeholder],[title],[aria-label],[alt]').forEach(element)}finally{busy=false}}
 const button=document.createElement('button');button.type='button';button.className='advent-language-switch';button.setAttribute('aria-label','Switch language / Sprache wechseln');button.setAttribute('title','Deutsch / English');button.innerHTML='<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 5-5 13 0 18M12 3c5 5 5 13 0 18"/></svg>';
