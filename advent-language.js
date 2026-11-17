@@ -147,7 +147,15 @@ const button=document.createElement('button');button.type='button';button.classN
 button.style.cssText='position:fixed;right:14px;top:14px;z-index:100050;display:grid;place-items:center;width:39px;height:39px;border:1px solid #b49a73;border-radius:50%;background:#f6efdf;color:#795b39;box-shadow:0 2px 9px #35240d2b;cursor:pointer';
 document.body.append(button);
 function syncExtra(){const d=document.getElementById('day');if(d)for(const o of d.options){const n=Number(o.value);if(n<1||n>24)continue;const suf=n>=11&&n<=13?'th':n%10===1?'st':n%10===2?'nd':n%10===3?'rd':'th';const v=english?'December '+n+suf:n+'. Dezember';const val=v+(o.disabled?' 🔒':'');if(o.textContent!==val)o.textContent=val}const p=document.getElementById('progress');if(p){const m=p.textContent.match(/[0-9]+/);if(m){const v=english?m[0]+' of 24 secrets revealed':m[0]+' von 24 Geheimnissen gelüftet';if(p.textContent!==v)p.textContent=v}}}
-function refresh(){document.documentElement.lang=english?'en':'de';button.setAttribute('aria-pressed',String(english));walk(document.body);syncExtra();document.title=english?'The Secret of the Lost Blossoms':'Das Geheimnis der verschollenen Blüten'}
+function syncLanguageButtonVisibility(){
+  // Sprachwechsel nur auf der Hauptansicht: aktive Rätsel-Dialoge dürfen niemals verdeckt werden.
+  const dialogs=document.querySelectorAll('[aria-modal="true"],[role="dialog"]');
+  const visible=el=>{if(el.hidden||el.closest('[hidden]'))return false;const css=getComputedStyle(el);return css.display!=='none'&&css.visibility!=='hidden'&&el.getClientRects().length>0};
+  const openDialog=Array.from(dialogs).some(visible);
+  const openOverlay=Array.from(document.body.children).some(el=>el!==button&&!el.hidden&&/(?:overlay|modal|dialog)/i.test(el.className||'')&&visible(el));
+  button.style.setProperty('display',openDialog||openOverlay?'none':'grid');
+}
+function refresh(){document.documentElement.lang=english?'en':'de';button.setAttribute('aria-pressed',String(english));walk(document.body);syncExtra();syncLanguageButtonVisibility();document.title=english?'The Secret of the Lost Blossoms':'Das Geheimnis der verschollenen Blüten'}
 button.onclick=()=>{english=!english;try{localStorage.setItem('advent-language-v1',english?'en':'de')}catch{}refresh()};
 try{english=localStorage.getItem('advent-language-v1')==='en'}catch{}
 document.getElementById('day')?.addEventListener('change',()=>setTimeout(refresh,0));
