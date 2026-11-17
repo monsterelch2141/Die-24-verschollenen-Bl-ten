@@ -137,7 +137,7 @@
 
   function updateProgress() {
     const count = Object.keys(solved).filter(d => solved[d] === answers[d]).length;
-    progress.textContent = `${count} von 24 Geheimnissen gelüftet`;
+    progress.textContent = localStorage.getItem('advent-language-v1') === 'en' ? `${count} of 24 secrets revealed` : `${count} von 24 Geheimnissen gelüftet`;
     document.getElementById('final-actions').hidden = count !== 24;
   }
 
@@ -146,7 +146,7 @@
     for (const option of daySelect.options) {
       const n = Number(option.value);
       option.disabled = n > max;
-      option.textContent = `${n}. Dezember${n > max ? ' 🔒' : ''}`;
+      option.textContent = localStorage.getItem('advent-language-v1') === 'en' ? `December ${n}${n >= 11 && n <= 13 ? 'th' : n % 10 === 1 ? 'st' : n % 10 === 2 ? 'nd' : n % 10 === 3 ? 'rd' : 'th'}${n > max ? ' 🔒' : ''}` : `${n}. Dezember${n > max ? ' 🔒' : ''}`;
     }
     daySelect.disabled = max === 0;
     if (max === 0) {
