@@ -117,7 +117,7 @@ const phrases=Object.entries(dictionary).sort((a,b)=>b[0].length-a[0].length);
 const originals=new WeakMap(),attributes=new WeakMap();let english=false,busy=false;
 const skip='script,style,code,pre,svg,canvas,[contenteditable],.wordle-grid,.wordle-keyboard,.strands-grid,.contexto-word,.contexto-guesses,.octordle-grid,.antiwordle-grid';
 function protect(node){const p=node.parentElement;return !p||!!p.closest(skip)||p.closest('input,textarea,select')!==null}
-function translateText(s){const m=s.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);if(!m)return s;const core=m[2];let translated=dictionary[core];if(translated===undefined){const dayMatch=core.match(/^(\\d{1,2})\\. Dezember$/);if(dayMatch)translated=dayMatch[1]+'. December';else translated=core}return m[1]+translated+m[3]}
+function translateText(s){let a=0,b=s.length;while(a<b&&s[a].trim()==='')a++;while(b>a&&s[b-1].trim()==='')b--;const core=s.slice(a,b);let translated=dictionary[core];if(translated===undefined){const dm=core.split('. Dezember');translated=dm.length===2&&dm[1]===''&&Number.isInteger(Number(dm[0]))?dm[0]+'. December':core}return s.slice(0,a)+translated+s.slice(b)}
 function textNode(n){if(protect(n))return;let old=originals.get(n);if(!english){if(old!==undefined&&n.nodeValue!==old)n.nodeValue=old;return}
 if(old===undefined){old=n.nodeValue;originals.set(n,old)}
 let en=translateText(old);if(old.includes('24 kleine Adventsrätsel in unserer gemeinsamen Reise')&&Number(document.getElementById('day')?.value)===15)en=en.replace('shared journey','shared adventure');
