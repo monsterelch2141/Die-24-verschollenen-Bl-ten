@@ -1,11 +1,11 @@
 (()=>{'use strict';
-const DAY=19,KEY='advent-tag19-gleisnetz-v3',N=6;
+const DAY=19,KEY='advent-tag19-gleisnetz-v4',N=6;
 const day=document.getElementById('day'),board=document.getElementById('board'),instruction=document.querySelector('.instruction'),feedback=document.getElementById('feedback');
 if(!day||!board||!instruction)return;
-const solution=[[0,0],[1,0],[1,1],[2,1],[2,0],[3,0],[3,1],[4,1],[4,0],[5,0],[5,1],[5,2],[4,2],[4,3],[5,3],[5,4],[5,5],[4,5],[4,4],[3,4],[3,5],[2,5],[2,4],[1,4],[1,5],[0,5],[0,4],[0,3],[1,3],[1,2],[0,2],[0,1]];
+const solution=[[0,0],[0,1],[1,1],[2,1],[3,1],[3,2],[2,2],[2,3],[1,3],[0,3],[0,4],[0,5],[1,5],[1,4],[2,4],[2,5],[3,5],[3,4],[4,4],[5,4],[5,3],[5,2],[4,2],[4,1],[4,0],[3,0],[2,0],[1,0]];
 const idx=(x,y)=>y*N+x,xy=n=>[n%N,Math.floor(n/N)],ek=(a,b)=>[a,b].sort((x,y)=>x-y).join('-');
 const secretEdges=new Set(solution.map((p,i)=>ek(idx(...p),idx(...solution[(i+1)%solution.length]))));
-const stations=[1,11,34,24],forbidden=[14,21];
+const stations=[7,20,32,17],forbidden=[13,22];
 function stats(edges){
 const adj=Array.from({length:N*N},()=>[]);
 const row=Array.from({length:N},()=>[0,0]),col=Array.from({length:N},()=>[0,0]);
