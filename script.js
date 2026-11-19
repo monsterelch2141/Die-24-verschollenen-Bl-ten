@@ -43,6 +43,13 @@
   const key = 'verschollene-blueten-geloest-v1';
   const gate = document.getElementById('password-gate');
   const page = document.getElementById('advent-page');
+  // Versteckte Zahl als Tageshinweis: nur auf der Hauptseite an Tag 17.
+  const day17Clue = document.createElement('span');
+  day17Clue.id = 'day17-edge-clue';
+  day17Clue.textContent = '21';
+  day17Clue.setAttribute('aria-label', '21');
+  day17Clue.hidden = true;
+  page.appendChild(day17Clue);
   const passwordForm = document.getElementById('password-form');
   const passwordInput = document.getElementById('password-input');
   const passwordError = document.getElementById('password-error');
@@ -163,6 +170,7 @@
   function render() {
     const max = refreshDays();
     daySelect.value = String(day);
+    day17Clue.hidden = day !== 17;
     previous.disabled = day <= 1 || max === 0;
     next.disabled = day >= max || max === 0;
     board.replaceChildren();
