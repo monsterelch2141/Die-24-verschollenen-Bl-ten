@@ -1147,6 +1147,6 @@ html:has(.day5-overlay){overflow:hidden!important}
 @media(max-width:560px){.day10-witness-grid{grid-template-columns:1fr}.day10-witness-line{padding:9px 13px}.day10-witness-line p{font-size:15px}}
 
 /* Kleiner versteckter Hinweis ausschließlich an Tag 17. */
-#day17-edge-clue{position:absolute;left:2.2%;top:46%;z-index:3;color:#9e7d53;font:400 13px Georgia,serif;opacity:.56;transform:rotate(-9deg);pointer-events:none;user-select:none}
+#day17-edge-clue{position:absolute;right:5px;top:83px;z-index:8;color:#886c49;font:400 13px Georgia,serif;opacity:.78;transform:rotate(-8deg);pointer-events:none;user-select:none}
 #day17-edge-clue[hidden]{display:none!important}
-@media(max-width:650px){#day17-edge-clue{left:1.5%;top:42%;font-size:11px;opacity:.52}}
+@media(max-width:650px){#day17-edge-clue{right:3px;top:85px;font-size:12px;opacity:.75}}
