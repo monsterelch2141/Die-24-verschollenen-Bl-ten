@@ -2,6 +2,9 @@
 // Für den echten Adventskalender unbedingt auf false stellen!
 window.ADVENT_TESTMODUS = true;
 
+// Schlüsselwort des letzten Tages (Groß-/Kleinschreibung wird ignoriert).
+window.ADVENT_TAG24_SCHLUESSELWORT = 'Engel';
+
 // Endgültige Feld-Zuordnung für die 24 Dezembertage.
 window.STERNEN_LOESUNGEN = {
   1: 'F3',
