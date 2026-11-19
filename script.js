@@ -49,7 +49,7 @@
   day17Clue.textContent = '21';
   day17Clue.setAttribute('aria-label', '21');
   day17Clue.hidden = true;
-  page.appendChild(day17Clue);
+  document.querySelector('.game').appendChild(day17Clue);
   const passwordForm = document.getElementById('password-form');
   const passwordInput = document.getElementById('password-input');
   const passwordError = document.getElementById('password-error');
