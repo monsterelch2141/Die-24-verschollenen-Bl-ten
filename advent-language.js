@@ -143,7 +143,7 @@ else if(n.nodeValue!==old&&n.nodeValue!==translateText(old)){old=n.nodeValue;ori
 if(!english){if(n.nodeValue!==old)n.nodeValue=old;return}
 let translated=translateText(old);
 if(old.includes('Nur wer den rechten Stern findet,'))translated=old.replace('Nur wer den rechten Stern findet,','Only those who find the right star,');
-if(old.includes('vermag das nächste Geheimnis zu lüften.'))translated=old.replace('vermag das nächste Geheimnis zu lüften.',Number(document.getElementById('day')?.value)===15?'can reveal the next secret.':'can uncover the next secret.');
+if(old.includes('vermag das nächste Geheimnis zu lüften.'))translated=old.replace('vermag das nächste Geheimnis zu lüften.',Number(document.getElementById('day')?.value)===15?'can uncover the next secret.':'can reveal the next secret.');
 if(n.nodeValue!==translated)n.nodeValue=translated}
 function element(el){if(el.matches(skip)||el.closest(skip))return;for(const a of ['placeholder','title','aria-label','alt']){if(!el.hasAttribute(a))continue;let old=attributes.get(el)||{},raw=el.getAttribute(a);if(english){if(!(a in old)||raw!==old[a]&&raw!==translateText(old[a]))old[a]=raw;let val=translateText(old[a]);if(raw!==val)el.setAttribute(a,val)}else if(a in old&&raw!==old[a])el.setAttribute(a,old[a]);attributes.set(el,old)}}
 function walk(root){if(busy)return;busy=true;try{if(root.nodeType===3){textNode(root);return}if(root.nodeType!==1&&root.nodeType!==9)return;if(root.nodeType===1)element(root);const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);while(w.nextNode())textNode(w.currentNode);if(root.querySelectorAll)root.querySelectorAll('[placeholder],[title],[aria-label],[alt]').forEach(element)}finally{busy=false}}
