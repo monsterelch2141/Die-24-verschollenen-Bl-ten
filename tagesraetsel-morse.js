@@ -37,17 +37,19 @@ function updateLens(){
  const sky=overlay.querySelector('.morse-sky'),glass=paper.querySelector('.morse-lens'),canvas=paper.querySelector('.morse-lens-canvas');
  const gr=glass.getBoundingClientRect(),sr=sky.getBoundingClientRect(),size=Math.max(1,Math.round(gr.width*2));
  if(canvas.width!==size){canvas.width=size;canvas.height=size}
- const ctx=canvas.getContext('2d'),radius=size/2,scale=1.7;
+ const ctx=canvas.getContext('2d'),radius=size/2,scale=2.65;
  const cx=gr.left+gr.width/2,cy=gr.top+gr.height/2;
  ctx.clearRect(0,0,size,size);ctx.save();ctx.beginPath();ctx.arc(radius,radius,radius-2,0,Math.PI*2);ctx.clip();
  const g=ctx.createRadialGradient(radius,radius,0,radius,radius,radius);g.addColorStop(0,'#354b69');g.addColorStop(1,'#111e37');ctx.fillStyle=g;ctx.fillRect(0,0,size,size);
  function project(x,y){return [radius+(x-cx)*scale*2,radius+(y-cy)*scale*2]}
- for(const dot of sky.querySelectorAll('.morse-farstars i')){const r=dot.getBoundingClientRect(),[x,y]=project(r.left+r.width/2,r.top+r.height/2);if(x<-5||x>size+5||y<-5||y>size+5)continue;ctx.fillStyle='#fff6d9';ctx.globalAlpha=Number(dot.style.opacity)||.6;ctx.beginPath();ctx.arc(x,y,Math.max(1,scale*1.2),0,Math.PI*2);ctx.fill()}
+ for(const dot of sky.querySelectorAll('.morse-farstars i')){const r=dot.getBoundingClientRect(),[x,y]=project(r.left+r.width/2,r.top+r.height/2);if(x<-5||x>size+5||y<-5||y>size+5)continue;ctx.fillStyle='#fff6d9';ctx.globalAlpha=Number(dot.style.opacity)||.6;ctx.beginPath();ctx.arc(x,y,Math.max(1,r.width*scale),0,Math.PI*2);ctx.fill()}
  ctx.globalAlpha=1;
- for(const star of starNodes){const r=star.getBoundingClientRect(),[x,y]=project(r.left+r.width/2,r.top+r.height/2);if(x<-30||x>size+30||y<-30||y>size+30)continue;const lit=star.classList.contains('morse-lit');ctx.fillStyle=lit?'#fff6c9':'#a8b7d2';ctx.shadowColor=lit?'#fff0a3':'#8496b4';ctx.shadowBlur=lit?17:3;ctx.font=(lit?'bold ':'')+Math.round(size*.23)+'px Georgia';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('✦',x,y)}
+ const moon=sky.querySelector('.morse-moon'),mr=moon.getBoundingClientRect(),[mx,my]=project(mr.left+mr.width/2,mr.top+mr.height/2),rr=mr.width*scale;
+ if(Math.hypot(mx-radius,my-radius)<rr+radius){const mg=ctx.createRadialGradient(mx-rr*.3,my-rr*.3,0,mx,my,rr);mg.addColorStop(0,'#fff9db');mg.addColorStop(.5,'#e9dcb3');mg.addColorStop(1,'#666b8b');ctx.fillStyle=mg;ctx.beginPath();ctx.arc(mx,my,rr,0,Math.PI*2);ctx.fill()}
+ for(const star of starNodes){const r=star.getBoundingClientRect(),[x,y]=project(r.left+r.width/2,r.top+r.height/2);if(x<-size||x>size*2||y<-size||y>size*2)continue;const lit=star.classList.contains('morse-lit');ctx.fillStyle=lit?'#fff6c9':'#a8b7d2';ctx.shadowColor=lit?'#fff0a3':'#8496b4';ctx.shadowBlur=lit?17:3;ctx.font=(lit?'bold ':'')+Math.round(parseFloat(getComputedStyle(star).fontSize)*scale*2*(lit?1.3:1))+'px Georgia';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('✦',x,y)}
  ctx.shadowBlur=0;
  const hint=sky.querySelector('.morse-subtle-shift'),hr=hint.getBoundingClientRect(),[hx,hy]=project(hr.left+hr.width/2,hr.top+hr.height/2);
- if(hx>-30&&hx<size+30&&hy>-30&&hy<size+30){ctx.font='bold '+Math.round(size*.25)+'px Georgia';ctx.fillStyle='#f5dfaa';ctx.shadowColor='#fff2c4';ctx.shadowBlur=8;ctx.textAlign='center';ctx.fillText('−1',hx,hy);ctx.shadowBlur=0}
+ if(hx>-30&&hx<size+30&&hy>-30&&hy<size+30){ctx.font='bold '+Math.round(12*scale*2)+'px Georgia';ctx.fillStyle='#f5dfaa';ctx.shadowColor='#fff2c4';ctx.shadowBlur=8;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('−1',hx,hy);ctx.shadowBlur=0}
  ctx.restore();lensFrame=requestAnimationFrame(updateLens)
 }
 
