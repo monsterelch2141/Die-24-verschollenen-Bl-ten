@@ -83,7 +83,7 @@ function map(animate=false){
  enter('Unsere gemeinsame Reise','24 besondere Momente – und noch so viele mehr …');
  stage.innerHTML='<div class="final-map"><img class="final-map-art" src="reise-karte-illustration.webp" alt="Märchenhafte illustrierte Karte unserer 24 gemeinsamen Erinnerungen"><div class="final-map-fog"></div><div class="final-map-hotspots"></div><img class="final-map-couple" src="reisepaar-mini.png" alt="Lena und Luis auf ihrer gemeinsamen Reise"></div><p class="final-map-note">Jedes entdeckte Wahrzeichen bewahrt eine Erinnerung. ♡</p>';
  const frame=stage.querySelector('.final-map');frame.dataset.walk=animate?'yes':'no';const hot=stage.querySelector('.final-map-hotspots'),fog=stage.querySelector('.final-map-fog'),pair=stage.querySelector('.final-map-couple');
- positions.forEach(([x,y],i)=>{const d=i+1,b=document.createElement('button');b.type='button';b.className='final-map-hotspot';b.style.left=x+'%';b.style.top=y+'%';b.setAttribute('aria-label',stops[i][0]+' – Erinnerung öffnen');b.title=stops[i][0];b.disabled=!(window.ADVENT_TESTMODUS||done.includes(d));if(!b.disabled)b.addEventListener('click',()=>memory(d));hot.append(b)});
+ positions.forEach(([x,y],i)=>{const d=i+1,b=document.createElement('button');b.type='button';b.className='final-map-hotspot';b.style.left=x+'%';b.style.top=y+'%';b.setAttribute('aria-label',stops[i][0]+' – Erinnerung öffnen');b.title=stops[i][0];b.disabled=!done.includes(d);if(!b.disabled)b.addEventListener('click',()=>memory(d));hot.append(b)});
  // Undurchsichtiger Nebel verdeckt noch nicht entdeckte Gebiete, statt sie als Kacheln anzuzeigen.
  // Eine einzige zusammenhängende Nebeldecke, mit präzise freigestellten entdeckten Stationen.
  const holes=positions.filter((_,i)=>done.includes(i+1)).map(([x,y])=>'<ellipse cx="'+x+'" cy="'+y+'" rx="12.8" ry="8.4" fill="black"/>').join('');
@@ -119,5 +119,5 @@ if(overlay)new MutationObserver(continueToMap).observe(overlay,{attributes:true,
 board.addEventListener('click',()=>setTimeout(refresh,0),true);
 document.getElementById('test-complete')?.addEventListener('click',()=>setTimeout(refresh,0));
 refresh();
-if(location.hash==='#reise'){const tryOpen=()=>{if(!root.hidden&&days().includes(1)){map();history.replaceState(null,'',location.pathname+location.search)}};setTimeout(tryOpen,250);document.getElementById('password-form')?.addEventListener('submit',()=>setTimeout(tryOpen,350));}
+if(location.hash==='#reise'){const tryOpen=()=>{if(!root.hidden&&(window.ADVENT_TESTMODUS||days().length||location.hash==='#reise')){map();history.replaceState(null,'',location.pathname+location.search)}};setTimeout(tryOpen,250);document.getElementById('password-form')?.addEventListener('submit',()=>setTimeout(tryOpen,350));}
 })();
