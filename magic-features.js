@@ -66,7 +66,7 @@ const stage=screen.querySelector('.storybook-stage'),heading=screen.querySelecto
 function enter(title,subtitle){root.hidden=true;document.getElementById('collage-view').hidden=true;screen.hidden=false;heading.textContent=title;sub.textContent=subtitle;scrollTo(0,0)}
 function home(){screen.hidden=true;root.hidden=false;scrollTo(0,0)}
 screen.querySelector('.storybook-back').onclick=()=>{if(stage.querySelector('.storybook-memory'))map();else home()};
-function refresh(){hub.querySelectorAll('button').forEach(b=>{b.hidden=false})}
+function refresh(){hub.querySelector('[data-world="map"]').hidden=false;hub.querySelector('[data-world="vase"]').hidden=!days().includes(2)}
 function memory(d){enter(stops[d-1][0],'Unsere Erinnerung · Kapitel '+d);stage.innerHTML='<div class="storybook-memory"><h2>'+stops[d-1][0]+'</h2><p>'+stops[d-1][2]+'</p><div class="storybook-gallery"></div><button type="button" class="storybook-return">← Zur Startseite</button></div>';let gallery=stage.querySelector('.storybook-gallery');let list=window.ADVENT_GALERIEN?.[d]||[];list.forEach((src,i)=>{const fig=document.createElement('figure');const im=document.createElement('img');im.src=src;im.loading='lazy';im.alt='Erinnerungsfoto '+(i+1);fig.append(im);const cap=document.createElement('figcaption');cap.textContent=i===0?(window.ADVENT_FOTOS?.[d]?.text||stops[d-1][0]):stops[d-1][0];fig.append(cap);gallery.append(fig)});if(!list.length)gallery.textContent='Hier wartet noch eine Erinnerung.';stage.querySelector('.storybook-return').textContent='← Zur Reisekarte';stage.querySelector('.storybook-return').onclick=()=>map();screen.querySelector('.storybook-back').textContent='← Zur Reisekarte'}
 
 const picture=d=>'blume-'+String(d).padStart(2,'0')+'.png';
