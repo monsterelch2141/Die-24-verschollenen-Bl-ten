@@ -1150,3 +1150,9 @@ html:has(.day5-overlay){overflow:hidden!important}
 #day17-edge-clue{position:absolute;right:5px;top:83px;z-index:8;color:#886c49;font:400 13px Georgia,serif;opacity:.78;transform:rotate(-8deg);pointer-events:none;user-select:none}
 #day17-edge-clue[hidden]{display:none!important}
 @media(max-width:650px){#day17-edge-clue{right:3px;top:85px;font-size:12px;opacity:.75}}
+
+/* Natural photo proportions, including landscape images. */
+.photo-overlay .reveal-shell{width:calc(var(--photo-width, 230px) + 30px);max-width:90vw;aspect-ratio:auto}
+.photo-overlay .reveal-shell .polaroid-image{aspect-ratio:var(--photo-ratio, .75);height:auto;background:transparent}
+.photo-overlay .reveal-shell .polaroid-image img{width:100%;height:100%;object-fit:contain}
+.cell .mini-photo{object-fit:cover;object-position:50% 30%}
