@@ -111,11 +111,16 @@
     return new Set(Object.keys(solved).filter(d => solved[d] === answers[d]).map(d => solved[d]));
   }
 
+  const shell=overlay.querySelector('.reveal-shell');
+  function fitPhoto(){if(!photoImage.naturalWidth||!photoImage.naturalHeight)return;const ratio=photoImage.naturalWidth/photoImage.naturalHeight;const w=Math.min(window.innerWidth*.86-30,460,Math.max(60,window.innerHeight-155)*ratio);shell.style.setProperty('--photo-width',Math.round(w)+'px');shell.style.setProperty('--photo-ratio',String(ratio));}
+  photoImage.addEventListener('load',fitPhoto);
+  window.addEventListener('resize',fitPhoto);
   function showPhoto(forDay, animated = true) {
     const info = photos[forDay];
     if (!info || !info.datei) return;
     lastFocus = document.activeElement;
-    photoImage.src = info.datei;
+    shell.style.removeProperty('--photo-width'); shell.style.removeProperty('--photo-ratio');
+    photoImage.src = info.datei; if(photoImage.complete)fitPhoto();
     photoImage.alt = `Erinnerungsfoto zum ${forDay}. Dezember`;
     photoCaption.textContent = info.text || `Unsere Erinnerung vom ${forDay}. Dezember ♡`;
     overlay.hidden = false;
@@ -205,6 +210,7 @@
             const thumbnail = document.createElement('img');
             thumbnail.className = 'mini-photo';
             thumbnail.src = photos[photoDay].datei;
+            thumbnail.style.objectPosition = photos[photoDay].position || '50% 30%';
             thumbnail.alt = '';
             thumbnail.loading = 'lazy';
             button.appendChild(thumbnail);
@@ -291,6 +297,15 @@
       : '✧ Die Erinnerungen sind wieder zugedeckt. ✧';
   });
 
+  if(testMode) document.addEventListener('click',e=>{
+    const cell=e.target.closest('#board .cell');if(!cell||availableDays()<day)return;
+    e.stopImmediatePropagation();e.preventDefault();
+    const index=Array.from(board.children).indexOf(cell);
+    const code='ABCDEF'[index%6]+(Math.floor(index/6)+1);
+    const d=Number(Object.keys(answers).find(k=>answers[k]===code));if(!d)return;
+    const fresh=solved[d]!==code;solved[d]=code;save();allRevealed=true;render();showPhoto(d,fresh);
+    feedback.className='feedback success';feedback.textContent='✧ Testmodus: Foto von Tag '+d+' aufgedeckt. ✧';
+  },true);
   testComplete.addEventListener('click', () => {
     if (!testMode || !confirm('Alle 24 Rätsel für den Collage-Test als gelöst markieren?')) return;
     for (let i=1; i<=24; i++) solved[i] = answers[i];
