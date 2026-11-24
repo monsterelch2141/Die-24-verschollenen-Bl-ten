@@ -30,7 +30,7 @@ const dictionary={
 'Verbinde deine Sternenroute und wähle den richtigen Stern.':'Connect your star route and choose the correct star.',
 'Löse zuerst das Tagesrätsel, bevor du ein Sternenfeld auswählst.':'Solve the daily puzzle before choosing a star square.',
 'Dieses Tagesrätsel neu beginnen':'Restart this daily puzzle',
-'Die Zitronenbotschaft':'The Lemon Message','Entziffere die unsichtbare Schrift und gib den Schlüssel exakt so ein, wie du ihn entdeckt hast.':'Decipher the invisible writing and enter the key exactly as you found it.',
+'Die geheimnisvolle Botschaft':'The Mysterious Message','Entschlüssle die Botschaft und gib den Schlüssel exakt so ein, wie du ihn entdeckt hast.':'Decipher the message and enter the key exactly as you found it.','Schlüsselwort der geheimnisvollen Botschaft':'Keyword of the mysterious message','Entziffere zuerst die geheimnisvolle Botschaft und gib den Schlüssel ein.':'First decipher the mysterious message and enter the key.','Zuerst die geheimnisvolle Botschaft lösen.':'Solve the mysterious message first.','Entziffere die unsichtbare Schrift und gib den Schlüssel exakt so ein, wie du ihn entdeckt hast.':'Decipher the invisible writing and enter the key exactly as you found it.',
 'Das Geheimnis der Website':'The Website Secret',
 'Ein einziges Wort ist nicht wie an den anderen Tagen. Finde das übliche englische Wort und gib es als Schlüssel ein.':'One word differs from the other days. Find the usual English word and enter it as the key.',
 'Finde das versteckte Schlüsselwort auf der Website.':'Find the hidden keyword on the website.',
@@ -156,13 +156,13 @@ function syncLanguageButtonVisibility(){
   const dialogs=document.querySelectorAll('[aria-modal="true"],[role="dialog"]');
   const visible=el=>{if(el.hidden||el.closest('[hidden]'))return false;const css=getComputedStyle(el);return css.display!=='none'&&css.visibility!=='hidden'&&el.getClientRects().length>0};
   const openDialog=Array.from(dialogs).some(visible);
-  const openOverlay=Array.from(document.body.children).some(el=>el!==button&&!el.hidden&&/(?:overlay|modal|dialog)/i.test(el.className||'')&&visible(el));
-  button.style.setProperty('display',openDialog||openOverlay?'none':'grid');
+  const openOverlay=Array.from(document.querySelectorAll('[class*="overlay"],[class*="modal"],[class*="dialog"],.age6-page,.day8-gate,.storybook-screen,#collage-view')).some(el=>el!==button&&visible(el)&&(el.matches('.age6-page,.day8-gate,.storybook-screen,#collage-view')||getComputedStyle(el).position==='fixed'||el.parentElement===document.body));
+  const display=openDialog||openOverlay?'none':'grid';if(button.style.display!==display)button.style.setProperty('display',display);
 }
 function refresh(){document.documentElement.lang=english?'en':'de';button.setAttribute('aria-pressed',String(english));walk(document.body);syncExtra();syncLanguageButtonVisibility();document.title=english?'The Secret of the Lost Blossoms':'Das Geheimnis der verschollenen Blüten'}
 button.onclick=()=>{english=!english;try{localStorage.setItem('advent-language-v1',english?'en':'de')}catch{}refresh()};
 try{english=localStorage.getItem('advent-language-v1')==='en'}catch{}
 document.getElementById('day')?.addEventListener('change',()=>setTimeout(refresh,0));
-new MutationObserver(mutations=>{if(busy)return;let needs=false;for(const m of mutations){if(m.target===button||button.contains(m.target))continue;needs=true;break}if(needs)refresh()}).observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['placeholder','title','aria-label','alt']});
+new MutationObserver(mutations=>{if(busy)return;let needs=false;for(const m of mutations){if(m.target===button||button.contains(m.target))continue;needs=true;break}if(needs)refresh()}).observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['placeholder','title','aria-label','alt','hidden','class','style','aria-modal','role']});
 refresh();
 })();
