@@ -159,10 +159,12 @@ function syncLanguageButtonVisibility(){
   const openOverlay=Array.from(document.querySelectorAll('[class*="overlay"],[class*="modal"],[class*="dialog"],.age6-page,.day8-gate,.storybook-screen,#collage-view')).some(el=>el!==button&&visible(el)&&(el.matches('.age6-page,.day8-gate,.storybook-screen,#collage-view')||getComputedStyle(el).position==='fixed'||el.parentElement===document.body));
   const display=openDialog||openOverlay?'none':'grid';if(button.style.display!==display)button.style.setProperty('display',display);
 }
-function refresh(){document.documentElement.lang=english?'en':'de';button.setAttribute('aria-pressed',String(english));walk(document.body);syncExtra();syncLanguageButtonVisibility();document.title=english?'The Secret of the Lost Blossoms':'Das Geheimnis der verschollenen Blüten'}
+function refresh(){if(document.documentElement.lang!==(english?'en':'de'))document.documentElement.lang=english?'en':'de';if(button.getAttribute('aria-pressed')!==String(english))button.setAttribute('aria-pressed',String(english));walk(document.body);syncExtra();syncLanguageButtonVisibility();const title=english?'The Secret of the Lost Blossoms':'Das Geheimnis der verschollenen Blüten';if(document.title!==title)document.title=title}
 button.onclick=()=>{english=!english;try{localStorage.setItem('advent-language-v1',english?'en':'de')}catch{}refresh()};
 try{english=localStorage.getItem('advent-language-v1')==='en'}catch{}
 document.getElementById('day')?.addEventListener('change',()=>setTimeout(refresh,0));
-new MutationObserver(mutations=>{if(busy)return;let needs=false;for(const m of mutations){if(m.target===button||button.contains(m.target))continue;needs=true;break}if(needs)refresh()}).observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['placeholder','title','aria-label','alt','hidden','class','style','aria-modal','role']});
+let refreshQueued=false;const observer=new MutationObserver(mutations=>{if(busy||refreshQueued)return;if(!mutations.some(m=>m.target!==button&&!button.contains(m.target)))return;refreshQueued=true;setTimeout(()=>{refreshQueued=false;observer.disconnect();try{refresh()}finally{observe()}},40)});
+function observe(){observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['placeholder','title','aria-label','alt','hidden','class','aria-modal','role']})}
+observe();setInterval(syncLanguageButtonVisibility,250);
 refresh();
 })();
