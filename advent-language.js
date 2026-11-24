@@ -136,7 +136,7 @@ if(dictionary[middle]!==undefined)translated=core.slice(0,left)+dictionary[middl
 else{const dm=middle.match(/^(\d{1,2})\. Dezember(.*)$/);if(dm){const n=Number(dm[1]);const suffix=n%100>=11&&n%100<=13?'th':n%10===1?'st':n%10===2?'nd':n%10===3?'rd':'th';translated=core.slice(0,left)+'December '+n+suffix+dm[2]+core.slice(right)}else translated=core}
 }
 return s.slice(0,a)+translated+s.slice(b)}
-function textNode(n){if(protect(n))return;
+function textNode(n){if(protect(n)||n.parentElement?.closest('footer p[data-star-footer]'))return;
 let old=originals.get(n);
 if(old===undefined){old=n.nodeValue;originals.set(n,old)}
 else if(n.nodeValue!==old&&n.nodeValue!==translateText(old)){old=n.nodeValue;originals.set(n,old)}
@@ -159,10 +159,11 @@ function syncLanguageButtonVisibility(){
   const openOverlay=Array.from(document.querySelectorAll('[class*="overlay"],[class*="modal"],[class*="dialog"],.age6-page,.day8-gate,.storybook-screen,#collage-view')).some(el=>el!==button&&visible(el)&&(el.matches('.age6-page,.day8-gate,.storybook-screen,#collage-view')||getComputedStyle(el).position==='fixed'||el.parentElement===document.body));
   const display=openDialog||openOverlay?'none':'grid';if(button.style.display!==display)button.style.setProperty('display',display);
 }
-function refresh(){if(document.documentElement.lang!==(english?'en':'de'))document.documentElement.lang=english?'en':'de';if(button.getAttribute('aria-pressed')!==String(english))button.setAttribute('aria-pressed',String(english));walk(document.body);syncExtra();syncLanguageButtonVisibility();const title=english?'The Secret of the Lost Blossoms':'Das Geheimnis der verschollenen Blüten';if(document.title!==title)document.title=title}
+function syncStarFooter(){const p=document.querySelector('footer p[data-star-footer]');if(!p)return;const first=english?'„Only those who find the right star,':'„Nur wer den rechten Stern findet,';const second=english?'can '+(Number(document.getElementById('day')?.value)===15?'uncover':'reveal')+' the next secret.“':'vermag das nächste Geheimnis zu lüften.“';if(p.firstChild?.nodeValue!==first||p.lastChild?.nodeValue!==second)p.replaceChildren(document.createTextNode(first),document.createElement('br'),document.createTextNode(second))}
+function refresh(){if(document.documentElement.lang!==(english?'en':'de'))document.documentElement.lang=english?'en':'de';if(button.getAttribute('aria-pressed')!==String(english))button.setAttribute('aria-pressed',String(english));walk(document.body);syncExtra();syncStarFooter();syncLanguageButtonVisibility();const title=english?'The Secret of the Lost Blossoms':'Das Geheimnis der verschollenen Blüten';if(document.title!==title)document.title=title}
 button.onclick=()=>{english=!english;try{localStorage.setItem('advent-language-v1',english?'en':'de')}catch{}refresh()};
 try{english=localStorage.getItem('advent-language-v1')==='en'}catch{}
-document.getElementById('day')?.addEventListener('change',()=>setTimeout(refresh,0));
+document.getElementById('day')?.addEventListener('change',()=>setTimeout(refresh,0));document.getElementById('day')?.addEventListener('input',syncStarFooter);setInterval(syncStarFooter,200);
 let refreshQueued=false;const observer=new MutationObserver(mutations=>{if(busy||refreshQueued)return;if(!mutations.some(m=>m.target!==button&&!button.contains(m.target)))return;refreshQueued=true;setTimeout(()=>{refreshQueued=false;observer.disconnect();try{refresh()}finally{observe()}},40)});
 function observe(){observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['placeholder','title','aria-label','alt','hidden','class','aria-modal','role']})}
 observe();setInterval(syncLanguageButtonVisibility,250);
