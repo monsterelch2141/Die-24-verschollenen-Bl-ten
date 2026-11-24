@@ -119,7 +119,7 @@
     });
     const fog=frame.querySelector('.final-map-fog');
     if(fog) {
-      fog.style.backgroundImage=`url("data:image/svg+xml,${encodeURIComponent(fogSvg(window.ADVENT_TESTMODUS?24:last))}")`;
+      fog.style.backgroundImage=`url("data:image/svg+xml,${encodeURIComponent(fogSvg(last))}")`;
       fog.style.backgroundSize='100% 100%';
       fog.style.backgroundRepeat='no-repeat';
     }
