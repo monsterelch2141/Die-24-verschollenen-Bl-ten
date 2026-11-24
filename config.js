@@ -38,3 +38,6 @@ window.STERNEN_LOESUNGEN = {
 window.ADVENT_FOTOS = {
   ...Object.fromEntries(Array.from({length:24}, (_,i) => [i+1, {datei:'foto-01.webp', text:'Ich liebe dich ♡'}]))
 };
+
+// Individuelle Fotogalerien der Reisekarte (keine Platzhalterbilder).
+window.ADVENT_GALERIEN = Object.fromEntries(Array.from({length:24},(_,i)=>[i+1,[]]));
