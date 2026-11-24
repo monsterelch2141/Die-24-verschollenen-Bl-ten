@@ -307,7 +307,8 @@
       for (let i = localStorage.length - 1; i >= 0; i--) {
         const storedKey = localStorage.key(i);
         if (storedKey && (
-          storedKey.startsWith('advent-tag') ||
+          (storedKey.startsWith('advent-') && storedKey !== 'advent-language-v1') ||
+          storedKey.startsWith('luminara-orakel-') ||
           storedKey === key ||
           storedKey === 'advent_blumen_gefunden'
         )) localStorage.removeItem(storedKey);
