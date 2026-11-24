@@ -240,6 +240,7 @@
             feedback.textContent = '✧ Richtig! Ein weiteres Geheimnis ist gelüftet. ✧';
             render();
             showPhoto(day);
+            document.dispatchEvent(new CustomEvent('advent-star-solved',{detail:{day}}));
           } else {
             button.classList.add('wrong');
             feedback.className = 'feedback error';
