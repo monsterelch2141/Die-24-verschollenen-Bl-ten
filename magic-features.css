@@ -119,3 +119,5 @@
 .final-reward p{font-size:26px}
 @media(max-width:600px){.final-map{border-width:3px}.final-map-couple{width:22%}.final-map-cloud{filter:blur(3px)}.final-vase-scene{border-width:3px}.final-flower-index{grid-template-columns:repeat(8,minmax(0,1fr))}.final-reward p{font-size:22px}}
 @media(prefers-reduced-motion:reduce){.final-map-couple{transition:none}.final-flower.is-arriving,.final-map-cloud{animation:none}}
+
+.storybook-nav{position:fixed;top:14px;right:61px;z-index:100049;display:flex;gap:8px;margin:0;flex-wrap:nowrap}.storybook-nav button{display:grid;place-items:center;width:39px;height:39px;padding:0;border:1px solid #b49a73;border-radius:50%;background:#f6efdf;color:#795b39;box-shadow:0 4px 9px #35240d2b}.storybook-nav button[hidden],.storybook-nav[hidden]{display:none!important}
