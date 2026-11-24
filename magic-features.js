@@ -66,7 +66,7 @@ const stage=screen.querySelector('.storybook-stage'),heading=screen.querySelecto
 function enter(title,subtitle){root.hidden=true;document.getElementById('collage-view').hidden=true;screen.hidden=false;heading.textContent=title;sub.textContent=subtitle;scrollTo(0,0)}
 function home(){screen.hidden=true;root.hidden=false;scrollTo(0,0)}
 screen.querySelector('.storybook-back').onclick=()=>{if(stage.querySelector('.storybook-memory'))map();else home()};
-function refresh(){const unlocked=days();hub.querySelector('[data-world="map"]').hidden=!unlocked.includes(1);hub.querySelector('[data-world="vase"]').hidden=!unlocked.includes(2)}
+function refresh(){const unlocked=days();hub.querySelector('[data-world="map"]').hidden=!(window.ADVENT_TESTMODUS||unlocked.length);hub.querySelector('[data-world="vase"]').hidden=!(window.ADVENT_TESTMODUS||unlocked.includes(2))}
 function memory(d){enter(stops[d-1][0],'Unsere Erinnerung · Kapitel '+d);stage.innerHTML='<div class="storybook-memory"><h2>'+stops[d-1][0]+'</h2><p>'+stops[d-1][2]+'</p><div class="storybook-gallery"></div><button type="button" class="storybook-return">← Zur Startseite</button></div>';let gallery=stage.querySelector('.storybook-gallery');let list=window.ADVENT_GALERIEN?.[d]||[];list.forEach((src,i)=>{const fig=document.createElement('figure');const im=document.createElement('img');im.src=src;im.loading='lazy';im.alt='Erinnerungsfoto '+(i+1);fig.append(im);const cap=document.createElement('figcaption');cap.textContent=i===0?(window.ADVENT_FOTOS?.[d]?.text||stops[d-1][0]):stops[d-1][0];fig.append(cap);gallery.append(fig)});if(!list.length)gallery.textContent='Hier wartet noch eine Erinnerung.';stage.querySelector('.storybook-return').textContent='← Zur Reisekarte';stage.querySelector('.storybook-return').onclick=()=>map();screen.querySelector('.storybook-back').textContent='← Zur Reisekarte'}
 
 const picture=d=>'blume-'+String(d).padStart(2,'0')+'.png';
@@ -112,8 +112,12 @@ function reward(d){
 }
 hub.onclick=e=>{const b=e.target.closest('[data-world]');if(!b)return;b.dataset.world==='map'?map():(location.href='blumen.html')};
 let pending=0;
-board.addEventListener('click',()=>{const before=days().length;setTimeout(()=>{const after=days();if(after.length>before)pending=Math.max(...after);refresh()},120)},true);
-const overlay=document.getElementById('photo-overlay');if(overlay)new MutationObserver(()=>{if(overlay.hidden&&pending){const d=pending;pending=0;setTimeout(()=>map(true),200)}}).observe(overlay,{attributes:true,attributeFilter:['hidden']});
+const overlay=document.getElementById('photo-overlay');
+function continueToMap(){if(!pending||overlay&&!overlay.hidden)return;pending=0;setTimeout(()=>map(true),200)}
+document.addEventListener('advent-star-solved',e=>{pending=Number(e.detail.day);refresh();continueToMap()});
+if(overlay)new MutationObserver(continueToMap).observe(overlay,{attributes:true,attributeFilter:['hidden']});
+board.addEventListener('click',()=>setTimeout(refresh,0),true);
+document.getElementById('test-complete')?.addEventListener('click',()=>setTimeout(refresh,0));
 refresh();
 if(location.hash==='#reise'){const tryOpen=()=>{if(!root.hidden&&days().includes(1)){map();history.replaceState(null,'',location.pathname+location.search)}};setTimeout(tryOpen,250);document.getElementById('password-form')?.addEventListener('submit',()=>setTimeout(tryOpen,350));}
 })();
