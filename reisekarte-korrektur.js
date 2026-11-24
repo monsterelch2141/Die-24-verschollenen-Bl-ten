@@ -36,7 +36,7 @@
     // Keine getrennten Masken mehr zwischen bereits gelösten Reihen.
     const activeRow=rows.find(row=>last>=row.first && last<=row.last);
     const clearTo=activeRow ? activeRow.top+1.1 : 10.8;
-    let open=`<rect width="100" height="${clearTo}" fill="black"/>`;
+    let open=last?`<rect width="100" height="${clearTo}" fill="black"/>`:'';
     for(const row of rows) {
       // Vollständig abgeschlossene Reihen liegen bereits in der durchgehenden Öffnung.
       if (activeRow && row.last < activeRow.first) continue;
@@ -59,7 +59,7 @@
       for(const [cx,cy] of revealed)open+=`<ellipse cx="${cx}" cy="${cy}" rx="7.2" ry="3.6" fill="black"/>`;
     }
     // Unabhängig vom Fortschritt: die beiden sitzenden Figuren unten links.
-    open+='<ellipse cx="12" cy="90" rx="23" ry="13.5" fill="black"/>';
+    if(last)open+='<ellipse cx="12" cy="90" rx="23" ry="13.5" fill="black"/>';
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
       <defs>
         <filter id="edge" x="-4%" y="-4%" width="108%" height="108%">
@@ -144,7 +144,7 @@
       couple.style.transition='none';
       couple.style.left=start[0]+'%';
       couple.style.top=start[1]+'%';
-      couple.style.visibility='visible';
+      couple.style.visibility=last?'visible':'hidden';
       couple.style.width=last<=1?'9%':'13%';
       if(last===1){
         const marker=document.createElement('div');
