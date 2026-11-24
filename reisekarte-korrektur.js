@@ -114,12 +114,12 @@
     const done=solvedDays(),last=Math.max(0,...done);
     frame.querySelectorAll('.final-map-hotspot').forEach((button,i)=>{
       if(!positions[i])return;
-      const [x,y]=positions[i];button.style.left=x+'%';button.style.top=y+'%';
+      const [x,y]=positions[i];button.style.left=x+'%';button.style.top=y+'%';Object.assign(button.style,{width:'19%',height:'9.5%',transform:'translate(-50%,-62%)',background:'transparent',border:'0',boxShadow:'none',pointerEvents:button.disabled?'none':'auto',cursor:button.disabled?'default':'pointer'});
       // Die existierenden Klick-Handler für die freigeschalteten Fotogalerien bleiben bestehen.
     });
     const fog=frame.querySelector('.final-map-fog');
     if(fog) {
-      fog.style.backgroundImage=`url("data:image/svg+xml,${encodeURIComponent(fogSvg(last))}")`;
+      fog.style.backgroundImage=`url("data:image/svg+xml,${encodeURIComponent(fogSvg(window.ADVENT_TESTMODUS?24:last))}")`;
       fog.style.backgroundSize='100% 100%';
       fog.style.backgroundRepeat='no-repeat';
     }
