@@ -1189,3 +1189,9 @@ body{--travel-art:url('reise-hintergrund-ipad.webp');}
 body::before{top:0;bottom:auto;height:100vh;height:100lvh;background-image:linear-gradient(rgba(250,238,214,.10),rgba(250,238,214,.10)),var(--travel-art),url('reise-hintergrund-neu.webp');background-size:100% 100%,cover,cover;background-position:center;background-repeat:no-repeat;}
 /* Old foreground contour belongs to the previous artwork; never overlay it on the new images. */
 #luminara-foreground-globe{display:none!important;}
+
+/* Keep the document scrollable, but clip its visible content to the same viewport as the artwork. */
+html{overscroll-behavior-y:none;}
+body{overscroll-behavior-y:none;}
+body::before{height:100vh;height:100dvh;}
+@supports (clip-path:inset(0)){#advent-page{clip-path:inset(var(--travel-clip-top,0px) 0 var(--travel-clip-bottom,0px) 0);}}
