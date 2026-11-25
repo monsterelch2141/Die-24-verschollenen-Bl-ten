@@ -446,35 +446,45 @@
     c.fillStyle='#a77a43';c.font='30px Georgia,serif';
     c.fillText('❦   ✧   ❦',W/2,284);
 
-    // Justified rows with variable widths, natural image proportions and gentle rotations.
-    const rows=[4,4,4,4,4,4], margin=95, gap=24, border=10, bottom=22, top=345;
-    const availableW=W-2*margin, availableH=H-top-95;
+    // Hand-arranged scrapbook: staggered bands, varying card sizes and angles.
+    const counts=[4,5,3,4,5,3], border=10,bottom=23,top=323,margin=28;
+    const gap=5,verticalGap=5;
     let cursor=0;
-    const layout=rows.map(n=>{
-      const entries=urls.slice(cursor,cursor+n).map((url,j)=>({img:images[url],i:cursor+j,ratio:images[url].naturalWidth/images[url].naturalHeight}));
+    const layout=counts.map((n,k)=>{
+      const entries=urls.slice(cursor,cursor+n).map((url,j)=>({img:images[url],i:cursor+j,ratio:images[url].naturalWidth/images[url].naturalHeight,weight:[1.04,.91,1.09,.96,1.02][(j+k*2)%5]}));
       cursor+=n;
-      const height=(availableW-(n-1)*gap-n*border*2)/entries.reduce((sum,e)=>sum+e.ratio,0);
-      return {entries,height};
+      const h=(W-2*margin-(n-1)*gap-n*border*2)/entries.reduce((sum,e)=>sum+e.ratio*e.weight,0);
+      return {entries,h,maxWeight:Math.max(...entries.map(e=>e.weight))};
     });
-    const scale=Math.min(1,(availableH-(rows.length-1)*gap-rows.length*(border+bottom))/layout.reduce((sum,r)=>sum+r.height,0));
-    const totalH=layout.reduce((sum,r)=>sum+r.height*scale+border+bottom,0)+(rows.length-1)*gap;
-    let y=top+(availableH-totalH)/2;
-    for(const row of layout){
-      const ph=row.height*scale,cardH=ph+border+bottom;
-      const rowW=row.entries.reduce((sum,e)=>sum+ph*e.ratio+2*border,0)+(row.entries.length-1)*gap;
-      let x=(W-rowW)/2;
-      for(const e of row.entries){
-        const pw=ph*e.ratio,cardW=pw+2*border;
-        const tilt=[-.032,.025,-.018,.034,-.026,.015][e.i%6];
-        c.save();c.translate(x+cardW/2,y+cardH/2);c.rotate(tilt);
-        c.shadowColor='rgba(69,45,28,.30)';c.shadowBlur=15;c.shadowOffsetY=7;
-        c.fillStyle='#fffaf1';c.fillRect(-cardW/2,-cardH/2,cardW,cardH);
-        c.shadowColor='transparent';c.shadowBlur=0;c.shadowOffsetY=0;
-        c.strokeStyle='#e3d6c0';c.lineWidth=1;c.strokeRect(-cardW/2,-cardH/2,cardW,cardH);
-        c.drawImage(e.img,-cardW/2+border,-cardH/2+border,pw,ph);
-        c.restore();x+=cardW+gap;
+    const usableH=H-top-28;
+    const scale=Math.min(1,(usableH-layout.length*(border+bottom)-(layout.length-1)*verticalGap-34)/layout.reduce((sum,r)=>sum+r.h*r.maxWeight,0));
+    let y=top+12;
+    const cards=[];
+    for(let k=0;k<layout.length;k++){
+      const row=layout[k],band=row.h*scale*row.maxWeight+border+bottom;
+      const widths=row.entries.map(e=>row.h*scale*e.weight*e.ratio+2*border);
+      const total=widths.reduce((a,b)=>a+b,0)+(widths.length-1)*gap;
+      let x=(W-total)/2+[ -16,17,-9,12,-14,8][k];
+      for(let j=0;j<row.entries.length;j++){
+        const e=row.entries[j],ph=row.h*scale*e.weight,pw=ph*e.ratio,cw=pw+2*border,ch=ph+border+bottom;
+        const tilt=[-.065,.047,-.039,.075,-.052,.032,.06,-.07][e.i%8];
+        const cy=y+band/2+[ -10,12,-15,8,0][(j+k)%5];
+        const ex=Math.abs(Math.cos(tilt))*cw/2+Math.abs(Math.sin(tilt))*ch/2;
+        const ey=Math.abs(Math.sin(tilt))*cw/2+Math.abs(Math.cos(tilt))*ch/2;
+        const cx=Math.max(18+ex,Math.min(W-18-ex,x+cw/2));
+        cards.push({e,pw,ph,cw,ch,tilt,cx,cy:Math.max(top+ey,Math.min(H-20-ey,cy))});
+        x+=cw+gap;
       }
-      y+=cardH+gap;
+      y+=band+verticalGap;
+    }
+    for(const {e,pw,ph,cw,ch,tilt,cx,cy} of cards){
+      c.save();c.translate(cx,cy);c.rotate(tilt);
+      c.shadowColor='rgba(69,45,28,.30)';c.shadowBlur=15;c.shadowOffsetY=7;
+      c.fillStyle='#fffaf1';c.fillRect(-cw/2,-ch/2,cw,ch);
+      c.shadowColor='transparent';c.shadowBlur=0;c.shadowOffsetY=0;
+      c.strokeStyle='#e3d6c0';c.lineWidth=1;c.strokeRect(-cw/2,-ch/2,cw,ch);
+      c.drawImage(e.img,-cw/2+border,-ch/2+border,pw,ph);
+      c.restore();
     }
     return await new Promise((resolve,reject)=>canvas.toBlob(
       b=>b?resolve(b):reject(new Error('Bild konnte nicht erstellt werden.')),'image/png'));
