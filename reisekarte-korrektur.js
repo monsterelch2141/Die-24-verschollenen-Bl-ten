@@ -103,6 +103,40 @@
             </g>
     </svg>`;
   }
+  // Non-destructive exchange of the two illustrated scenes, using original pixels.
+  let correctedArt=null;
+  function swappedArt(){
+    if(correctedArt)return correctedArt;
+    correctedArt=new Promise((resolve,reject)=>{
+      const source=new Image();
+      source.onload=()=>{
+        try{
+          const canvas=document.createElement('canvas');canvas.width=source.naturalWidth;canvas.height=source.naturalHeight;
+          const ctx=canvas.getContext('2d');ctx.drawImage(source,0,0);
+          const sx=canvas.width/1024,sy=canvas.height/1536;
+          // Feathered scene polygons deliberately exclude the numbered circles and luminous path.
+          const patches=[
+            {dx:-255,poly:[[525,477],[550,465],[690,467],[730,482],[750,520],[766,575],[760,602],[703,608],[604,600],[595,587],[548,587],[520,596],[510,550]]},
+            {dx:255,poly:[[270,478],[300,467],[445,467],[485,480],[510,516],[510,570],[500,604],[450,608],[371,601],[359,588],[315,588],[295,600],[255,586],[245,540]]}
+          ];
+          for(const p of patches){
+            const layer=document.createElement('canvas');layer.width=canvas.width;layer.height=canvas.height;
+            const l=layer.getContext('2d');
+            l.save();l.scale(sx,sy);l.translate(p.dx,0);l.beginPath();
+            p.poly.forEach(([x,y],i)=>i?l.lineTo(x,y):l.moveTo(x,y));l.closePath();l.fillStyle='white';l.filter='blur(5px)';l.fill();l.restore();
+            l.globalCompositeOperation='source-in';l.drawImage(source,p.dx*sx,0,canvas.width,canvas.height);
+            ctx.drawImage(layer,0,0);
+          }
+          // Restore the original numbered badges and path below the scene boundary.
+          ctx.save();ctx.scale(sx,sy);ctx.beginPath();
+          ctx.arc(337,614,29,0,Math.PI*2);ctx.arc(573,614,29,0,Math.PI*2);
+          ctx.clip();ctx.drawImage(source,0,0,1024,1536);ctx.restore();
+          resolve(canvas.toDataURL('image/png'));
+        }catch(e){reject(e);}
+      };source.onerror=reject;source.src='reisekarte-final.webp';
+    }).catch(e=>{correctedArt=null;throw e;});
+    return correctedArt;
+  }
   let lastMap=null, lastPosition=null;
   function enhance() {
     const frame=document.querySelector('.storybook-screen:not([hidden]) .final-map');
@@ -110,7 +144,7 @@
     if(frame===lastMap)return;
     lastMap=frame;
     const img=frame.querySelector('.final-map-art');
-    if(img) {img.src='reisekarte-final.webp';img.alt='Unsere illustrierte Reisekarte mit 24 Stationen';}
+    if(img) {img.src='reisekarte-final.webp';img.alt='Unsere illustrierte Reisekarte mit 24 Stationen';swappedArt().then(url=>{if(img.isConnected)img.src=url;}).catch(()=>{});}
     const done=solvedDays(),last=Math.max(0,...done);
     frame.querySelectorAll('.final-map-hotspot').forEach((button,i)=>{
       if(!positions[i])return;
