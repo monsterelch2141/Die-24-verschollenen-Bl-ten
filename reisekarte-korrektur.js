@@ -35,35 +35,38 @@
     // Durchgehende Öffnung vom oberen Kartenrand bis zur aktuellen Reihe.
     // Keine getrennten Masken mehr zwischen bereits gelösten Reihen.
     const activeRow=rows.find(row=>last>=row.first && last<=row.last);
-    const clearTo=activeRow ? activeRow.top+1.1 : 10.8;
-    let open=last?`<rect width="100" height="${clearTo}" fill="black"/>`:'';
-    for(const row of rows) {
-      // Vollständig abgeschlossene Reihen liegen bereits in der durchgehenden Öffnung.
-      if (activeRow && row.last < activeRow.first) continue;
+    let open='';
+    // Trace the lower edge of the actual luminous route, rather than a rectangular row.
+    function boundary(row){
+      const pts=positions.slice(row.first-1,row.last).map(([x,y])=>[x,y+1.35]).sort((a,b)=>a[0]-b[0]);
+      return [[0,pts[0][1]],...pts,[100,pts[pts.length-1][1]]];
+    }
+    function at(pts,x){
+      for(let i=1;i<pts.length;i++)if(x<=pts[i][0]){
+        const [a,b]=[pts[i-1],pts[i]];return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]);
+      }return pts.at(-1)[1];
+    }
+    function strip(pts,left,right,top){
+      const line=[[left,at(pts,left)],...pts.filter(p=>p[0]>left&&p[0]<right),[right,at(pts,right)]];
+      return '<path fill="black" d="M '+left+' '+top+' L '+right+' '+top+' '+line.reverse().map(p=>'L '+p.join(' ')).join(' ')+' Z"/>';
+    }
+    for(const row of rows){
       const count=Math.max(0,Math.min(row.last-row.first+1,last-row.first+1));
       if(!count)continue;
       const full=count===row.last-row.first+1;
       const x=positions[row.first+count-2][0];
-      const edge=row.dir===1?Math.min(100,x+11):Math.max(0,x-11);
-      const left=full?0:(row.dir===1?0:edge);
-      const right=full?100:(row.dir===1?edge:100);
-      const top=row.top-0.35,bottom=row.bottom;
-      // Round both the advancing edge and the corners at the row transition.
-      const width=right-left, height=bottom-top;
-      const rad=Math.min(4.8,width/3,height/2.5);
-      // Weiche Bezierkurven statt rechtwinkliger Ausschnitte.
-      const mid=(left+right)/2;
-      open+=`<path d="M ${left+rad} ${top} L ${right-rad} ${top} Q ${right} ${top} ${right} ${top+rad} L ${right} ${bottom-rad} Q ${right} ${bottom} ${right-rad} ${bottom} Q ${mid+width*.16} ${bottom-1.0} ${mid} ${bottom+.35} Q ${mid-width*.16} ${bottom+1.0} ${left+rad} ${bottom} Q ${left} ${bottom} ${left} ${bottom-rad} L ${left} ${top+rad} Q ${left} ${top} ${left+rad} ${top} Z" fill="black"/>`;
-      // A softer halo prevents cloud remnants directly on the active symbol.
-      const revealed=positions.slice(row.first-1,row.first-1+count);
-      for(const [cx,cy] of revealed)open+=`<ellipse cx="${cx}" cy="${cy}" rx="7.2" ry="3.6" fill="black"/>`;
+      const edge=row.dir===1?Math.min(100,x+10):Math.max(0,x-10);
+      const left=full?0:row.dir===1?0:edge,right=full?100:row.dir===1?edge:100;
+      const pts=boundary(row);
+      if(full)open+=strip(pts,0,100,0);
+      else open+=strip(pts,left,right,Math.max(0,row.top-8));
     }
     // Unabhängig vom Fortschritt: die beiden sitzenden Figuren unten links.
     if(last)open+='<ellipse cx="12" cy="90" rx="23" ry="13.5" fill="black"/>';
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
       <defs>
         <filter id="edge" x="-4%" y="-4%" width="108%" height="108%">
-          <feTurbulence type="fractalNoise" baseFrequency=".085 .12" numOctaves="4" seed="23" result="edgeNoise"/><feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="5.0" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".72"/>
+          <feTurbulence type="fractalNoise" baseFrequency=".085 .12" numOctaves="4" seed="23" result="edgeNoise"/><feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="1.1" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".23"/>
         </filter>
         <mask id="visibility" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
           <rect width="100" height="100" fill="white"/>
@@ -151,14 +154,19 @@
       const [x,y]=positions[i];button.style.left=x+'%';button.style.top=y+'%';Object.assign(button.style,{width:'19%',height:'9.5%',transform:'translate(-50%,-62%)',background:'transparent',border:'0',boxShadow:'none',pointerEvents:button.disabled?'none':'auto',cursor:button.disabled?'default':'pointer'});
       // Die existierenden Klick-Handler für die freigeschalteten Fotogalerien bleiben bestehen.
     });
+    const hot=frame.querySelector('.final-map-hotspots');
+    if(hot)Object.assign(hot.style,{position:'absolute',inset:'0',zIndex:'30',pointerEvents:'none'});
+    if(img)img.style.pointerEvents='none';
     const fog=frame.querySelector('.final-map-fog');
     if(fog) {
+      fog.style.pointerEvents='none';
       fog.style.backgroundImage=`url("data:image/svg+xml,${encodeURIComponent(fogSvg(last))}")`;
       fog.style.backgroundSize='100% 100%';
       fog.style.backgroundRepeat='no-repeat';
     }
     const couple=frame.querySelector('.final-map-couple');
     if(couple) {
+      couple.style.pointerEvents='none';
       // Tatsächliche Positionen des gedruckten Pfads, nicht im freien Kartenfeld.
       // Auf der waagerechten Strecke stehen die Figuren zwischen den Zahlen.
       // Bei den Reihenwechseln stehen sie auf dem senkrechten Kurvenstück.
