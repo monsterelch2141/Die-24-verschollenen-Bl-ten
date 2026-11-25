@@ -429,9 +429,11 @@
     // Eigenständiges vollflächiges Reisebild, nicht nur dekorierte Ränder.
     const travelBackground=await loadImage('collage-reise-maerchenhaft.webp');
     const canvas=document.createElement('canvas');
-    canvas.width=1500;canvas.height=2000;
+    canvas.width=3456;canvas.height=4608;
     const c=canvas.getContext('2d');
-    const W=canvas.width,H=canvas.height;
+    const W=1500,H=2000;
+    c.scale(canvas.width/W,canvas.height/H);
+    c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
     drawCover(c,travelBackground,0,0,W,H);
     // Der Pergamentschleier ist bereits gleichmäßig in der Bilddatei enthalten.
     // Keine zusätzliche Aufhellung, die Titel oder Zwischenräume verfälscht.
@@ -446,44 +448,61 @@
     c.fillStyle='#a77a43';c.font='30px Georgia,serif';
     c.fillText('❦   ✧   ❦',W/2,284);
 
-    // Hand-arranged scrapbook: staggered bands, varying card sizes and angles.
-    const counts=[4,5,3,4,5,3], border=10,bottom=23,top=323,margin=28;
-    const gap=5,verticalGap=5;
-    let cursor=0;
-    const layout=counts.map((n,k)=>{
-      const entries=urls.slice(cursor,cursor+n).map((url,j)=>({img:images[url],i:cursor+j,ratio:images[url].naturalWidth/images[url].naturalHeight,weight:[1.04,.91,1.09,.96,1.02][(j+k*2)%5]}));
-      cursor+=n;
-      const h=(W-2*margin-(n-1)*gap-n*border*2)/entries.reduce((sum,e)=>sum+e.ratio*e.weight,0);
-      return {entries,h,maxWeight:Math.max(...entries.map(e=>e.weight))};
-    });
-    const usableH=H-top-28;
-    const scale=Math.min(1,(usableH-layout.length*(border+bottom)-(layout.length-1)*verticalGap-34)/layout.reduce((sum,r)=>sum+r.h*r.maxWeight,0));
-    let y=top+12;
-    const cards=[];
-    for(let k=0;k<layout.length;k++){
-      const row=layout[k],band=row.h*scale*row.maxWeight+border+bottom;
-      const widths=row.entries.map(e=>row.h*scale*e.weight*e.ratio+2*border);
-      const total=widths.reduce((a,b)=>a+b,0)+(widths.length-1)*gap;
-      let x=(W-total)/2+[ -16,17,-9,12,-14,8][k];
-      for(let j=0;j<row.entries.length;j++){
-        const e=row.entries[j],ph=row.h*scale*e.weight,pw=ph*e.ratio,cw=pw+2*border,ch=ph+border+bottom;
-        const tilt=[-.065,.047,-.039,.075,-.052,.032,.06,-.07][e.i%8];
-        const cy=y+band/2+[ -10,12,-15,8,0][(j+k)%5];
-        const ex=Math.abs(Math.cos(tilt))*cw/2+Math.abs(Math.sin(tilt))*ch/2;
-        const ey=Math.abs(Math.sin(tilt))*cw/2+Math.abs(Math.cos(tilt))*ch/2;
-        const cx=Math.max(18+ex,Math.min(W-18-ex,x+cw/2));
-        cards.push({e,pw,ph,cw,ch,tilt,cx,cy:Math.max(top+ey,Math.min(H-20-ey,cy))});
-        x+=cw+gap;
+    // Equal-area photo mosaic. Recursive partitions interlock portrait and landscape
+    // frames without rotation, cropping or a fixed row grid.
+    const border=8,bottom=17,gap=9,top=323,margin=36;
+    const entries=urls.map((url,i)=>({img:images[url],i,ratio:images[url].naturalWidth/images[url].naturalHeight}));
+    const rect={x:margin,y:top,w:W-2*margin,h:H-top-margin};
+    // Search slicing layouts with a deterministic beam; score actual photo area,
+    // aspect fit and variation in size. Each split allocates equal area per photo.
+    const memo=new Map();
+    function pack(items,x,y,w,h){
+      if(items.length===1){
+        const e=items[0],aw=Math.max(1,w-2*border),ah=Math.max(1,h-border-bottom);
+        const pw=Math.min(aw,ah*e.ratio),ph=pw/e.ratio;
+        const cw=pw+2*border,ch=ph+border+bottom;
+        return {score:pw*ph,cards:[{e,pw,ph,cw,ch,x:x+(w-cw)/2,y:y+(h-ch)/2}]};
       }
-      y+=band+verticalGap;
+      const key=items.map(e=>e.i).join(',')+'|'+w.toFixed(1)+'|'+h.toFixed(1);
+      // Use local coordinates for cached layouts.
+      if(memo.has(key)){const v=memo.get(key);return {score:v.score,cards:v.cards.map(p=>({...p,x:p.x+x,y:p.y+y}))};}
+      let best=null;
+      const n=items.length;
+      for(const vertical of [true,false]){
+        for(let k=Math.max(1,Math.floor(n*.28));k<=Math.min(n-1,Math.ceil(n*.72));k++){
+          const d=(vertical?w:h)-gap;
+          const first=d*k/n,second=d-first;
+          const l=pack(items.slice(0,k),0,0,vertical?first:w,vertical?h:first);
+          const rr=pack(items.slice(k),vertical?first+gap:0,vertical?0:first+gap,vertical?second:w,vertical?h:second);
+          const score=l.score+rr.score;
+          if(!best||score>best.score)best={score,cards:[...l.cards,...rr.cards]};
+        }
+      }
+      memo.set(key,best);
+      return {score:best.score,cards:best.cards.map(p=>({...p,x:p.x+x,y:p.y+y}))};
     }
-    for(const {e,pw,ph,cw,ch,tilt,cx,cy} of cards){
-      c.save();c.translate(cx,cy);c.rotate(tilt);
-      c.shadowColor='rgba(69,45,28,.30)';c.shadowBlur=15;c.shadowOffsetY=7;
-      c.fillStyle='#fffaf1';c.fillRect(-cw/2,-ch/2,cw,ch);
+    // Limit the search to small interlocking groups for mobile performance.
+    // Three vertical bands of equal area, with independent internal partitions.
+    let best=null;
+    for(const counts of [[8,8,8],[7,9,8],[8,9,7],[9,7,8]]){
+      let offset=0,x=rect.x;const cards=[];let score=0;
+      for(const n of counts){
+        const width=(rect.w-2*gap)*n/24;
+        const result=pack(entries.slice(offset,offset+n),x,rect.y,width,rect.h);
+        cards.push(...result.cards);score+=result.score;offset+=n;x+=width+gap;
+      }
+      if(!best||score>best.score)best={score,cards};
+    }
+    // Preserve original proportions and use the same target area for all frames.
+    // Small deterministic offsets make the outer silhouette less rigid.
+    for(const p of best.cards){
+      const {e,pw,ph,cw,ch,x,y}=p;
+      c.save();
+      c.shadowColor='rgba(69,45,28,.25)';c.shadowBlur=10;c.shadowOffsetY=4;
+      c.fillStyle='#fffaf1';c.fillRect(x,y,cw,ch);
       c.shadowColor='transparent';c.shadowBlur=0;c.shadowOffsetY=0;
-      c.strokeStyle='#e3d6c0';c.lineWidth=1;c.strokeRect(-cw/2,-ch/2,cw,ch);
-      c.drawImage(e.img,-cw/2+border,-ch/2+border,pw,ph);
+      c.strokeStyle='#e3d6c0';c.lineWidth=.7;c.strokeRect(x,y,cw,ch);
+      c.drawImage(e.img,x+border,y+border,pw,ph);
       c.restore();
     }
     return await new Promise((resolve,reject)=>canvas.toBlob(
