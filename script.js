@@ -112,31 +112,33 @@
   }
 
   const shell=overlay.querySelector('.reveal-shell');
-  function fitPhoto(){if(!photoImage.naturalWidth||!photoImage.naturalHeight)return;const ratio=photoImage.naturalWidth/photoImage.naturalHeight;const w=Math.min(window.innerWidth*.86-30,460,Math.max(60,window.innerHeight-155)*ratio);shell.style.setProperty('--photo-width',Math.round(w)+'px');shell.style.setProperty('--photo-ratio',String(ratio));}
-  photoImage.addEventListener('load',fitPhoto);
-  window.addEventListener('resize',fitPhoto);
-  function showPhoto(forDay, animated = true) {
-    const info = photos[forDay];
-    if (!info || !info.datei) return;
-    lastFocus = document.activeElement;
-    shell.style.removeProperty('--photo-width'); shell.style.removeProperty('--photo-ratio');
-    photoImage.src = info.datei; if(photoImage.complete)fitPhoto();
-    photoImage.alt = `Erinnerungsfoto zum ${forDay}. Dezember`;
-    photoCaption.textContent = info.text || `Unsere Erinnerung vom ${forDay}. Dezember ♡`;
-    overlay.hidden = false;
-    overlay.classList.remove('legendary-play');
-    void overlay.offsetWidth;
-    if (animated) overlay.classList.add('legendary-play');
+  let photoRequest=0, activeRatio=0;
+  function fitPhoto(ratio=activeRatio){if(!ratio)return;const w=Math.min(window.innerWidth*.86-30,460,Math.max(60,window.innerHeight-155)*ratio);shell.style.setProperty('--photo-width',Math.round(w)+'px');shell.style.setProperty('--photo-ratio',String(ratio));}
+  window.addEventListener('resize',()=>fitPhoto());
+  async function showPhoto(forDay, animated = true) {
+    const info=photos[forDay];if(!info?.datei)return;
+    const request=++photoRequest;lastFocus=document.activeElement;
+    overlay.hidden=false;overlay.style.visibility='hidden';overlay.classList.remove('legendary-play');
     document.body.classList.add('photo-open');
-    closePhoto.focus();
+    try{
+      const img=await loadImage(info.datei);
+      if(request!==photoRequest)return;
+      activeRatio=img.naturalWidth/img.naturalHeight;fitPhoto();
+      photoImage.src=img.src;
+      if(photoImage.decode)try{await photoImage.decode()}catch(_){}
+      if(request!==photoRequest)return;
+      photoImage.alt='Erinnerungsfoto zum '+forDay+'. Dezember';
+      photoCaption.textContent=info.text||'Unsere Erinnerung vom '+forDay+'. Dezember ♡';
+      void overlay.offsetWidth;
+      overlay.style.visibility='';
+      if(animated)overlay.classList.add('legendary-play');
+      closePhoto.focus();
+    }catch(err){if(request!==photoRequest)return;hidePhoto();feedback.className='feedback error';feedback.textContent='Das Erinnerungsfoto konnte nicht geladen werden.';}
   }
-
-  function hidePhoto() {
-    overlay.hidden = true;
-    overlay.classList.remove('legendary-play');
-    document.body.classList.remove('photo-open');
-    photoImage.removeAttribute('src');
-    if (lastFocus && lastFocus.isConnected) lastFocus.focus();
+  function hidePhoto(){
+    ++photoRequest;overlay.hidden=true;overlay.style.visibility='';overlay.classList.remove('legendary-play');
+    document.body.classList.remove('photo-open');photoImage.removeAttribute('src');
+    if(lastFocus&&lastFocus.isConnected)lastFocus.focus();
   }
 
   function solvedPhotoFor(code) {
@@ -302,9 +304,12 @@
     e.stopImmediatePropagation();e.preventDefault();
     const index=Array.from(board.children).indexOf(cell);
     const code='ABCDEF'[index%6]+(Math.floor(index/6)+1);
-    const d=Number(Object.keys(answers).find(k=>answers[k]===code));if(!d)return;
-    const fresh=solved[d]!==code;solved[d]=code;save();allRevealed=true;render();showPhoto(d,fresh);
-    feedback.className='feedback success';feedback.textContent='✧ Testmodus: Foto von Tag '+d+' aufgedeckt. ✧';
+    if(solvedFields().has(code)){const d=solvedPhotoFor(code);if(d)showPhoto(d,!allRevealed);return;}
+    if(solved[day]){feedback.className='feedback success';feedback.textContent='✧ Dieses Tagesrätsel hast du bereits gelöst. ✧';return;}
+    if(code!==answers[day]){cell.classList.add('wrong');feedback.className='feedback error';feedback.textContent='Noch nicht ganz – folge den Sternen erneut. ✧';return;}
+    solved[day]=code;save();render();showPhoto(day);
+    feedback.className='feedback success';feedback.textContent='✧ Richtig! Ein weiteres Geheimnis ist gelüftet. ✧';
+    document.dispatchEvent(new CustomEvent('advent-star-solved',{detail:{day}}));
   },true);
   testComplete.addEventListener('click', () => {
     if (!testMode || !confirm('Alle 24 Rätsel für den Collage-Test als gelöst markieren?')) return;
@@ -441,23 +446,35 @@
     c.fillStyle='#a77a43';c.font='30px Georgia,serif';
     c.fillText('❦   ✧   ❦',W/2,284);
 
-    const cols=4,cardW=285,cardH=232,gapX=24,gapY=24;
-    const left=(W-(cols*cardW+(cols-1)*gapX))/2,top=342;
-    for(let i=0;i<24;i++) {
-      const row=Math.floor(i/cols),col=i%cols;
-      const x=left+col*(cardW+gapX),y=top+row*(cardH+gapY);
-      const tilt=([-0.012,.008,-.009,.011][col]+(row%2?-.003:.003));
-      c.save();c.translate(x+cardW/2,y+cardH/2);c.rotate(tilt);
-      c.shadowColor='rgba(69,45,28,.30)';c.shadowBlur=15;c.shadowOffsetY=7;
-      c.fillStyle='#fffaf1';c.fillRect(-cardW/2,-cardH/2,cardW,cardH);
-      c.shadowColor='transparent';c.shadowBlur=0;c.shadowOffsetY=0;
-      c.strokeStyle='#e3d6c0';c.lineWidth=1;c.strokeRect(-cardW/2,-cardH/2,cardW,cardH);
-      const border=12;
-      const px=-cardW/2+border,py=-cardH/2+border;
-      const pw=cardW-border*2,ph=cardH-border*2-16;
-      c.save();c.beginPath();c.rect(px,py,pw,ph);c.clip();
-      drawCover(c,images[urls[i]],px,py,pw,ph);
-      c.restore();c.restore();
+    // Justified rows with variable widths, natural image proportions and gentle rotations.
+    const rows=[4,4,4,4,4,4], margin=95, gap=24, border=10, bottom=22, top=345;
+    const availableW=W-2*margin, availableH=H-top-95;
+    let cursor=0;
+    const layout=rows.map(n=>{
+      const entries=urls.slice(cursor,cursor+n).map((url,j)=>({img:images[url],i:cursor+j,ratio:images[url].naturalWidth/images[url].naturalHeight}));
+      cursor+=n;
+      const height=(availableW-(n-1)*gap-n*border*2)/entries.reduce((sum,e)=>sum+e.ratio,0);
+      return {entries,height};
+    });
+    const scale=Math.min(1,(availableH-(rows.length-1)*gap-rows.length*(border+bottom))/layout.reduce((sum,r)=>sum+r.height,0));
+    const totalH=layout.reduce((sum,r)=>sum+r.height*scale+border+bottom,0)+(rows.length-1)*gap;
+    let y=top+(availableH-totalH)/2;
+    for(const row of layout){
+      const ph=row.height*scale,cardH=ph+border+bottom;
+      const rowW=row.entries.reduce((sum,e)=>sum+ph*e.ratio+2*border,0)+(row.entries.length-1)*gap;
+      let x=(W-rowW)/2;
+      for(const e of row.entries){
+        const pw=ph*e.ratio,cardW=pw+2*border;
+        const tilt=[-.032,.025,-.018,.034,-.026,.015][e.i%6];
+        c.save();c.translate(x+cardW/2,y+cardH/2);c.rotate(tilt);
+        c.shadowColor='rgba(69,45,28,.30)';c.shadowBlur=15;c.shadowOffsetY=7;
+        c.fillStyle='#fffaf1';c.fillRect(-cardW/2,-cardH/2,cardW,cardH);
+        c.shadowColor='transparent';c.shadowBlur=0;c.shadowOffsetY=0;
+        c.strokeStyle='#e3d6c0';c.lineWidth=1;c.strokeRect(-cardW/2,-cardH/2,cardW,cardH);
+        c.drawImage(e.img,-cardW/2+border,-cardH/2+border,pw,ph);
+        c.restore();x+=cardW+gap;
+      }
+      y+=cardH+gap;
     }
     return await new Promise((resolve,reject)=>canvas.toBlob(
       b=>b?resolve(b):reject(new Error('Bild konnte nicht erstellt werden.')),'image/png'));
