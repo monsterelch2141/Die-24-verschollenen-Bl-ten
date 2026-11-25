@@ -7,7 +7,7 @@ button,select { font:inherit; }
 .page {
   position:relative; max-width:1060px; min-height:100vh; margin:0 auto;
   padding:80px 0 55px; overflow:hidden;
-  background:#eeddbd url('reise-hintergrund.webp') center top / 100% 100% no-repeat;
+  background:#eeddbd url('reise-hintergrund-neu.webp') center top / 100% 100% no-repeat;
   box-shadow:0 0 35px #54331345;
 }
 .top-florals {
@@ -115,7 +115,7 @@ footer p { margin:0; }
 .password-gate {
   position:relative; isolation:isolate; min-height:100svh; max-width:1060px; margin:auto;
   display:flex; align-items:center; justify-content:center; padding:75px 18px;
-  background:#e9d6b4 url('reise-hintergrund.webp') center center / 100% 100% no-repeat;
+  background:#e9d6b4 url('reise-hintergrund-neu.webp') center center / 100% 100% no-repeat;
   box-shadow:0 0 35px #54331345;
 }
 .gate-florals { position:absolute; inset:0 0 auto; height:125px; z-index:1; pointer-events:none;
@@ -456,7 +456,7 @@ footer p { margin:0; }
 .final-actions { margin:18px auto; padding:12px 10px; border:1px solid #c49a60; background:#fff7e4; text-align:center; }
 .final-actions p { margin:0 0 5px; font-style:italic; }
 .test-complete { display:block; margin:12px auto 0; padding:6px 12px; border:1px dashed #b78a4a; background:#fff7e8; color:#815023; cursor:pointer; font-size:15px; }
-.collage-view { position:relative; min-height:100svh; padding:42px 15px 65px; background:#e9d6b4 url('reise-hintergrund.webp') center top / 100% 100% no-repeat; }
+.collage-view { position:relative; min-height:100svh; padding:42px 15px 65px; background:#e9d6b4 url('reise-hintergrund-neu.webp') center top / 100% 100% no-repeat; }
 .collage-panel { max-width:760px; margin:0 auto; padding:24px 18px 35px; text-align:center; border:1px solid #b78949; outline:1px solid #d4ae70; outline-offset:-8px; background:#f8e9ccf5; box-shadow:0 15px 40px #54331355; }
 .collage-ornament { color:#b78a4a; letter-spacing:8px; font-size:26px; }
 .collage-panel h2 { font:400 clamp(38px,7vw,65px)/1.1 'Great Vibes',cursive; text-transform:none; letter-spacing:0; color:#764318; margin:10px 0; }
@@ -471,7 +471,7 @@ footer p { margin:0; }
 /* V54: Reiseillustration proportional statt mit wachsender Seitenhöhe verzerren. */
 .page {
   padding-top:clamp(24px, 5vw, 55px);
-  background-image:linear-gradient(rgba(250,238,214,.10),rgba(250,238,214,.10)),url('reise-hintergrund.webp');
+  background-image:linear-gradient(rgba(250,238,214,.10),rgba(250,238,214,.10)),url('reise-hintergrund-neu.webp');
   background-position:center top, center top;
   background-size:100% 100%,100% auto;
   background-repeat:no-repeat,repeat-y;
@@ -1165,9 +1165,12 @@ html:has(.day5-overlay){overflow:hidden!important}
 #password-gate .gate-footnote{order:2;}
 
 /* Fixed viewport artwork, shared by login and main page. No Safari fixed-attachment dependency. */
-body::before{content:"";position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,1060px);z-index:-1;pointer-events:none;background:#e9d6b4 url('reise-hintergrund.webp') center center / cover no-repeat;}
+body::before{content:"";position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,1060px);z-index:-1;pointer-events:none;background:#e9d6b4 url('reise-hintergrund-neu.webp') center center / cover no-repeat;}
 body{isolation:isolate;}
 #password-gate,.page{background:transparent!important;box-shadow:none;}
 #password-gate .gate-florals,.page .top-florals{display:none!important;}
 #password-gate{min-height:100svh;}
 @media(min-width:681px) and (orientation:portrait){#password-gate .gate-paper{min-height:calc(100svh - 2 * clamp(18px,4vh,44px));}}
+
+/* Keep the complete new artwork visible, including the bottom travel objects. */
+body::before{background-image:linear-gradient(rgba(250,238,214,.10),rgba(250,238,214,.10)),url('reise-hintergrund-neu.webp');background-size:100% 100%,100% 100%;background-repeat:no-repeat;}
