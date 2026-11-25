@@ -4,12 +4,21 @@ const dayKey='advent-ausgewaehlter-tag-v1';
 const page=document.getElementById('advent-page');
 const world=document.querySelector('.storybook-screen');
 if(!page)return;
-let running=false,lastVisible=false;
+let running=false,lastVisible=false,pending=false;
 function eligible(){
- if(page.hidden || (world&&!world.hidden) || !document.getElementById('photo-overlay')?.hidden)return false;
+ if(page.hidden || !document.getElementById('photo-overlay')?.hidden)return false;
+ if(document.querySelector('.storybook-screen:not([hidden])'))return false;
  const day=Number(document.getElementById('day')?.value||sessionStorage.getItem(dayKey)||1);
- if(day!==6)return false;
- try {const solved=JSON.parse(localStorage.getItem(solvedKey)||'{}');return solved[6]===window.STERNEN_LOESUNGEN?.[6]}catch{return false}
+ const now=new Date();
+ const nikolaus=now.getMonth()===11&&now.getDate()===6;
+ if(!nikolaus&&!(window.ADVENT_TESTMODUS&&day===6))return false;
+ // A puzzle overlay is not the main page.
+ for(const el of document.querySelectorAll('[class*="overlay"],[role="dialog"]')){
+   if(el.closest('.nikolaus-winter')||el.hidden||el.closest('[hidden]'))continue;
+   const st=getComputedStyle(el);
+   if(st.display!=='none'&&st.visibility!=='hidden'&&el.getBoundingClientRect().width>0&&st.position==='fixed')return false;
+ }
+ return true;
 }
 const css=document.createElement('style');
 css.textContent=`
@@ -31,11 +40,11 @@ function play(){
  image.style.cssText='display:block;width:100%;height:auto;';
  figure.append(image);
  layer.append(figure);document.body.append(layer);
- setTimeout(()=>{layer.remove();running=false;lastVisible=eligible()},8200);
+ setTimeout(()=>{layer.remove();running=false;if(pending){pending=false;if(eligible())play()}},8200);
 }
-function check(){const yes=eligible();if(yes&&!lastVisible)play();lastVisible=yes}
-const obs=new MutationObserver(check);obs.observe(document.body,{subtree:true,attributes:true,attributeFilter:['hidden']});
-document.addEventListener('change',check);document.addEventListener('click',()=>setTimeout(check,180));
+function check(){const yes=eligible();if(yes&&!lastVisible){if(running)pending=true;else play()}lastVisible=yes}
+const obs=new MutationObserver(check);obs.observe(document.body,{subtree:true,attributes:true,attributeFilter:['hidden','class','style']});
+document.addEventListener('change',check);setInterval(check,350);document.addEventListener('click',()=>setTimeout(check,180));
 window.addEventListener('pageshow',()=>setTimeout(check,300));
 setTimeout(check,700);
 })();
