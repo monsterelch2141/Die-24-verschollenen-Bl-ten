@@ -34,43 +34,37 @@
     // Die größere Höhe schützt vollständig freigeschaltete Symbole vor Nebelresten.
     // Durchgehende Öffnung vom oberen Kartenrand bis zur aktuellen Reihe.
     // Keine getrennten Masken mehr zwischen bereits gelösten Reihen.
-    const activeRow=rows.find(row=>last>=row.first && last<=row.last);
+    // Hand-shaped route boundaries: each row follows the printed path, with
+    // separate advancing contours between landmarks, not rectangular cutouts.
+    const contours=[
+      [[0,17.4],[7.4,17.5],[20,17.7],[33.1,18],[44,19],[55.4,18.7],[70,18.5],[85.2,18.4],[100,19]],
+      [[0,29.5],[10.7,29.5],[22,30.2],[34.3,30.5],[47,30.9],[58.6,30.5],[75,30],[91,29.4],[100,28.8]],
+      [[0,39.3],[8,39.4],[20,41.2],[33,41.6],[44,42],[55.9,41.4],[74,41.8],[91.8,41.4],[100,42]],
+      [[0,52.4],[7.4,52.5],[20,53.1],[31.9,53],[45,54],[60.4,53.1],[77,53.5],[92.7,52.2],[100,51.8]],
+      [[0,63.5],[7.2,63.6],[20,65.1],[31.9,65.6],[45,66],[60.4,65.4],[75,65.1],[89.7,64.6],[100,65]],
+      [[0,78.6],[28.3,78.6],[45,79.8],[61.3,79.6],[76,79],[89.7,78.3],[100,77.5]]
+    ];
+    const cuts=[[20,45,69,100],[79,46,22,0],[20,44,75,100],[79,46,20,0],[20,46,75,100],[78,45,0]];
+    function at(pts,x){for(let i=1;i<pts.length;i++)if(x<=pts[i][0]){const [a,b]=[pts[i-1],pts[i]];return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]);}return pts.at(-1)[1];}
+    function smooth(points){let d='';for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i],m=(a[0]+b[0])/2;d+=' C '+m+' '+a[1]+' '+m+' '+b[1]+' '+b.join(' ');}return d;}
     let open='';
-    // Trace the lower edge of the actual luminous route, rather than a rectangular row.
-    function boundary(row){
-      const pts=positions.slice(row.first-1,row.last).map(([x,y])=>[x,y+.65]).sort((a,b)=>a[0]-b[0]);
-      return [[0,pts[0][1]],...pts,[100,pts[pts.length-1][1]]];
-    }
-    function at(pts,x){
-      for(let i=1;i<pts.length;i++)if(x<=pts[i][0]){
-        const [a,b]=[pts[i-1],pts[i]];return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]);
-      }return pts.at(-1)[1];
-    }
-    function strip(pts,left,right,top){
-      const line=[[left,at(pts,left)],...pts.filter(p=>p[0]>left&&p[0]<right),[right,at(pts,right)]];
-      const rev=line.reverse();
-      const rad=Math.min(4.5,(right-left)/3);
-      const endY=at(pts,left),startY=at(pts,right);
-      const inner=rev.filter(p=>p[0]>left+rad&&p[0]<right-rad);
-      return '<path fill="black" d="M '+(left+rad)+' '+top+' L '+(right-rad)+' '+top+' Q '+right+' '+top+' '+right+' '+(top+rad)+' L '+right+' '+(startY-rad)+' Q '+right+' '+startY+' '+(right-rad)+' '+at(pts,right-rad)+' '+inner.map(p=>'L '+p.join(' ')).join(' ')+' L '+(left+rad)+' '+at(pts,left+rad)+' Q '+left+' '+endY+' '+left+' '+(endY-rad)+' L '+left+' '+(top+rad)+' Q '+left+' '+top+' '+(left+rad)+' '+top+' Z"/>';
-    }
-    for(const row of rows){
-      const count=Math.max(0,Math.min(row.last-row.first+1,last-row.first+1));
+    for(let k=0;k<contours.length;k++){
+      const row=rows[k],pts=contours[k],count=Math.max(0,Math.min(row.last-row.first+1,last-row.first+1));
       if(!count)continue;
       const full=count===row.last-row.first+1;
-      const x=positions[row.first+count-2][0];
-      const edge=row.dir===1?Math.min(100,x+10):Math.max(0,x-10);
-      const left=full?0:row.dir===1?0:edge,right=full?100:row.dir===1?edge:100;
-      const pts=boundary(row);
-      if(full)open+=strip(pts,0,100,0);
-      else open+=strip(pts,left,right,Math.max(0,row.top-8));
+      if(full){const rev=[...pts].reverse();open+='<path fill="black" d="M -5 -5 L 105 -5 L 105 '+rev[0][1]+' L '+rev[0].join(' ')+smooth(rev)+' L -5 '+pts[0][1]+' Z"/>';continue;}
+      const edge=cuts[k][count-1],dir=row.dir,outer=dir===1?-5:105;
+      const top=k?at(contours[k-1],edge)-3:0;
+      const bottom=at(pts,edge),inset=edge-dir*3.5;
+      const line=[[inset,at(pts,inset)],...pts.filter(p=>dir===1?p[0]<inset:p[0]>inset).sort((a,b)=>dir*(b[0]-a[0])),[outer,at(pts,dir===1?0:100)]];
+      open+='<path fill="black" d="M '+outer+' -5 L '+edge+' -5 L '+edge+' '+top+' C '+(edge+dir*2)+' '+(top+3)+' '+(edge-dir*2)+' '+(bottom-5)+' '+edge+' '+(bottom-3)+' Q '+edge+' '+bottom+' '+line[0].join(' ')+smooth(line)+' Z"/>';
     }
-    // Unabhängig vom Fortschritt: die beiden sitzenden Figuren unten links.
-    if(last)open+='<ellipse cx="12" cy="90" rx="23" ry="13.5" fill="black"/>';
+    // The seated couple and camera are visible, but the Christmas house is not.
+    if(last)open+='<path fill="black" d="M -5 81 C 2 76 12 76.5 19 79 C 23 81 25 83 24 85 C 23 87 30 87 30 91 C 33 96 29 103 20 105 L -5 105 Z"/>';
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
       <defs>
         <filter id="edge" x="-4%" y="-4%" width="108%" height="108%">
-          <feTurbulence type="fractalNoise" baseFrequency=".085 .12" numOctaves="4" seed="23" result="edgeNoise"/><feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="3.2" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".58"/>
+          <feTurbulence type="fractalNoise" baseFrequency=".085 .12" numOctaves="4" seed="23" result="edgeNoise"/><feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="4.0" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".85"/>
         </filter>
         <mask id="visibility" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
           <rect width="100" height="100" fill="white"/>
