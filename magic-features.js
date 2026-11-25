@@ -84,6 +84,20 @@ function map(animate=false){
  stage.innerHTML='<div class="final-map"><img class="final-map-art" src="reise-karte-illustration.webp" alt="Märchenhafte illustrierte Karte unserer 24 gemeinsamen Erinnerungen"><div class="final-map-fog"></div><div class="final-map-hotspots"></div><img class="final-map-couple" src="reisepaar-mini.png" alt="Lena und Luis auf ihrer gemeinsamen Reise"></div><p class="final-map-note">Jedes entdeckte Wahrzeichen bewahrt eine Erinnerung. ♡</p>';
  const frame=stage.querySelector('.final-map');frame.dataset.walk=animate?'yes':'no';const hot=stage.querySelector('.final-map-hotspots'),fog=stage.querySelector('.final-map-fog'),pair=stage.querySelector('.final-map-couple');
  positions.forEach(([x,y],i)=>{const d=i+1,b=document.createElement('button');b.type='button';b.className='final-map-hotspot';b.style.left=x+'%';b.style.top=y+'%';b.setAttribute('aria-label',stops[i][0]+' – Erinnerung öffnen');b.title=stops[i][0];b.disabled=!done.includes(d);if(!b.disabled)b.addEventListener('click',()=>memory(d));hot.append(b)});
+ // Independent coordinate-based tap handler, including taps directly on printed numbers.
+ frame.addEventListener('click',e=>{
+   const rect=frame.getBoundingClientRect();
+   const x=(e.clientX-rect.left-frame.clientLeft)/frame.clientWidth*100;
+   const y=(e.clientY-rect.top-frame.clientTop)/frame.clientHeight*100;
+   const coords=[[7.4,15.6],[33.1,16.1],[55.4,16.8],[85.2,16.5],[91,27.5],[58.6,28.6],[34.3,28.6],[10.7,27.6],[8,37.5],[33,39.7],[55.9,39.5],[91.8,39.5],[92.7,50.3],[60.4,51.2],[31.9,51.1],[7.4,50.6],[7.2,61.7],[31.9,63.7],[60.4,63.5],[89.7,62.7],[89.7,76.4],[61.3,77.7],[28.3,76.7],[49.8,89]];
+   let best=Infinity,d=0;
+   coords.forEach(([cx,cy],i)=>{const dist=((x-cx)/12)**2+((y-cy+2)/6.5)**2;if(dist<best){best=dist;d=i+1}});
+   const button=e.target.closest('.final-map-hotspot');
+   if(button&&e.detail===0)d=Array.from(hot.children).indexOf(button)+1;
+   else if(best>1.35)return;
+   if(!days().includes(d))return;
+   e.preventDefault();e.stopImmediatePropagation();memory(d);
+ },true);
  // Undurchsichtiger Nebel verdeckt noch nicht entdeckte Gebiete, statt sie als Kacheln anzuzeigen.
  // Eine einzige zusammenhängende Nebeldecke, mit präzise freigestellten entdeckten Stationen.
  const holes=positions.filter((_,i)=>done.includes(i+1)).map(([x,y])=>'<ellipse cx="'+x+'" cy="'+y+'" rx="12.8" ry="8.4" fill="black"/>').join('');
