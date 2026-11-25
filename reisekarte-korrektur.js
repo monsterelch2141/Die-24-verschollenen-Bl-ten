@@ -38,7 +38,7 @@
     let open='';
     // Trace the lower edge of the actual luminous route, rather than a rectangular row.
     function boundary(row){
-      const pts=positions.slice(row.first-1,row.last).map(([x,y])=>[x,y+1.35]).sort((a,b)=>a[0]-b[0]);
+      const pts=positions.slice(row.first-1,row.last).map(([x,y])=>[x,y+.65]).sort((a,b)=>a[0]-b[0]);
       return [[0,pts[0][1]],...pts,[100,pts[pts.length-1][1]]];
     }
     function at(pts,x){
@@ -48,7 +48,11 @@
     }
     function strip(pts,left,right,top){
       const line=[[left,at(pts,left)],...pts.filter(p=>p[0]>left&&p[0]<right),[right,at(pts,right)]];
-      return '<path fill="black" d="M '+left+' '+top+' L '+right+' '+top+' '+line.reverse().map(p=>'L '+p.join(' ')).join(' ')+' Z"/>';
+      const rev=line.reverse();
+      const rad=Math.min(4.5,(right-left)/3);
+      const endY=at(pts,left),startY=at(pts,right);
+      const inner=rev.filter(p=>p[0]>left+rad&&p[0]<right-rad);
+      return '<path fill="black" d="M '+(left+rad)+' '+top+' L '+(right-rad)+' '+top+' Q '+right+' '+top+' '+right+' '+(top+rad)+' L '+right+' '+(startY-rad)+' Q '+right+' '+startY+' '+(right-rad)+' '+at(pts,right-rad)+' '+inner.map(p=>'L '+p.join(' ')).join(' ')+' L '+(left+rad)+' '+at(pts,left+rad)+' Q '+left+' '+endY+' '+left+' '+(endY-rad)+' L '+left+' '+(top+rad)+' Q '+left+' '+top+' '+(left+rad)+' '+top+' Z"/>';
     }
     for(const row of rows){
       const count=Math.max(0,Math.min(row.last-row.first+1,last-row.first+1));
@@ -66,7 +70,7 @@
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
       <defs>
         <filter id="edge" x="-4%" y="-4%" width="108%" height="108%">
-          <feTurbulence type="fractalNoise" baseFrequency=".085 .12" numOctaves="4" seed="23" result="edgeNoise"/><feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="1.1" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".23"/>
+          <feTurbulence type="fractalNoise" baseFrequency=".085 .12" numOctaves="4" seed="23" result="edgeNoise"/><feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="3.2" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".58"/>
         </filter>
         <mask id="visibility" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
           <rect width="100" height="100" fill="white"/>
