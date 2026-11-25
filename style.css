@@ -1156,3 +1156,10 @@ html:has(.day5-overlay){overflow:hidden!important}
 
 #collage-view { box-sizing:border-box; min-height:100svh; background-repeat:no-repeat; background-size:cover; background-position:center top; }
 #collage-preview[hidden]{display:none!important;}
+
+/* Login: one continuous artwork, with the paper covering its central blank area. */
+#password-gate{box-sizing:border-box;min-height:100svh;width:100%;background-repeat:no-repeat;background-position:center center;background-size:cover;padding:clamp(18px,4vh,44px) 18px;}
+#password-gate .gate-florals{display:none;}
+@media (min-width:681px) and (orientation:portrait){#password-gate .gate-paper{box-sizing:border-box;width:76%;max-width:760px;min-height:calc(100svh - 2 * clamp(18px,4vh,44px));display:flex;flex-direction:column;justify-content:center;}}
+#password-gate .cloud-login{order:1;}
+#password-gate .gate-footnote{order:2;}
