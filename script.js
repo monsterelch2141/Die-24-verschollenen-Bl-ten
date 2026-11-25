@@ -489,8 +489,8 @@
 
     }
     // High resolution export is encoded in strips, never displayed in the page.
-    if(high && typeof CompressionStream==='function'){
-      const width=4000,height=5333,band=128,pad=48;
+    if(high && typeof CompressionStream==='function') for(const [width,height] of [[6000,8000],[4000,5333]]){
+      const band=128,pad=64;
       const table=Uint32Array.from({length:256},(_,i)=>{let v=i;for(let j=0;j<8;j++)v=v&1?0xedb88320^(v>>>1):v>>>1;return v>>>0});
       function chunk(name,data){const out=new Uint8Array(data.length+12),dv=new DataView(out.buffer);dv.setUint32(0,data.length);for(let i=0;i<4;i++)out[4+i]=name.charCodeAt(i);out.set(data,8);let crc=0xffffffff;for(let i=4;i<out.length-4;i++)crc=table[(crc^out[i])&255]^(crc>>>8);dv.setUint32(out.length-4,(crc^0xffffffff)>>>0);return out;}
       const header=new Uint8Array(13),dv=new DataView(header.buffer);dv.setUint32(0,width);dv.setUint32(4,height);header[8]=8;header[9]=2;
