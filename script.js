@@ -420,7 +420,7 @@
     ctx.restore();
   }
 
-  async function createCollage() {
+  async function createCollage(high=false) {
     const urls = Array.from({length:24},(_,i)=>photos[i+1]?.datei);
     if(urls.some(url=>!url)) throw new Error('Noch nicht allen 24 Tagen ist ein Foto zugeordnet.');
     const unique=[...new Set(urls)];
@@ -488,16 +488,43 @@
     }
 
     }
-    const canvas=document.createElement('canvas');canvas.width=3456;canvas.height=4608;
+    // High resolution export is encoded in strips, never displayed in the page.
+    if(high && typeof CompressionStream==='function'){
+      const width=4000,height=5333,band=128,pad=48;
+      const table=Uint32Array.from({length:256},(_,i)=>{let v=i;for(let j=0;j<8;j++)v=v&1?0xedb88320^(v>>>1):v>>>1;return v>>>0});
+      function chunk(name,data){const out=new Uint8Array(data.length+12),dv=new DataView(out.buffer);dv.setUint32(0,data.length);for(let i=0;i<4;i++)out[4+i]=name.charCodeAt(i);out.set(data,8);let crc=0xffffffff;for(let i=4;i<out.length-4;i++)crc=table[(crc^out[i])&255]^(crc>>>8);dv.setUint32(out.length-4,(crc^0xffffffff)>>>0);return out;}
+      const header=new Uint8Array(13),dv=new DataView(header.buffer);dv.setUint32(0,width);dv.setUint32(4,height);header[8]=8;header[9]=2;
+      const parts=[new Uint8Array([137,80,78,71,13,10,26,10]),chunk('IHDR',header)];
+      const stream=new CompressionStream('deflate'),writer=stream.writable.getWriter(),reader=stream.readable.getReader();
+      const consume=(async()=>{while(true){const {value,done}=await reader.read();if(done)break;parts.push(chunk('IDAT',value));}})();
+      const tile=document.createElement('canvas');tile.width=width;tile.height=band+2*pad;
+      try{const ctx=tile.getContext('2d',{willReadFrequently:true,alpha:false});if(!ctx)throw Error('Canvas unavailable');
+        for(let y=0;y<height;y+=band){const n=Math.min(band,height-y);ctx.setTransform(width/1500,0,0,height/2000,0,pad-y);render(ctx);const pixels=ctx.getImageData(0,pad,width,n).data;const raw=new Uint8Array(n*(width*3+1));for(let j=0;j<n;j++){let dest=j*(width*3+1);raw[dest++]=1;let R=0,G=0,B=0;for(let x=0;x<width;x++){const i=(j*width+x)*4;raw[dest++]=pixels[i]-R;raw[dest++]=pixels[i+1]-G;raw[dest++]=pixels[i+2]-B;R=pixels[i];G=pixels[i+1];B=pixels[i+2];}}await writer.write(raw);await new Promise(resolve=>setTimeout(resolve,0));}
+        await writer.close();await consume;parts.push(chunk('IEND',new Uint8Array(0)));return new Blob(parts,{type:'image/png'});
+      }catch(e){await writer.abort(e).catch(()=>{});await consume.catch(()=>{});console.warn('High resolution fallback',e);}finally{tile.width=tile.height=1;}
+    }
+    const canvas=document.createElement('canvas');canvas.width=high?3456:1500;canvas.height=high?4608:2000;
     const c=canvas.getContext('2d');c.scale(canvas.width/1500,canvas.height/2000);render(c);
     try{return await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Bild konnte nicht erstellt werden.')),'image/png'));}
     finally{canvas.width=canvas.height=1;}
 
   }
 
+  let exportBlob=null,exportUrl=null,exportPending=false,collageGeneration=0;
+  function clearExport(){exportBlob=null;if(exportUrl)URL.revokeObjectURL(exportUrl);exportUrl=null;downloadCollage.removeAttribute('href');}
+  async function prepareExport(){
+    if(exportPending)return false;
+    exportPending=true;const generation=collageGeneration;
+    shareCollage.disabled=true;collageStatus.hidden=false;collageStatus.textContent='Dein hochauflösendes Erinnerungsbild wird erstellt …';
+    try{const blob=await createCollage(true);if(generation!==collageGeneration)return false;exportBlob=blob;exportUrl=URL.createObjectURL(blob);downloadCollage.href=exportUrl;collageStatus.textContent='Dein Druckbild ist fertig. Tippe erneut auf Sichern / Teilen oder Herunterladen.';return true;}
+    catch(e){if(generation===collageGeneration)collageStatus.textContent='Erstellung fehlgeschlagen. Bitte erneut versuchen.';return false;}
+    finally{exportPending=false;if(generation===collageGeneration)shareCollage.disabled=false;}
+  }
+  downloadCollage.addEventListener('click',async e=>{if(exportBlob)return;e.preventDefault();if(collageBlob)await prepareExport();});
   document.getElementById('open-collage').addEventListener('click', async () => {
     const count=Object.keys(solved).filter(d=>solved[d]===answers[d]).length;
     if(count!==24) return;
+    if(exportPending)return;collageGeneration++;clearExport();collageBlob=null;collagePreview.removeAttribute('src');if(collageUrl)URL.revokeObjectURL(collageUrl);collageUrl=null;
     page.hidden=true;collageView.hidden=false;
     collageStatus.hidden=false;collageStatus.textContent='Dein Erinnerungsbild wird vorbereitet …';
     collagePreview.hidden=true;shareCollage.disabled=true;
@@ -507,29 +534,31 @@
       if(collageUrl) URL.revokeObjectURL(collageUrl);
       collageUrl=URL.createObjectURL(collageBlob);
       collagePreview.src=collageUrl;collagePreview.hidden=false;
-      downloadCollage.href=collageUrl;
+      downloadCollage.removeAttribute('href');
       collageStatus.hidden=true;shareCollage.disabled=false;
     } catch(error) {
       collageStatus.textContent=error.message;
     }
   });
   document.getElementById('back-collage').addEventListener('click',()=>{
+    collageGeneration++;clearExport();collageBlob=null;collagePreview.removeAttribute('src');if(collageUrl)URL.revokeObjectURL(collageUrl);collageUrl=null;
     collageView.hidden=true;page.hidden=false;window.scrollTo(0,0);
   });
   shareCollage.addEventListener('click',async()=>{
     if(!collageBlob)return;
-    const file=new File([collageBlob],'Das-Geheimnis-der-verschollenen-Blueten.png',{type:'image/png'});
+    if(!exportBlob){await prepareExport();return;}
+    const file=new File([exportBlob],'Das-Geheimnis-der-verschollenen-Blueten.png',{type:'image/png'});
     try {
       if(navigator.share && navigator.canShare?.({files:[file]})) {
         await navigator.share({files:[file],title:'Das Geheimnis der verschollenen Blüten'});
       } else {
         collageStatus.hidden=false;
-        collageStatus.textContent='Tippe länger auf das Bild und wähle „In Fotos sichern“ oder nutze „Bild herunterladen“.';
+        collageStatus.textContent='Nutze „Bild herunterladen“ für die hochauflösende Datei.';
       }
     } catch(error) {
       if(error.name!=='AbortError') {
         collageStatus.hidden=false;
-        collageStatus.textContent='Teilen nicht möglich. Halte das Bild länger gedrückt oder verwende „Bild herunterladen“.';
+        collageStatus.textContent='Teilen nicht möglich. Verwende „Bild herunterladen“ für die hochauflösende Datei.';
       }
     }
   });
