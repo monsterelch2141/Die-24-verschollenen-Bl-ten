@@ -44,7 +44,7 @@
       [[0,63.5],[7.2,63.6],[20,65.1],[31.9,65.6],[45,66],[60.4,65.4],[75,65.1],[89.7,64.6],[100,65]],
       [[0,78.6],[28.3,78.6],[45,79.8],[61.3,79.6],[76,79],[89.7,78.3],[100,77.5]]
     ];
-    const cuts=[[28,45,69,100],[79,46,30,0],[20,44,75,100],[79,46,20,0],[20,46,75,100],[78,45,0]];
+    const cuts=[[28,45,69,100],[79,46,30,0],[20,44,75,100],[79,49,27,0],[20,46,75,100],[78,45,0]];
     function at(pts,x){for(let i=1;i<pts.length;i++)if(x<=pts[i][0]){const [a,b]=[pts[i-1],pts[i]];return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]);}return pts.at(-1)[1];}
     function smooth(points){let d='';for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i],m=(a[0]+b[0])/2;d+=' C '+m+' '+a[1]+' '+m+' '+b[1]+' '+b.join(' ');}return d;}
     let open='';
@@ -58,7 +58,7 @@
       const bottom=at(pts,edge),inset=edge-dir*3.5;
       const line=[[inset,at(pts,inset)],...pts.filter(p=>dir===1?p[0]<inset:p[0]>inset).sort((a,b)=>dir*(b[0]-a[0])),[outer,at(pts,dir===1?0:100)]];
       const shoulder=k?top:2;
-      const bulge=dir*(k===1&&count===3?1.5:k===0&&count===1?3:4);
+      const bulge=dir*(k===3&&count===3?1.5:k===3&&count===2?2.5:k===1&&count===3?1.5:k===0&&count===1?3:4);
       open+='<path fill="black" d="M '+outer+' -5 L '+(edge-dir*7)+' -5 C '+(edge-dir*3)+' '+(shoulder-3)+' '+(edge+bulge)+' '+(shoulder+2)+' '+(edge+bulge)+' '+(shoulder+5)+' C '+(edge+bulge)+' '+(bottom-7)+' '+(edge-dir*1)+' '+(bottom-2)+' '+line[0].join(' ') +smooth(line)+' Z"/>';
     }
     // The seated couple and camera are visible, but the Christmas house is not.
