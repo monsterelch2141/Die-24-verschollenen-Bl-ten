@@ -428,7 +428,7 @@
     const images=Object.fromEntries(unique.map((url,i)=>[url,loaded[i]]));
     // Eigenständiges vollflächiges Reisebild, nicht nur dekorierte Ränder.
     const travelBackground=await loadImage('collage-reise-maerchenhaft.webp');
-    await document.fonts.load('67px "Great Vibes"');
+    await document.fonts.load('79px "Great Vibes"');
     function render(c){
       const W=1500,H=2000;
       c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
@@ -439,7 +439,7 @@
     c.textAlign='center';c.textBaseline='middle';
     c.fillStyle='#754522';c.shadowColor='rgba(255,248,233,.9)';c.shadowBlur=12;
 
-    c.font='67px "Great Vibes",cursive';
+    c.font='79px "Great Vibes",cursive';
     c.fillText('Das Geheimnis der',W/2,132);
     c.fillText('verschollenen Blüten',W/2,215);
     c.shadowBlur=0;
