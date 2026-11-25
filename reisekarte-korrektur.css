@@ -43,3 +43,6 @@
 @media (prefers-reduced-motion:reduce) {
   .final-map-couple {transition:none;}
 }
+
+/* Avoid repeating decorative background seams above the travel heading. */
+.storybook-screen:has(.final-map){background-position:center center;background-attachment:scroll;background-repeat:no-repeat;background-size:cover;}
