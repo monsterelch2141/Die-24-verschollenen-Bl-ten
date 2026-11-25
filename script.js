@@ -90,6 +90,11 @@
   if (testReset) testReset.hidden = !testMode;
 
   function availableDays() {
+    if(window.ADVENT_ACCOUNT_ROLE==='lena'&&window.ADVENT_PREVIEW)return sequentialLimit(24);
+    return sequentialLimit(calendarDays());
+  }
+  function sequentialLimit(max){if(testMode)return max;let n=1;while(n<24&&solved[n]===answers[n])n++;return Math.min(max,n);}
+  function calendarDays() {
     // Deutsche Zeit, unabhängig von der eingestellten Geräte-Zeitzone.
     const parts = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit'
@@ -99,7 +104,7 @@
     if (year > 2026 || (year === 2026 && month === 12 && date >= 24)) return 24;
     if (year === 2026 && month === 12) return Math.min(24, date);
     // Testmodus öffnet vor dem Advent die Tage 1 bis 10.
-    return testMode && year <= 2026 ? 24 : 0;
+    return testMode ? 24 : 0;
   }
 
   function save() {
