@@ -482,10 +482,7 @@ footer p { margin:0; }
   background-size:cover;
   background-position:center center;
 }
-.collage-view {
-  background-size:100% auto;
-  background-repeat:repeat-y;
-}
+.collage-view { background-size:cover; background-position:center top; background-repeat:no-repeat; }
 @media(max-width:680px) {
   .page {padding-top:25px; background-size:100% 100%,100% auto;}
   .password-gate {background-size:cover;}
@@ -1156,3 +1153,6 @@ html:has(.day5-overlay){overflow:hidden!important}
 .photo-overlay .reveal-shell .polaroid-image{aspect-ratio:var(--photo-ratio, .75);height:auto;background:transparent}
 .photo-overlay .reveal-shell .polaroid-image img{width:100%;height:100%;object-fit:contain}
 .cell .mini-photo{object-fit:cover;object-position:50% 30%}
+
+#collage-view { box-sizing:border-box; min-height:100svh; background-repeat:no-repeat; background-size:cover; background-position:center top; }
+#collage-preview[hidden]{display:none!important;}
