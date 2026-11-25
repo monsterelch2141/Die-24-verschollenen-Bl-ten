@@ -447,7 +447,7 @@
     c.fillText('❦   ✧   ❦',W/2,284);
 
     // Compact masonry: equal-area cards, independently staggered columns.
-    const border=8,bottom=17,gap=8,top=323,margin=36;
+    const border=8,bottom=17,gap=14,top=323,margin=36;
     const entries=urls.map((url,i)=>({img:images[url],i,ratio:images[url].naturalWidth/images[url].naturalHeight}));
     // Search balanced columns of six to eight photos; fit each column tightly.
     let best=null;
@@ -487,48 +487,6 @@
       }
     }
 
-    }
-    // Encode PNG in horizontal strips, avoiding a 432 MB full-size canvas.
-    async function tiledPNG(width,height){
-      const table=Uint32Array.from({length:256},(_,i)=>{let v=i;for(let j=0;j<8;j++)v=v&1?0xedb88320^(v>>>1):v>>>1;return v>>>0});
-      function chunk(name,data){
-        const out=new Uint8Array(data.length+12),dv=new DataView(out.buffer);
-        dv.setUint32(0,data.length);for(let i=0;i<4;i++)out[4+i]=name.charCodeAt(i);
-        out.set(data,8);let crc=0xffffffff;
-        for(let i=4;i<out.length-4;i++)crc=table[(crc^out[i])&255]^(crc>>>8);
-        dv.setUint32(out.length-4,(crc^0xffffffff)>>>0);return out;
-      }
-      const header=new Uint8Array(13),dv=new DataView(header.buffer);
-      dv.setUint32(0,width);dv.setUint32(4,height);header[8]=8;header[9]=2;
-      const parts=[new Uint8Array([137,80,78,71,13,10,26,10]),chunk('IHDR',header)];
-      const dpi=new Uint8Array(9),dd=new DataView(dpi.buffer);dd.setUint32(0,11811);dd.setUint32(4,11811);dpi[8]=1;parts.push(chunk('pHYs',dpi));
-      const stream=new CompressionStream('deflate'),writer=stream.writable.getWriter(),reader=stream.readable.getReader();
-      const consume=(async()=>{while(true){const {value,done}=await reader.read();if(done)break;parts.push(chunk('IDAT',value));}})();
-      const canvas=document.createElement('canvas'),band=128,pad=48;
-      canvas.width=width;canvas.height=band+2*pad;
-      const c=canvas.getContext('2d',{willReadFrequently:true,alpha:false});
-      if(!c)throw Error('Canvas unavailable');
-      try{
-        for(let y=0;y<height;y+=band){
-          const n=Math.min(band,height-y);
-          c.setTransform(width/1500,0,0,height/2000,0,pad-y);render(c);
-          const pixels=c.getImageData(0,pad,width,n).data;
-          const raw=new Uint8Array(n*(width*3+1));
-          for(let j=0;j<n;j++){let dest=j*(width*3+1);raw[dest++]=1;let prevR=0,prevG=0,prevB=0;
-            for(let x=0;x<width;x++){const i=(j*width+x)*4,R=pixels[i],G=pixels[i+1],B=pixels[i+2];raw[dest++]=R-prevR;raw[dest++]=G-prevG;raw[dest++]=B-prevB;prevR=R;prevG=G;prevB=B;}
-          }
-          await writer.write(raw);
-          await new Promise(resolve=>setTimeout(resolve,0));
-        }
-        await writer.close();await consume;parts.push(chunk('IEND',new Uint8Array(0)));
-        return new Blob(parts,{type:'image/png'});
-      }catch(e){await writer.abort(e).catch(()=>{});await consume.catch(()=>{});throw e;}
-      finally{canvas.width=canvas.height=1;}
-    }
-    if(typeof CompressionStream==='function'){
-      for(const [w,h] of [[9000,12000],[6000,8000],[4500,6000]]){
-        try{return await tiledPNG(w,h);}catch(e){console.warn('Collage resolution fallback',w,e);}
-      }
     }
     const canvas=document.createElement('canvas');canvas.width=3456;canvas.height=4608;
     const c=canvas.getContext('2d');c.scale(canvas.width/1500,canvas.height/2000);render(c);
