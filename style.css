@@ -1190,8 +1190,9 @@ body::before{top:0;bottom:auto;height:100vh;height:100lvh;background-image:linea
 /* Old foreground contour belongs to the previous artwork; never overlay it on the new images. */
 #luminara-foreground-globe{display:none!important;}
 
-/* Keep the document scrollable, but clip its visible content to the same viewport as the artwork. */
-html{overscroll-behavior-y:none;}
-body{overscroll-behavior-y:none;}
-body::before{height:100vh;height:100dvh;}
-@supports (clip-path:inset(0)){#advent-page{clip-path:inset(var(--travel-clip-top,0px) 0 var(--travel-clip-bottom,0px) 0);}}
+/* Stable viewport artwork; native scrolling without dynamic clipping. */
+html,body{overscroll-behavior-y:none;}
+body::before{height:100vh;height:100lvh;}
+#advent-page{clip-path:none;}
+.cloud-login p[role="status"]{color:#984d3e;font:15px/1.5 Georgia,serif;text-align:center;}
+.cloud-login p[role="status"]:empty{display:none;}
