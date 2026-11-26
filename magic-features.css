@@ -148,3 +148,11 @@
 .photo-viewer-image.zoomed{display:block}
 .photo-viewer-image.zoomed img{max-width:none;max-height:none;width:200%;height:auto}
 .luminara-photo-viewer>p{flex:none;text-align:center;min-height:1em;margin:8px 0 0}
+
+.gallery-view-options>button,.photo-order-controls button{font:inherit;background:#fff9eb;color:#795b39;border:1px solid #b99e72;border-radius:7px;padding:7px;cursor:pointer}
+.photo-order-controls{display:none}
+.photo-order-edit .photo-order-controls{display:flex;justify-content:center;gap:3px;margin-top:5px}
+.photo-order-edit figure img{cursor:default}
+.photo-order-edit figure>button{display:none}
+.photo-drag-handle{touch-action:none;cursor:grab!important}
+.photo-dragging{opacity:.55;outline:2px dashed #a78b61}
