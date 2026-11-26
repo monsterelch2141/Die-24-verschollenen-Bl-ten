@@ -121,3 +121,20 @@
 @media(prefers-reduced-motion:reduce){.final-map-couple{transition:none}.final-flower.is-arriving,.final-map-cloud{animation:none}}
 
 .storybook-nav{position:fixed;top:14px;right:61px;z-index:100049;display:flex;gap:8px;margin:0;flex-wrap:nowrap}.storybook-nav button{display:grid;place-items:center;width:39px;height:39px;padding:0;border:1px solid #b49a73;border-radius:50%;background:#f6efdf;color:#795b39;box-shadow:0 4px 9px #35240d2b}.storybook-nav button[hidden],.storybook-nav[hidden]{display:none!important}
+
+/* Personal photo gallery display */
+.storybook-gallery[data-layout]{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start;justify-items:center}
+.storybook-gallery[data-layout="two"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.storybook-gallery[data-layout="three"]{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.storybook-gallery[data-layout] figure{box-sizing:border-box;width:100%;min-width:0;max-width:420px;padding:clamp(4px,1.3vw,12px);padding-bottom:clamp(8px,2vw,22px)}
+.storybook-gallery[data-layout] img{display:block;width:100%;height:auto;max-height:none;object-fit:contain}
+.storybook-gallery[data-layout="three"] figcaption{font-size:10px;overflow-wrap:anywhere}
+.storybook-gallery[data-layout] figure button{max-width:100%;font-size:11px;overflow-wrap:anywhere;padding:4px}
+.storybook-gallery[data-frame="plain"] figure{background:none;box-shadow:none;padding:0}
+.storybook-gallery[data-frame="plain"] figcaption{display:none}
+.gallery-view-options,.storybook-gallery .cloud-gallery-tools{grid-column:1/-1;width:100%;box-sizing:border-box}
+.gallery-view-options{text-align:center;color:#795b39;font-size:13px;padding:6px}
+.gallery-view-row{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:7px 0}
+.gallery-view-row button{font:inherit;color:#795b39;background:#fff9eb;border:1px solid #b99e72;border-radius:7px;padding:6px 9px;cursor:pointer}
+.gallery-view-row button[aria-pressed="true"]{background:#795b39;color:#fff9eb}
+.gallery-view-options small{display:block;min-height:1em;font-size:11px}
