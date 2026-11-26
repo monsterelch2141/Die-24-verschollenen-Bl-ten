@@ -138,3 +138,13 @@
 .gallery-view-row button{font:inherit;color:#795b39;background:#fff9eb;border:1px solid #b99e72;border-radius:7px;padding:6px 9px;cursor:pointer}
 .gallery-view-row button[aria-pressed="true"]{background:#795b39;color:#fff9eb}
 .gallery-view-options small{display:block;min-height:1em;font-size:11px}
+
+.storybook-gallery figure img{cursor:zoom-in}
+.luminara-photo-viewer{position:fixed;inset:0;z-index:2147483000;background:#17130f;display:flex;flex-direction:column;box-sizing:border-box;padding: max(12px,env(safe-area-inset-top)) 10px max(12px,env(safe-area-inset-bottom));color:#fff8e9;font:14px Georgia,serif}
+.photo-viewer-bar{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;flex:none}
+.photo-viewer-bar button{font:inherit;background:#f5e9d2;color:#65482e;border:1px solid #b99e72;border-radius:8px;padding:10px;cursor:pointer}
+.photo-viewer-image{flex:1;min-height:0;overflow:auto;display:flex;align-items:center;justify-content:center;margin-top:10px;touch-action:pan-x pan-y pinch-zoom}
+.photo-viewer-image img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+.photo-viewer-image.zoomed{display:block}
+.photo-viewer-image.zoomed img{max-width:none;max-height:none;width:200%;height:auto}
+.luminara-photo-viewer>p{flex:none;text-align:center;min-height:1em;margin:8px 0 0}
